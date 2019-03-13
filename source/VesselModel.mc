@@ -210,13 +210,15 @@ class VesselModel {
        invalidateTimer(updateTimer);
        System.println("make web request");
         Communications.makeWebRequest(
-            baseURL + "/vessels/self",
+            baseURL + "/plugins/minimumvesseldatarest/vesseldata",
             {
             },
             {
               :method => Communications.HTTP_REQUEST_METHOD_GET,
-                :headers => {                                           
-                    "Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED
+                :headers => {    
+                	"Accept" => "application/json",                                       
+                    "Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
+                    "Authorization" => "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFkbWluIiwiaWF0IjoxNTUyNTA5MDE2LCJleHAiOjE1NTI1OTU0MTZ9.rugOSXwXPGs4bs89MUrWjLgTiW7hSb84Q9MLUD2L5rU"
                 },
                  :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON 
              
@@ -228,75 +230,50 @@ class VesselModel {
 
     function onReceive(responseCode, data) {
         
-        System.println("response code " + responseCode);
+        System.println("response code " + responseCode + "\n\n" + data + "\n\n");
 
         if (responseCode == 200) {
         	// Parse JSON data
         	
+  
         	try {
-  				apparentWindAngle = data["environment"]["wind"]["angleApparent"]["value"].toFloat();
-			}
-			catch (ex) {}
-			
-			try {
-  				depthBelowTranscuder = data["environment"]["depth"]["belowTransducer"]["value"].toFloat();
-			}
-			catch (ex) {}
 
-			try {
-  				trueWindSpeed = data["environment"]["wind"]["speedTrue"]["value"].toFloat();
-			}
-			catch (ex) {}
+				// FLOAT VALUES
 
-			try {
-  				apparentWindSpeed = data["environment"]["wind"]["speedApparent"]["value"].toFloat();
-			}
-			catch (ex) {}
+				depthBelowTranscuder = setValueIfPresent(data["depthBelowTransducer"]);
+				trueWindSpeed = setValueIfPresent(data["windSpeedTrue"]);
+				apparentWindSpeed = setValueIfPresent(data["windSpeedApparent"]);
+				speedOverGround = setValueIfPresent(data["speedOverGround"]);
+				courseOverGround = setValueIfPresent(data["courseOverGroundTrue"]);
+				apparentWindAngle = setValueIfPresent(data["headingTrue"]);
+				rudderAngle = setValueIfPresent(data["rudderAngle"]);
+				targetHeadingMagnetic = setValueIfPresent(data["autopilotTargetHeadingMagnetic"]);
+				targetHeadingTrue = setValueIfPresent(data["autopilotTargetHeadingTrue"]);
+				targetHeadingWindAppearant = setValueIfPresent(data["autopilotTargetWindAngleApparent"]);
+				
+				
+				// STRING VALUES
+				
+				if(data["autopilotState"] != null) {
+					autopilotState = data["autopilotState"];
+				}else {
+					autopilotState = "---";
+				}
+				
+				
 
-			try {
-  				speedOverGround = data["navigation"]["speedOverGround"]["value"].toFloat();
 			}
-			catch (ex) {}
+			catch (ex) {
 			
-			try {
-  				courseOverGround = data["navigation"]["courseOverGroundTrue"]["value"].toFloat();
-			}
-			catch (ex) {}
+				resetVesselData();
 			
-			try {
-  				heading = data["navigation"]["headingTrue"]["value"].toFloat();
 			}
-			catch (ex) {}
-			
-			try {
-  				rudderAngle = data["steering"]["rudderAngle"]["value"].toFloat();
-			}
-			catch (ex) {}
-			
-			try {
-  				autopilotState = data["steering"]["autopilot"]["state"]["value"];
-			}
-			catch (ex) {}
-			
-			try {
-  				targetHeadingMagnetic = data["steering"]["autopilot"]["target"]["headingMagnetic"]["value"].toFloat();
-			}
-			catch (ex) {}
-			
-			try {
-  				targetHeadingTrue = data["steering"]["autopilot"]["target"]["headingTrue"]["value"].toFloat();
-			}
-			catch (ex) {}
-			
-			try {
-  				targetHeadingWindAppearant = data["steering"]["autopilot"]["target"]["windAngleApparent"]["value"].toFloat();
-			}
-			catch (ex) {}
 
         	
         	updateTimer = new Timer.Timer();
-        	updateTimer.start(method(:makeRequest), 1000, false);
+        	updateTimer.start(method(:makeRequest), 5000, false);
         
+        	logState();
         
         	WatchUi.requestUpdate();
         	
@@ -304,11 +281,16 @@ class VesselModel {
         } else {
 	        System.println("Response Code: " + responseCode);
             resetVesselData();
+            
+            var error = errorMessage(responseCode);
+            var messageView = new MessageView(error,responseCode);
+            
+            WatchUi.pushView(messageView, new MessageViewDelegate(), WatchUi.SLIDE_UP);
         }
         
         data = null;
         
-        logState();
+        
 
     }
     
@@ -338,6 +320,18 @@ class VesselModel {
         "\nTARGET_AWA: " + targetHeadingWindAppearant + 
         "\nRudder: " + rudderAngle + 
         "\nAUTOPILOT: " + autopilotState + "\n---------------\n");
+    }
+    
+    function setValueIfPresent(value) {
+    
+    	if(value != null) {
+    	
+    		return value;
+    	
+    	}else {
+    		return 0.0;
+    	} 
+    
     }
 
 

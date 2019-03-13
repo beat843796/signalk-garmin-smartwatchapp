@@ -11,7 +11,7 @@ class VesselConnectApp extends Application.AppBase {
     function initialize() {
         AppBase.initialize();
         
-        vessel = new VesselModel("https://0.0.0.0:3443/signalk/v1/api");
+        vessel = new VesselModel("https://0.0.0.0:3443");
         
     }
 
