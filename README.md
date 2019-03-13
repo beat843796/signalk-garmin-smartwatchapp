@@ -1,7 +1,7 @@
-# signalk garmin smartwatch app
+## signalk garmin smartwatch app
 
-Connect IQ App that display boat data and let you control an autopilot
+Connect IQ App that display boat data and let you control an autopilot using the the open marine data standard [SignalK](http://signalk.org)
 
-For the app to work you need the following plugins installed on your signalk server
+For the garmin app to work you need the following plugin installed on your [signalk nodejs server](https://github.com/SignalK/signalk-server-node).
 
-[Autopilot](https://www.npmjs.com/package/signalk-raymarine-autopilot)
+[Autopilot plugin](https://www.npmjs.com/package/signalk-raymarine-autopilot)
