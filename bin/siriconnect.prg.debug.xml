@@ -1,0 +1,707 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<debugInfo>
+    <pcToLineNum>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="3" lineNum="40" pc="268435456" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="3" lineNum="42" pc="268435460" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="3" lineNum="43" pc="268435470" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="3" lineNum="45" pc="268435500" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="4" lineNum="49" pc="268435513" symbol="startUpdatingData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="4" lineNum="50" pc="268435517" symbol="startUpdatingData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="4" lineNum="52" pc="268435538" symbol="startUpdatingData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="5" lineNum="55" pc="268435551" symbol="stopUpdatingData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="5" lineNum="56" pc="268435555" symbol="stopUpdatingData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="5" lineNum="58" pc="268435576" symbol="stopUpdatingData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="6" lineNum="62" pc="268435597" symbol="resetVesselData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="6" lineNum="64" pc="268435601" symbol="resetVesselData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="6" lineNum="65" pc="268435618" symbol="resetVesselData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="6" lineNum="66" pc="268435635" symbol="resetVesselData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="6" lineNum="67" pc="268435652" symbol="resetVesselData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="6" lineNum="68" pc="268435669" symbol="resetVesselData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="6" lineNum="69" pc="268435686" symbol="resetVesselData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="6" lineNum="70" pc="268435703" symbol="resetVesselData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="6" lineNum="71" pc="268435720" symbol="resetVesselData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="6" lineNum="72" pc="268435737" symbol="resetVesselData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="6" lineNum="73" pc="268435754" symbol="resetVesselData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="6" lineNum="74" pc="268435771" symbol="resetVesselData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="6" lineNum="76" pc="268435788" symbol="resetVesselData"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="7" lineNum="80" pc="268435802" symbol="getSpeedOverGroundKnotsString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="7" lineNum="82" pc="268435806" symbol="getSpeedOverGroundKnotsString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="8" lineNum="86" pc="268435841" symbol="getApparentWindSpeedKnotsString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="8" lineNum="88" pc="268435845" symbol="getApparentWindSpeedKnotsString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="9" lineNum="91" pc="268435880" symbol="getTrueWindSpeedKnotsString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="9" lineNum="93" pc="268435884" symbol="getTrueWindSpeedKnotsString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="10" lineNum="97" pc="268435919" symbol="getDepthBelowTranscuderMeterString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="10" lineNum="99" pc="268435923" symbol="getDepthBelowTranscuderMeterString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="11" lineNum="103" pc="268435953" symbol="getAppearantWindAngleDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="11" lineNum="105" pc="268435957" symbol="getAppearantWindAngleDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="11" lineNum="107" pc="268435987" symbol="getAppearantWindAngleDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="12" lineNum="111" pc="268436011" symbol="getCourseOverGroundDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="12" lineNum="113" pc="268436015" symbol="getCourseOverGroundDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="12" lineNum="115" pc="268436045" symbol="getCourseOverGroundDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="13" lineNum="119" pc="268436069" symbol="getHeadingDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="13" lineNum="121" pc="268436073" symbol="getHeadingDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="13" lineNum="123" pc="268436103" symbol="getHeadingDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="14" lineNum="127" pc="268436127" symbol="getTargetHeadingTrueDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="14" lineNum="129" pc="268436131" symbol="getTargetHeadingTrueDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="14" lineNum="131" pc="268436161" symbol="getTargetHeadingTrueDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="15" lineNum="135" pc="268436185" symbol="getTargetHeadingMagneticDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="15" lineNum="137" pc="268436189" symbol="getTargetHeadingMagneticDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="15" lineNum="139" pc="268436219" symbol="getTargetHeadingMagneticDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="16" lineNum="143" pc="268436243" symbol="getTargetHeadingWindAppearantDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="16" lineNum="145" pc="268436247" symbol="getTargetHeadingWindAppearantDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="16" lineNum="147" pc="268436277" symbol="getTargetHeadingWindAppearantDegreeString"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="17" lineNum="151" pc="268436301" symbol="autoPilotPlusOne"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="17" lineNum="152" pc="268436305" symbol="autoPilotPlusOne"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="18" lineNum="155" pc="268436327" symbol="autoPilotMinusOne"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="18" lineNum="156" pc="268436331" symbol="autoPilotMinusOne"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="19" lineNum="159" pc="268436353" symbol="autoPilotPlusTen"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="19" lineNum="160" pc="268436357" symbol="autoPilotPlusTen"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="20" lineNum="163" pc="268436379" symbol="autoPilotMinusTen"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="20" lineNum="164" pc="268436383" symbol="autoPilotMinusTen"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="21" lineNum="168" pc="268436405" symbol="setAutopilotState"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="21" lineNum="169" pc="268436409" symbol="setAutopilotState"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="22" lineNum="172" pc="268436434" symbol="meterPerSecondToKnots"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="22" lineNum="174" pc="268436438" symbol="meterPerSecondToKnots"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="22" lineNum="176" pc="268436451" symbol="meterPerSecondToKnots"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="23" lineNum="179" pc="268436455" symbol="degreestToRadians"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="23" lineNum="181" pc="268436459" symbol="degreestToRadians"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="23" lineNum="183" pc="268436486" symbol="degreestToRadians"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="24" lineNum="187" pc="268436490" symbol="radiansToDegrees"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="24" lineNum="189" pc="268436494" symbol="radiansToDegrees"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="24" lineNum="191" pc="268436521" symbol="radiansToDegrees"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="25" lineNum="196" pc="268436525" symbol="invalidateTimer"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="25" lineNum="198" pc="268436529" symbol="invalidateTimer"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="25" lineNum="199" pc="268436536" symbol="invalidateTimer"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="25" lineNum="202" pc="268436540" symbol="invalidateTimer"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="25" lineNum="203" pc="268436552" symbol="invalidateTimer"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="26" lineNum="208" pc="268436556" symbol="makeRequest"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="26" lineNum="210" pc="268436560" symbol="makeRequest"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="26" lineNum="211" pc="268436580" symbol="makeRequest"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="26" lineNum="212" pc="268436601" symbol="makeRequest"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="229" pc="268436734" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="231" pc="268436738" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="233" pc="268436762" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="236" pc="268436773" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="237" pc="268436773" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="241" pc="268436838" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="242" pc="268436838" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="246" pc="268436903" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="247" pc="268436903" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="251" pc="268436968" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="252" pc="268436968" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="256" pc="268437033" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="257" pc="268437033" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="261" pc="268437092" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="262" pc="268437092" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="266" pc="268437151" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="267" pc="268437151" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="271" pc="268437210" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="272" pc="268437210" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="276" pc="268437269" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="277" pc="268437269" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="281" pc="268437325" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="282" pc="268437325" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="286" pc="268437396" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="287" pc="268437396" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="291" pc="268437467" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="292" pc="268437467" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="297" pc="268437538" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="298" pc="268437572" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="301" pc="268437613" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="305" pc="268437634" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="306" pc="268437658" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="309" pc="268437670" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="27" lineNum="311" pc="268437673" symbol="onReceive"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="28" lineNum="316" pc="268437686" symbol="getNameForActiveState"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="28" lineNum="318" pc="268437690" symbol="getNameForActiveState"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="28" lineNum="320" pc="268437709" symbol="getNameForActiveState"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="28" lineNum="321" pc="268437728" symbol="getNameForActiveState"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="28" lineNum="324" pc="268437738" symbol="getNameForActiveState"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="29" lineNum="328" pc="268437742" symbol="logState"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselModel.mc" id="29" lineNum="329" pc="268437746" symbol="logState"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotMenuDelegate.mc" id="31" lineNum="5" pc="268437948" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotMenuDelegate.mc" id="31" lineNum="6" pc="268437952" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotMenuDelegate.mc" id="32" lineNum="9" pc="268437971" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotMenuDelegate.mc" id="32" lineNum="10" pc="268437975" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotMenuDelegate.mc" id="32" lineNum="12" pc="268438002" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotMenuDelegate.mc" id="32" lineNum="14" pc="268438031" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="34" lineNum="8" pc="268438060" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="34" lineNum="9" pc="268438064" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="12" pc="268438083" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="14" pc="268438087" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="15" pc="268438130" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="16" pc="268438173" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="17" pc="268438216" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="19" pc="268438259" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="21" pc="268438266" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="24" pc="268438369" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="25" pc="268438376" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="27" pc="268438379" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="28" pc="268438396" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="29" pc="268438403" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="31" pc="268438406" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="32" pc="268438423" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="33" pc="268438430" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="36" pc="268438433" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="37" pc="268438450" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="38" pc="268438457" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="43" pc="268438460" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="45" pc="268438517" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="46" pc="268438531" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="47" pc="268438545" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="48" pc="268438559" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="50" pc="268438573" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="35" lineNum="52" pc="268438625" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="36" lineNum="56" pc="268438629" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="36" lineNum="58" pc="268438633" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="36" lineNum="60" pc="268438767" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="36" lineNum="61" pc="268438785" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="36" lineNum="63" pc="268438788" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="36" lineNum="64" pc="268438806" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="36" lineNum="66" pc="268438809" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="36" lineNum="67" pc="268438827" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="36" lineNum="70" pc="268438830" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="36" lineNum="71" pc="268438848" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="36" lineNum="74" pc="268438851" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="36" lineNum="75" pc="268438879" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotDelegate.mc" id="36" lineNum="80" pc="268438882" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="38" lineNum="11" pc="268438886" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="38" lineNum="12" pc="268438890" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="18" pc="268438909" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="20" pc="268438913" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="22" pc="268438933" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="25" pc="268438969" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="27" pc="268438981" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="28" pc="268439000" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="29" pc="268439019" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="34" pc="268439035" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="35" pc="268439042" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="40" pc="268439049" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="42" pc="268439152" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="43" pc="268439171" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="45" pc="268439178" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="47" pc="268439181" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="48" pc="268439200" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="50" pc="268439207" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="52" pc="268439210" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="53" pc="268439229" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="54" pc="268439236" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="57" pc="268439239" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="58" pc="268439246" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="59" pc="268439253" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="65" pc="268439256" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="68" pc="268439293" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="69" pc="268439324" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="71" pc="268439363" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="78" pc="268439399" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="87" pc="268439471" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="98" pc="268439516" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="99" pc="268439552" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="101" pc="268439569" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="103" pc="268439585" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="104" pc="268439603" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="107" pc="268439708" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="108" pc="268439744" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="110" pc="268439761" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="111" pc="268439844" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="113" pc="268439927" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="115" pc="268440025" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="39" lineNum="116" pc="268440061" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="40" lineNum="122" pc="268440090" symbol="drawDataText"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="40" lineNum="124" pc="268440094" symbol="drawDataText"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="40" lineNum="131" pc="268440142" symbol="drawDataText"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="41" lineNum="140" pc="268440191" symbol="drawRudderAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="41" lineNum="143" pc="268440195" symbol="drawRudderAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="41" lineNum="144" pc="268440206" symbol="drawRudderAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="41" lineNum="147" pc="268440210" symbol="drawRudderAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="41" lineNum="149" pc="268440214" symbol="drawRudderAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="41" lineNum="150" pc="268440225" symbol="drawRudderAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="41" lineNum="153" pc="268440238" symbol="drawRudderAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="41" lineNum="157" pc="268440252" symbol="drawRudderAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="41" lineNum="158" pc="268440267" symbol="drawRudderAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="41" lineNum="161" pc="268440277" symbol="drawRudderAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="41" lineNum="162" pc="268440288" symbol="drawRudderAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="41" lineNum="164" pc="268440327" symbol="drawRudderAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="41" lineNum="168" pc="268440363" symbol="drawRudderAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="41" lineNum="170" pc="268440370" symbol="drawRudderAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="41" lineNum="171" pc="268440385" symbol="drawRudderAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="41" lineNum="174" pc="268440407" symbol="drawRudderAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="42" lineNum="180" pc="268440491" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="42" lineNum="184" pc="268440495" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="42" lineNum="185" pc="268440526" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="42" lineNum="187" pc="268440547" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="42" lineNum="189" pc="268440554" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="42" lineNum="190" pc="268440606" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="42" lineNum="192" pc="268440658" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="42" lineNum="193" pc="268440723" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="42" lineNum="195" pc="268440788" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="42" lineNum="196" pc="268440853" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="42" lineNum="198" pc="268440918" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="42" lineNum="199" pc="268440946" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="42" lineNum="200" pc="268440974" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/AutopilotView.mc" id="42" lineNum="204" pc="268441002" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="44" lineNum="11" pc="268441051" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="44" lineNum="12" pc="268441055" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="44" lineNum="13" pc="268441078" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="19" pc="268441097" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="21" pc="268441101" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="23" pc="268441121" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="24" pc="268441157" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="26" pc="268441169" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="27" pc="268441188" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="28" pc="268441207" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="33" pc="268441229" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="35" pc="268441246" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="37" pc="268441282" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="38" pc="268441323" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="39" pc="268441376" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="43" pc="268441438" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="44" pc="268441445" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="49" pc="268441459" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="50" pc="268441495" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="53" pc="268441571" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="54" pc="268441607" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="61" pc="268441683" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="63" pc="268441719" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="65" pc="268441774" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="67" pc="268441841" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="69" pc="268441905" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="45" lineNum="72" pc="268441969" symbol="onUpdate"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="46" lineNum="79" pc="268441998" symbol="drawDataText"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="46" lineNum="81" pc="268442002" symbol="drawDataText"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="46" lineNum="88" pc="268442050" symbol="drawDataText"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="47" lineNum="97" pc="268442099" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="47" lineNum="101" pc="268442103" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="47" lineNum="102" pc="268442134" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="47" lineNum="104" pc="268442155" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="47" lineNum="106" pc="268442162" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="47" lineNum="107" pc="268442214" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="47" lineNum="109" pc="268442266" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="47" lineNum="110" pc="268442331" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="47" lineNum="112" pc="268442396" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="47" lineNum="113" pc="268442461" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="47" lineNum="115" pc="268442526" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="47" lineNum="116" pc="268442554" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="47" lineNum="117" pc="268442582" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="47" lineNum="120" pc="268442610" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataView.mc" id="47" lineNum="121" pc="268442646" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselConnectApp.mc" id="49" lineNum="11" pc="268442695" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselConnectApp.mc" id="49" lineNum="12" pc="268442699" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselConnectApp.mc" id="49" lineNum="14" pc="268442717" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselConnectApp.mc" id="50" lineNum="19" pc="268442753" symbol="onStart"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselConnectApp.mc" id="50" lineNum="20" pc="268442757" symbol="onStart"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselConnectApp.mc" id="50" lineNum="23" pc="268442778" symbol="onStart"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselConnectApp.mc" id="51" lineNum="29" pc="268442797" symbol="onStop"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselConnectApp.mc" id="51" lineNum="31" pc="268442801" symbol="onStop"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselConnectApp.mc" id="51" lineNum="33" pc="268442819" symbol="onStop"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselConnectApp.mc" id="52" lineNum="39" pc="268442841" symbol="getInitialView"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselConnectApp.mc" id="52" lineNum="40" pc="268442845" symbol="getInitialView"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselConnectApp.mc" id="52" lineNum="41" pc="268442866" symbol="getInitialView"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataViewDelegate.mc" id="54" lineNum="7" pc="268442934" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataViewDelegate.mc" id="54" lineNum="8" pc="268442938" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataViewDelegate.mc" id="55" lineNum="11" pc="268442957" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataViewDelegate.mc" id="55" lineNum="12" pc="268442961" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataViewDelegate.mc" id="55" lineNum="14" pc="268442982" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/siriconnect/source/VesselDataViewDelegate.mc" id="55" lineNum="15" pc="268443054" symbol="onSelect"/>
+        <entry filename="Rez" id="62" lineNum="20" pc="268443058" symbol="Testlayout"/>
+        <entry filename="Rez" id="62" lineNum="24" pc="268443070" symbol="Testlayout"/>
+        <entry filename="Rez" id="62" lineNum="25" pc="268443265" symbol="Testlayout"/>
+        <entry filename="Rez" id="62" lineNum="26" pc="268443298" symbol="Testlayout"/>
+        <entry filename="Rez" id="62" lineNum="29" pc="268443350" symbol="Testlayout"/>
+        <entry filename="Rez" id="63" lineNum="40" pc="268443368" symbol="Anotherlayout"/>
+        <entry filename="Rez" id="63" lineNum="44" pc="268443380" symbol="Anotherlayout"/>
+        <entry filename="Rez" id="63" lineNum="45" pc="268443575" symbol="Anotherlayout"/>
+        <entry filename="Rez" id="63" lineNum="46" pc="268443608" symbol="Anotherlayout"/>
+        <entry filename="Rez" id="63" lineNum="49" pc="268443660" symbol="Anotherlayout"/>
+    </pcToLineNum>
+    <symbolTable>
+        <entry id="65" method="true" symbol="degreestToRadians"/>
+        <entry id="8388644" module="true" symbol="System"/>
+        <entry field="true" id="13" symbol="AP_STATE_NOT_SUPPORTED"/>
+        <entry id="8389124" method="true" symbol="onUpdate"/>
+        <entry id="8389349" symbol="justification"/>
+        <entry id="8388637" module="true" symbol="Communications"/>
+        <entry id="21" object="true" symbol="VesselDataViewDelegate"/>
+        <entry id="71" method="true" symbol="logState"/>
+        <entry field="true" id="19" symbol="vessel"/>
+        <entry field="true" id="10" symbol="AP_STATE_AUTO"/>
+        <entry id="47" method="true" symbol="stopUpdatingData"/>
+        <entry field="true" id="8389642" symbol="title"/>
+        <entry id="8389097" method="true" symbol="onKey"/>
+        <entry field="true" id="37" symbol="trueWindSpeed"/>
+        <entry field="true" id="8388611" module="true" symbol="Toybox"/>
+        <entry field="true" id="38" symbol="depthBelowTranscuder"/>
+        <entry field="true" id="40" symbol="courseOverGround"/>
+        <entry id="8389619" method="true" symbol="onSelect"/>
+        <entry id="14" object="true" symbol="VesselModel"/>
+        <entry id="30" method="true" symbol="drawRudderAngle"/>
+        <entry field="true" id="35" symbol="speedOverGround"/>
+        <entry id="8388770" module="true" object="true" symbol="Strings"/>
+        <entry field="true" id="8388965" symbol="heading"/>
+        <entry id="8389280" method="true" symbol="getInitialView"/>
+        <entry id="20" object="true" symbol="VesselConnectApp"/>
+        <entry id="8390436" symbol="focus"/>
+        <entry id="8388639" module="true" symbol="Graphics"/>
+        <entry id="63" method="true" symbol="setAutopilotState"/>
+        <entry field="true" id="41" symbol="rudderAngle"/>
+        <entry id="8388769" module="true" object="true" symbol="Rez"/>
+        <entry id="31" method="true" symbol="drawWindAngle"/>
+        <entry id="8388702" method="true" symbol="initialize"/>
+        <entry id="59" method="true" symbol="autoPilotPlusOne"/>
+        <entry field="true" id="27" symbol="AppName"/>
+        <entry id="60" method="true" symbol="autoPilotMinusOne"/>
+        <entry id="68" method="true" symbol="makeRequest"/>
+        <entry field="true" id="28" symbol="rudderHeight"/>
+        <entry id="8389594" symbol="headers"/>
+        <entry field="true" id="12" symbol="AP_STATE_TRACK"/>
+        <entry field="true" id="72" symbol="blockHeight"/>
+        <entry id="51" method="true" symbol="getTrueWindSpeedKnotsString"/>
+        <entry id="26" method="true" symbol="Anotherlayout"/>
+        <entry id="70" method="true" symbol="getNameForActiveState"/>
+        <entry id="8388641" module="true" symbol="Math"/>
+        <entry id="46" method="true" symbol="startUpdatingData"/>
+        <entry field="true" id="24" symbol="LauncherIcon"/>
+        <entry field="true" id="11" symbol="AP_STATE_WIND"/>
+        <entry id="17" object="true" symbol="AutopilotView"/>
+        <entry id="8388646" module="true" object="true" symbol="Timer"/>
+        <entry field="true" id="32" symbol="FACTOR_MS_TO_KNOTS"/>
+        <entry id="8388786" method="true" symbol="method"/>
+        <entry id="8388648" module="true" symbol="WatchUi"/>
+        <entry field="true" id="42" symbol="targetHeadingTrue"/>
+        <entry id="8389281" method="true" symbol="onStop"/>
+        <entry id="15" object="true" symbol="AutopilotMenuDelegate"/>
+        <entry field="true" id="8389065" symbol="locY"/>
+        <entry field="true" id="8389064" symbol="locX"/>
+        <entry id="8388771" module="true" object="true" symbol="Drawables"/>
+        <entry id="55" method="true" symbol="getHeadingDegreeString"/>
+        <entry id="18" object="true" symbol="VesselDataView"/>
+        <entry id="50" method="true" symbol="getApparentWindSpeedKnotsString"/>
+        <entry field="true" id="9" symbol="AP_STATE_STANDBY"/>
+        <entry id="8389279" method="true" symbol="onStart"/>
+        <entry field="true" id="34" symbol="updateTimer"/>
+        <entry id="8389348" symbol="font"/>
+        <entry field="true" id="39" symbol="apparentWindAngle"/>
+        <entry id="16" object="true" symbol="AutopilotDelegate"/>
+        <entry id="48" method="true" symbol="resetVesselData"/>
+        <entry field="true" id="8389067" symbol="height"/>
+        <entry field="true" id="45" symbol="autopilotState"/>
+        <entry id="23" module="true" symbol="Layouts"/>
+        <entry id="53" method="true" symbol="getAppearantWindAngleDegreeString"/>
+        <entry id="66" method="true" symbol="radiansToDegrees"/>
+        <entry id="67" method="true" symbol="invalidateTimer"/>
+        <entry id="49" method="true" symbol="getSpeedOverGroundKnotsString"/>
+        <entry id="58" method="true" symbol="getTargetHeadingWindAppearantDegreeString"/>
+        <entry id="8390088" module="true" object="true" symbol="JsonData"/>
+        <entry id="8389844" symbol="responseType"/>
+        <entry id="8389346" symbol="text"/>
+        <entry field="true" id="8389066" symbol="width"/>
+        <entry field="true" id="8389063" symbol="identifier"/>
+        <entry id="29" method="true" symbol="drawDataText"/>
+        <entry id="57" method="true" symbol="getTargetHeadingMagneticDegreeString"/>
+        <entry field="true" id="33" symbol="baseURL"/>
+        <entry id="56" method="true" symbol="getTargetHeadingTrueDegreeString"/>
+        <entry id="22" module="true" symbol="Menus"/>
+        <entry id="61" method="true" symbol="autoPilotPlusTen"/>
+        <entry id="62" method="true" symbol="autoPilotMinusTen"/>
+        <entry id="54" method="true" symbol="getCourseOverGroundDegreeString"/>
+        <entry field="true" id="36" symbol="apparentWindSpeed"/>
+        <entry id="25" method="true" symbol="Testlayout"/>
+        <entry id="69" method="true" symbol="onReceive"/>
+        <entry id="8388772" module="true" object="true" symbol="Fonts"/>
+        <entry id="64" method="true" symbol="meterPerSecondToKnots"/>
+        <entry field="true" id="44" symbol="targetHeadingWindAppearant"/>
+        <entry field="true" id="43" symbol="targetHeadingMagnetic"/>
+        <entry id="52" method="true" symbol="getDepthBelowTranscuderMeterString"/>
+        <entry id="8388635" module="true" symbol="Application"/>
+    </symbolTable>
+    <localVars>
+        <entry endPc="268435513" name="signalKBaseURL" stackId="1" startPc="268435456"/>
+        <entry endPc="268436010" name="degrees" stackId="1" startPc="268435957"/>
+        <entry endPc="268436068" name="degrees" stackId="1" startPc="268436015"/>
+        <entry endPc="268436126" name="degrees" stackId="1" startPc="268436073"/>
+        <entry endPc="268436184" name="degrees" stackId="1" startPc="268436131"/>
+        <entry endPc="268436242" name="degrees" stackId="1" startPc="268436189"/>
+        <entry endPc="268436300" name="degrees" stackId="1" startPc="268436247"/>
+        <entry endPc="268436434" name="apMode" stackId="1" startPc="268436405"/>
+        <entry endPc="268436454" name="knots" stackId="2" startPc="268436438"/>
+        <entry endPc="268436455" name="metersPerSecond" stackId="1" startPc="268436434"/>
+        <entry endPc="268436489" name="radians" stackId="2" startPc="268436459"/>
+        <entry endPc="268436490" name="degrees" stackId="1" startPc="268436455"/>
+        <entry endPc="268436524" name="degrees" stackId="2" startPc="268436494"/>
+        <entry endPc="268436525" name="radians" stackId="1" startPc="268436490"/>
+        <entry endPc="268436556" name="timer" stackId="1" startPc="268436525"/>
+        <entry endPc="268437686" name="responseCode" stackId="1" startPc="268436734"/>
+        <entry endPc="268437686" name="data" stackId="2" startPc="268436734"/>
+        <entry endPc="268437741" name="stateName" stackId="1" startPc="268437690"/>
+        <entry endPc="268438060" name="item" stackId="1" startPc="268437971"/>
+        <entry endPc="268438628" name="focus" stackId="5" startPc="268438087"/>
+        <entry endPc="268438628" name="autoItem" stackId="2" startPc="268438087"/>
+        <entry endPc="268438628" name="trackItem" stackId="4" startPc="268438087"/>
+        <entry endPc="268438628" name="menu" stackId="6" startPc="268438087"/>
+        <entry endPc="268438628" name="standbyItem" stackId="1" startPc="268438087"/>
+        <entry endPc="268438628" name="windItem" stackId="3" startPc="268438087"/>
+        <entry endPc="268438886" name="keyEvent" stackId="1" startPc="268438629"/>
+        <entry endPc="268439708" name="i" stackId="6" startPc="268439603"/>
+        <entry endPc="268440089" name="xOffsetTens" stackId="5" startPc="268438913"/>
+        <entry endPc="268440089" name="labelText" stackId="4" startPc="268438913"/>
+        <entry endPc="268440089" name="blockHeight" stackId="2" startPc="268438913"/>
+        <entry endPc="268440089" name="valueToDraw" stackId="3" startPc="268438913"/>
+        <entry endPc="268440090" name="dc" stackId="1" startPc="268438909"/>
+        <entry endPc="268440191" name="x" stackId="2" startPc="268440090"/>
+        <entry endPc="268440191" name="dc" stackId="1" startPc="268440090"/>
+        <entry endPc="268440191" name="valueText" stackId="5" startPc="268440090"/>
+        <entry endPc="268440191" name="labelText" stackId="4" startPc="268440090"/>
+        <entry endPc="268440191" name="y" stackId="3" startPc="268440090"/>
+        <entry endPc="268440490" name="percentage" stackId="4" startPc="268440195"/>
+        <entry endPc="268440490" name="xOffset" stackId="5" startPc="268440195"/>
+        <entry endPc="268440490" name="absRudderAngle" stackId="3" startPc="268440195"/>
+        <entry endPc="268440491" name="dc" stackId="1" startPc="268440191"/>
+        <entry endPc="268440491" name="rudderAngle" stackId="2" startPc="268440191"/>
+        <entry endPc="268441050" name="pointA" stackId="12" startPc="268440495"/>
+        <entry endPc="268441050" name="yB" stackId="9" startPc="268440495"/>
+        <entry endPc="268441050" name="yA" stackId="7" startPc="268440495"/>
+        <entry endPc="268441050" name="correctedAngleDegrees" stackId="3" startPc="268440495"/>
+        <entry endPc="268441050" name="radians" stackId="4" startPc="268440495"/>
+        <entry endPc="268441050" name="xC" stackId="10" startPc="268440495"/>
+        <entry endPc="268441050" name="xB" stackId="8" startPc="268440495"/>
+        <entry endPc="268441050" name="xA" stackId="6" startPc="268440495"/>
+        <entry endPc="268441050" name="arrowLength" stackId="5" startPc="268440495"/>
+        <entry endPc="268441050" name="pointC" stackId="14" startPc="268440495"/>
+        <entry endPc="268441050" name="pointB" stackId="13" startPc="268440495"/>
+        <entry endPc="268441050" name="yC" stackId="11" startPc="268440495"/>
+        <entry endPc="268441051" name="dc" stackId="1" startPc="268440491"/>
+        <entry endPc="268441051" name="angle" stackId="2" startPc="268440491"/>
+        <entry endPc="268441997" name="arcLineWidth" stackId="2" startPc="268441101"/>
+        <entry endPc="268441998" name="dc" stackId="1" startPc="268441097"/>
+        <entry endPc="268442099" name="x" stackId="2" startPc="268441998"/>
+        <entry endPc="268442099" name="dc" stackId="1" startPc="268441998"/>
+        <entry endPc="268442099" name="valueText" stackId="5" startPc="268441998"/>
+        <entry endPc="268442099" name="labelText" stackId="4" startPc="268441998"/>
+        <entry endPc="268442099" name="y" stackId="3" startPc="268441998"/>
+        <entry endPc="268442694" name="pointA" stackId="12" startPc="268442103"/>
+        <entry endPc="268442694" name="yB" stackId="9" startPc="268442103"/>
+        <entry endPc="268442694" name="yA" stackId="7" startPc="268442103"/>
+        <entry endPc="268442694" name="correctedAngleDegrees" stackId="3" startPc="268442103"/>
+        <entry endPc="268442694" name="radians" stackId="4" startPc="268442103"/>
+        <entry endPc="268442694" name="xC" stackId="10" startPc="268442103"/>
+        <entry endPc="268442694" name="xB" stackId="8" startPc="268442103"/>
+        <entry endPc="268442694" name="xA" stackId="6" startPc="268442103"/>
+        <entry endPc="268442694" name="arrowLength" stackId="5" startPc="268442103"/>
+        <entry endPc="268442694" name="pointC" stackId="14" startPc="268442103"/>
+        <entry endPc="268442694" name="pointB" stackId="13" startPc="268442103"/>
+        <entry endPc="268442694" name="yC" stackId="11" startPc="268442103"/>
+        <entry endPc="268442695" name="dc" stackId="1" startPc="268442099"/>
+        <entry endPc="268442695" name="angle" stackId="2" startPc="268442099"/>
+        <entry endPc="268442797" name="state" stackId="1" startPc="268442753"/>
+        <entry endPc="268442841" name="state" stackId="1" startPc="268442797"/>
+        <entry endPc="268443367" name="rez_cmp_local_bitmap_Testlabel_fontHeight" stackId="3" startPc="268443070"/>
+        <entry endPc="268443367" name="rez_cmp_local_bitmap_Testlabel" stackId="2" startPc="268443070"/>
+        <entry endPc="268443368" name="dc" stackId="1" startPc="268443058"/>
+        <entry endPc="268443677" name="rez_cmp_local_bitmap_Testlabel_fontHeight" stackId="3" startPc="268443380"/>
+        <entry endPc="268443677" name="rez_cmp_local_bitmap_Testlabel" stackId="2" startPc="268443380"/>
+        <entry endPc="268443678" name="dc" stackId="1" startPc="268443368"/>
+    </localVars>
+    <annotations/>
+    <functions>
+        <functionEntry accessMode="public" name="initialize" parent="VesselModel">
+            <param id="signalKBaseURL"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="startUpdatingData" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="stopUpdatingData" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="resetVesselData" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="getSpeedOverGroundKnotsString" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="getApparentWindSpeedKnotsString" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="getTrueWindSpeedKnotsString" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="getDepthBelowTranscuderMeterString" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="getAppearantWindAngleDegreeString" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="getCourseOverGroundDegreeString" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="getHeadingDegreeString" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="getTargetHeadingTrueDegreeString" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="getTargetHeadingMagneticDegreeString" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="getTargetHeadingWindAppearantDegreeString" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="autoPilotPlusOne" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="autoPilotMinusOne" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="autoPilotPlusTen" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="autoPilotMinusTen" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="setAutopilotState" parent="VesselModel">
+            <param id="apMode"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="meterPerSecondToKnots" parent="VesselModel">
+            <param id="metersPerSecond"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="degreestToRadians" parent="VesselModel">
+            <param id="degrees"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="radiansToDegrees" parent="VesselModel">
+            <param id="radians"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="invalidateTimer" parent="VesselModel">
+            <param id="timer"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="makeRequest" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="onReceive" parent="VesselModel">
+            <param id="responseCode"/>
+            <param id="data"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="getNameForActiveState" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="logState" parent="VesselModel">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="initialize" parent="AutopilotMenuDelegate">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="onSelect" parent="AutopilotMenuDelegate">
+            <param id="item"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="initialize" parent="AutopilotDelegate">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="onSelect" parent="AutopilotDelegate">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="onKey" parent="AutopilotDelegate">
+            <param id="keyEvent"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="initialize" parent="AutopilotView">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="onUpdate" parent="AutopilotView">
+            <param id="dc"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="drawDataText" parent="AutopilotView">
+            <param id="dc"/>
+            <param id="x"/>
+            <param id="y"/>
+            <param id="labelText"/>
+            <param id="valueText"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="drawRudderAngle" parent="AutopilotView">
+            <param id="dc"/>
+            <param id="rudderAngle"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="drawWindAngle" parent="AutopilotView">
+            <param id="dc"/>
+            <param id="angle"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="initialize" parent="VesselDataView">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="onUpdate" parent="VesselDataView">
+            <param id="dc"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="drawDataText" parent="VesselDataView">
+            <param id="dc"/>
+            <param id="x"/>
+            <param id="y"/>
+            <param id="labelText"/>
+            <param id="valueText"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="drawWindAngle" parent="VesselDataView">
+            <param id="dc"/>
+            <param id="angle"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="initialize" parent="VesselConnectApp">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="onStart" parent="VesselConnectApp">
+            <param id="state"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="onStop" parent="VesselConnectApp">
+            <param id="state"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="getInitialView" parent="VesselConnectApp">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="initialize" parent="VesselDataViewDelegate">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="onSelect" parent="VesselDataViewDelegate">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="Testlayout" parent="Layouts">
+            <param id="dc"/>
+            <documentation>
+                <![CDATA[<div class="description"> Draw the layout<br/> param The context<br/></div>]]>
+            </documentation>
+        </functionEntry>
+        <functionEntry accessMode="public" name="Anotherlayout" parent="Layouts">
+            <param id="dc"/>
+            <documentation>
+                <![CDATA[<div class="description"> Draw the layout<br/> param The context<br/></div>]]>
+            </documentation>
+        </functionEntry>
+    </functions>
+    <dataEntryOffsetMappings>
+        <dataEntry offset="87" parentId="" symbolId="globals" type="module"/>
+        <dataEntry offset="294" parentId="globals" symbolId="Rez" type="module"/>
+        <dataEntry offset="373" parentId="Rez" symbolId="Drawables" type="module"/>
+        <dataEntry offset="412" parentId="Rez" symbolId="Menus" type="module"/>
+        <dataEntry offset="443" parentId="Rez" symbolId="Fonts" type="module"/>
+        <dataEntry offset="474" parentId="Rez" symbolId="JsonData" type="module"/>
+        <dataEntry offset="505" parentId="Rez" symbolId="Layouts" type="module"/>
+        <dataEntry offset="552" parentId="Rez" symbolId="Strings" type="module"/>
+        <dataEntry offset="591" parentId="globals" symbolId="AutopilotView" type="class"/>
+        <dataEntry offset="694" parentId="globals" symbolId="AutopilotDelegate" type="class"/>
+        <dataEntry offset="757" parentId="globals" symbolId="VesselModel" type="class"/>
+        <dataEntry offset="1132" parentId="globals" symbolId="VesselConnectApp" type="class"/>
+        <dataEntry offset="1203" parentId="globals" symbolId="VesselDataViewDelegate" type="class"/>
+        <dataEntry offset="1258" parentId="globals" symbolId="VesselDataView" type="class"/>
+        <dataEntry offset="1353" parentId="globals" symbolId="AutopilotMenuDelegate" type="class"/>
+    </dataEntryOffsetMappings>
+</debugInfo>
