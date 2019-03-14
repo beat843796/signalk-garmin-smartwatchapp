@@ -23,7 +23,7 @@ class MessageView extends Ui.View {
       View.onUpdate(dc);
        
         
-      dc.setColor(Graphics.COLOR_WHITE,Graphics.COLOR_BLACK);
+      dc.setColor(Graphics.COLOR_BLACK,Graphics.COLOR_WHITE);
       dc.clear();
         
       var width = dc.getWidth();
@@ -48,5 +48,7 @@ class MessageView extends Ui.View {
       }
         
     }
+    
+
 
 }

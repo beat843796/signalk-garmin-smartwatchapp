@@ -20,7 +20,6 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
 		
 		switch ( vessel.autopilotState ) {
     		case "standby":
-    			//standbyItem.setSubLabel("Current state");
     			focus = 0;
     			break;
     		case "auto":

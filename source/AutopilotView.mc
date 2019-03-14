@@ -34,9 +34,6 @@ class AutopilotView extends WatchUi.View {
         var valueToDraw = "---";
         var labelText = "";
         
-        
-        //var widthOfDegreeSign = dc.getTextWidthInPixels("°",Graphics.FONT_NUMBER_HOT)/2;
-        
         switch ( vessel.autopilotState ) {
     		case "standby":
     			valueToDraw = vessel.getHeadingDegreeString();
@@ -59,22 +56,16 @@ class AutopilotView extends WatchUi.View {
         		break;
     		}
 		}
-        
-        
-        
+
         drawDataText(dc,width/2,10,labelText,valueToDraw);
         
-
         if(vessel.autopilotState.equals("standby")) {
         	dc.setColor(Graphics.COLOR_BLACK,Graphics.COLOR_WHITE);
         } else {
         	dc.setColor(Graphics.COLOR_DK_RED,Graphics.COLOR_WHITE);
         }
         
-        
-        
-        
-        
+
         dc.drawText(
         width/2,                     
         165,                   
@@ -85,15 +76,6 @@ class AutopilotView extends WatchUi.View {
         // DRAW RUDDER ANGLE VIEW
         
         drawRudderAngle(dc, vessel.radiansToDegrees(vessel.rudderAngle));
-        
-        /*
-        var xOffsetFives = width/16;
-        
-        dc.setColor(Graphics.COLOR_BLACK,Graphics.COLOR_TRANSPARENT);
-        dc.setPenWidth(1);
-        for( var i = 1; i < 16; i += 1 ) {
-        	dc.drawLine(0+xOffsetFives*i, height/2-rudderHeight/2, +xOffsetFives*i, height/2+rudderHeight/2);
-        }*/
         
         dc.setColor(Graphics.COLOR_BLACK,Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);

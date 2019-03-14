@@ -19,6 +19,10 @@ class VesselModel {
 	const FACTOR_MS_TO_KNOTS = 1.943844d;
 
 	protected var baseURL = null;
+	protected var username = null;
+	protected var password = null;
+	protected var token = null;
+	
 	protected var updateTimer;
 
 	//Strings
@@ -37,28 +41,34 @@ class VesselModel {
     
     public var autopilotState = "---";
     
-    function initialize(signalKBaseURL) {
-        
-        baseURL = signalKBaseURL;
-    	System.println("SignalK Base URL is: " + baseURL);
-    	
-    	resetVesselData();
-        
+    function initialize() {
+
     }
+    
+ 	function configureSignalK(signalKBaseURL, signalKUsername, signalKPassword) {
+ 	
+ 		baseURL = signalKBaseURL;
+        username = signalKUsername;
+        password = signalKPassword;
+        
+        resetVesselData();
+ 	
+ 	}
     
     function startUpdatingData() {
-    	System.println("Start updating data");
 
-        makeRequest();
+        loginToSignalKServer();
     }
     
+    
+    
     function stopUpdatingData() {
-    	System.println("Stopping updating data");
+
+		Communications.cancelAllRequests();
 
         invalidateTimer(updateTimer);
     }
     
-    // In case invalid date is received, invalidate all values
     function resetVesselData() {
     
     	speedOverGround = 0.0d;		
@@ -148,6 +158,18 @@ class VesselModel {
     	
     }
     
+    function getNameForActiveState() {
+   
+   		var stateName = autopilotState.toUpper();
+   		
+   		if(stateName.equals("ROUTE")) {
+   			stateName = "TRACK";
+   		}
+   
+   		return stateName;
+   
+    }
+    
     function autoPilotPlusOne() {
     	System.println("AP +1");
     }
@@ -204,23 +226,62 @@ class VesselModel {
     
     }
     
+    ////////////////////////////////////////////////////////
+    ///////////////////// NETWORKING ///////////////////////
+    ////////////////////////////////////////////////////////
     
-    function makeRequest() {
+    function loginToSignalKServer() {
+
+        Communications.makeWebRequest(
+            baseURL + "/signalk/v1/auth/login",
+            {
+            	"username" => username,
+              	"password" => password
+            },
+            {
+              	:method => Communications.HTTP_REQUEST_METHOD_POST,
+                :headers => {    
+                	"Accept" => "application/json",                                       
+                    "Content-Type" => Communications.REQUEST_CONTENT_TYPE_JSON,
+                },
+                :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON 
+             
+            },
+            method(:onLoginReceive)
+        );
+    
+    }
+    
+    function onLoginReceive(responseCode, data) {
+    
+    	if(responseCode != 200) {
+    	
+    		showNetworkError(responseCode);
+    		
+    	}else {
+   
+    		token = data["token"];
+    		updateVesselDataFromServer();
+    	}
+
+    }
+    
+    function updateVesselDataFromServer() {
 
        invalidateTimer(updateTimer);
-       System.println("make web request");
+       System.println("make web request " + baseURL);
         Communications.makeWebRequest(
             baseURL + "/plugins/minimumvesseldatarest/vesseldata",
             {
             },
             {
-              :method => Communications.HTTP_REQUEST_METHOD_GET,
-                :headers => {    
+            	:method => Communications.HTTP_REQUEST_METHOD_GET,
+              	:headers => {    
                 	"Accept" => "application/json",                                       
                     "Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
-                    "Authorization" => "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFkbWluIiwiaWF0IjoxNTUyNTA5MDE2LCJleHAiOjE1NTI1OTU0MTZ9.rugOSXwXPGs4bs89MUrWjLgTiW7hSb84Q9MLUD2L5rU"
+                    "Authorization" => "JWT " + token
                 },
-                 :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON 
+             	:responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON 
              
             },
             method(:onReceive)
@@ -230,12 +291,9 @@ class VesselModel {
 
     function onReceive(responseCode, data) {
         
-        System.println("response code " + responseCode + "\n\n" + data + "\n\n");
 
         if (responseCode == 200) {
-        	// Parse JSON data
-        	
-  
+
         	try {
 
 				// FLOAT VALUES
@@ -250,8 +308,7 @@ class VesselModel {
 				targetHeadingMagnetic = setValueIfPresent(data["autopilotTargetHeadingMagnetic"]);
 				targetHeadingTrue = setValueIfPresent(data["autopilotTargetHeadingTrue"]);
 				targetHeadingWindAppearant = setValueIfPresent(data["autopilotTargetWindAngleApparent"]);
-				
-				
+
 				// STRING VALUES
 				
 				if(data["autopilotState"] != null) {
@@ -260,8 +317,6 @@ class VesselModel {
 					autopilotState = "---";
 				}
 				
-				
-
 			}
 			catch (ex) {
 			
@@ -269,9 +324,8 @@ class VesselModel {
 			
 			}
 
-        	
         	updateTimer = new Timer.Timer();
-        	updateTimer.start(method(:makeRequest), 5000, false);
+        	updateTimer.start(method(:updateVesselDataFromServer), 1000, false);
         
         	logState();
         
@@ -281,31 +335,37 @@ class VesselModel {
         } else {
 	        System.println("Response Code: " + responseCode);
             resetVesselData();
+
+            showNetworkError(responseCode);
             
-            var error = errorMessage(responseCode);
-            var messageView = new MessageView(error,responseCode);
-            
-            WatchUi.pushView(messageView, new MessageViewDelegate(), WatchUi.SLIDE_UP);
         }
         
         data = null;
-        
-        
 
     }
     
+    function setValueIfPresent(value) {
     
-    function getNameForActiveState() {
-   
-   		var stateName = autopilotState.toUpper();
-   		
-   		if(stateName.equals("ROUTE")) {
-   			stateName = "TRACK";
-   		}
-   
-   		return stateName;
-   
+    	if(value != null) {
+    	
+    		return value;
+    	
+    	}else {
+    		return 0.0;
+    	} 
+    
     }
+    
+    function showNetworkError(responseCode) {
+    	var error = errorMessage(responseCode);
+        var messageView = new MessageView(error,responseCode);
+            
+        WatchUi.pushView(messageView, new MessageViewDelegate(), WatchUi.SLIDE_UP);
+    }
+
+    ////////////////////////////////////////////////////////
+    ///////////////////// LOGGING //////////////////////////
+    ////////////////////////////////////////////////////////
     
     function logState() {
     	System.println("SOG: " + speedOverGround + 
@@ -320,18 +380,6 @@ class VesselModel {
         "\nTARGET_AWA: " + targetHeadingWindAppearant + 
         "\nRudder: " + rudderAngle + 
         "\nAUTOPILOT: " + autopilotState + "\n---------------\n");
-    }
-    
-    function setValueIfPresent(value) {
-    
-    	if(value != null) {
-    	
-    		return value;
-    	
-    	}else {
-    		return 0.0;
-    	} 
-    
     }
 
 

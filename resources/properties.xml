@@ -1,0 +1,32 @@
+<resources>
+
+    <properties>
+        <property id="baseurl_prop" type="string"></property>
+        <property id="username_prop" type="string"></property>
+        <property id="password_prop" type="string"></property>
+        
+    </properties>
+
+    <strings>
+       <string id="baseurl_title">SignalK URL</string>
+       <string id="username_title">Username</string>
+       <string id="password_title">Password</string>
+ 
+    </strings>
+
+    <settings>
+        <setting propertyKey="@Properties.baseurl_prop" title="@Strings.baseurl_title">
+            <settingConfig type="url" />
+        </setting>
+
+        <setting propertyKey="@Properties.username_prop" title="@Strings.username_title">
+            <settingConfig type="alphaNumeric" />
+        </setting>
+
+        <setting propertyKey="@Properties.password_prop" title="@Strings.password_title">
+            <settingConfig type="password" />
+        </setting>
+
+        
+    </settings>
+</resources>
