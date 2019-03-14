@@ -16,7 +16,7 @@ enum {
 
 class VesselModel {
 
-	const FACTOR_MS_TO_KNOTS = 1.943844d;
+	
 
 	protected var baseURL = null;
 	protected var username = null;
@@ -24,6 +24,7 @@ class VesselModel {
 	protected var token = null;
 	
 	protected var updateTimer;
+	protected var retryTimer;
 
 	//Strings
     public var speedOverGround;				// meter/second
@@ -41,15 +42,34 @@ class VesselModel {
     
     public var autopilotState = "---";
     
+    // Failure indication
+    public var credentialsAvailable = false;
+    public var errorCode = null;
+    
     function initialize() {
+
+        configureSignalK();
 
     }
     
- 	function configureSignalK(signalKBaseURL, signalKUsername, signalKPassword) {
+ 	function configureSignalK() {
  	
- 		baseURL = signalKBaseURL;
-        username = signalKUsername;
-        password = signalKPassword;
+ 		baseURL = Application.Properties.getValue("baseurl_prop");
+        username = Application.Properties.getValue("username_prop");
+        password = Application.Properties.getValue("password_prop");
+        
+        System.println("Settings: " + baseURL + " " + username + " " + password);
+        
+        if(baseURL == null || username == null || password == null) {
+		
+			System.println("Missing credentails");
+			credentialsAvailable = false;
+		
+		}else {
+		
+			credentialsAvailable = true;
+		
+		}
         
         resetVesselData();
  	
@@ -65,8 +85,9 @@ class VesselModel {
     function stopUpdatingData() {
 
 		Communications.cancelAllRequests();
-
         invalidateTimer(updateTimer);
+        invalidateTimer(retryTimer);
+        
     }
     
     function resetVesselData() {
@@ -191,30 +212,7 @@ class VesselModel {
     	System.println("Selected ap mode: " + apMode);
     } 
 
-	function meterPerSecondToKnots(metersPerSecond) {
-	
-		var knots = metersPerSecond * FACTOR_MS_TO_KNOTS;
-		
-		return knots;
-	}
 
-	function degreestToRadians(degrees) {
-	
-		var radians = degrees * Math.PI / 180.0d;
-		
-		return radians;
-	
-	}
-	
-	function radiansToDegrees(radians) {
-		
-		var degrees = radians * 180.0d / Math.PI;
-		
-		return degrees;
-	}
-	
-    
-    
     function invalidateTimer(timer) {
     
     	if(timer == null) {
@@ -254,14 +252,20 @@ class VesselModel {
     
     function onLoginReceive(responseCode, data) {
     
-    	if(responseCode != 200) {
+    	if(responseCode == 200) {
     	
-    		showNetworkError(responseCode);
+    		token = data["token"];
+    		updateVesselDataFromServer();
+    		
+    		errorCode = null;
+    		
     		
     	}else {
    
-    		token = data["token"];
-    		updateVesselDataFromServer();
+    		showNetworkError(responseCode);
+    		
+    		startRetryTimer();
+    		
     	}
 
     }
@@ -329,6 +333,8 @@ class VesselModel {
         
         	logState();
         
+        	errorCode = null;
+        
         	WatchUi.requestUpdate();
         	
         	
@@ -337,6 +343,8 @@ class VesselModel {
             resetVesselData();
 
             showNetworkError(responseCode);
+            
+            startRetryTimer();
             
         }
         
@@ -357,10 +365,19 @@ class VesselModel {
     }
     
     function showNetworkError(responseCode) {
-    	var error = errorMessage(responseCode);
-        var messageView = new MessageView(error,responseCode);
-            
-        WatchUi.pushView(messageView, new MessageViewDelegate(), WatchUi.SLIDE_UP);
+    	
+    	errorCode = responseCode;     
+                
+        WatchUi.requestUpdate();
+    }
+    
+    function startRetryTimer() {
+    
+    	System.println("Retry in 2 seconds");
+    
+    	retryTimer = new Timer.Timer();
+        retryTimer.start(method(:startUpdatingData), 2000, false);
+    
     }
 
     ////////////////////////////////////////////////////////

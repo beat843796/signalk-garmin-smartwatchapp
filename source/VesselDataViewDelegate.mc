@@ -11,6 +11,10 @@ class VesselDataViewDelegate extends WatchUi.BehaviorDelegate {
     function onSelect() {
         System.println("pressed select");
 
+		if(vessel.errorCode != null) {
+			return true;
+		}
+
         WatchUi.pushView(new AutopilotView(),new AutopilotDelegate(), WatchUi.SLIDE_RIGHT);
         return true;
     }

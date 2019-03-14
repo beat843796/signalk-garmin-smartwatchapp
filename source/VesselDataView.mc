@@ -28,7 +28,61 @@ class VesselDataView extends WatchUi.View {
         blockHeight = height/3;
         
 
-        // DRAW THE GRID
+		if(vessel.errorCode == null) {
+		
+			drawValues(dc);
+		
+		}else {
+		
+			drawError(dc);
+		
+		}
+        
+        
+        
+        
+
+    }
+    
+    function drawError(dc) {
+    
+    	// DRAW THE GRID
+        
+        var errorMessage = errorMessage(vessel.errorCode);
+        
+        dc.setPenWidth(2);
+        
+        dc.setColor(Graphics.COLOR_DK_RED,Graphics.COLOR_TRANSPARENT);
+        
+        dc.drawLine(0, blockHeight, width, blockHeight);
+        dc.drawLine(0, blockHeight * 2, width, blockHeight * 2);
+        
+        
+        if(!vessel.credentialsAvailable || vessel.errorCode == 401) {
+        	errorMessage = "INVALID OR\nMISSING CREDENTIALS";
+        }else {
+        	drawDataText(dc,width/2,10,"ERROR",vessel.errorCode);
+        }
+        
+        
+        
+        dc.setColor(Graphics.COLOR_BLACK,Graphics.COLOR_TRANSPARENT);
+        
+        dc.drawText(
+      	width/2,                     
+      	height/2,                   
+      	Graphics.FONT_SYSTEM_TINY,     
+      	errorMessage,                   
+      	(Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
+        
+    
+    }
+    
+
+    
+    function drawValues(dc) {
+    
+    	// DRAW THE GRID
         
         dc.setPenWidth(2);
         
@@ -40,18 +94,18 @@ class VesselDataView extends WatchUi.View {
         
         // DRAW THE ARCS
         
-        var arcLineWidth = 10;
+        var arcLineWidth = 15;
         dc.setPenWidth(arcLineWidth);
         
         
         
         // Stareboard 
         dc.setColor(Graphics.COLOR_DK_GREEN,Graphics.COLOR_TRANSPARENT);
-        dc.drawArc(width/2, height/2,(width/2), Graphics.ARC_CLOCKWISE, 90, 30);
+        dc.drawArc(width/2, height/2,(width/2), Graphics.ARC_CLOCKWISE, 90, 45);
         
         // Port 
         dc.setColor(Graphics.COLOR_DK_RED,Graphics.COLOR_TRANSPARENT);
-        dc.drawArc(width/2, height/2,(width/2), Graphics.ARC_COUNTER_CLOCKWISE, 90, 150);
+        dc.drawArc(width/2, height/2,(width/2), Graphics.ARC_COUNTER_CLOCKWISE, 90, 135);
        
         
         // DRAW SHIP DATA
@@ -70,10 +124,7 @@ class VesselDataView extends WatchUi.View {
         
         
         drawWindAngle(dc,vessel.apparentWindAngle);
-        
-        
-        
-
+    
     }
     
     function drawDataText(dc,x,y,labelText,valueText) {

@@ -11,6 +11,10 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
 
     function onSelect() {
 
+		if(vessel.errorCode != null) {
+			return true;
+		}
+
 		var standbyItem = new WatchUi.MenuItem("Standby", null, AP_STATE_STANDBY, null);
 		var autoItem = new WatchUi.MenuItem("Auto", null, AP_STATE_AUTO, null);
 		var windItem = new WatchUi.MenuItem("Wind", null, AP_STATE_WIND, null);

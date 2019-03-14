@@ -28,11 +28,19 @@ class AutopilotView extends WatchUi.View {
         height = dc.getHeight();
         var blockHeight = height/3;
         
+		drawValues(dc);
         
-        // DRAW TEXT
+
+    }
+    
+
+    function drawValues(dc) {
+    
+    	// DRAW TEXT
         
         var valueToDraw = "---";
         var labelText = "";
+        var stateName = vessel.getNameForActiveState();
         
         switch ( vessel.autopilotState ) {
     		case "standby":
@@ -57,6 +65,7 @@ class AutopilotView extends WatchUi.View {
     		}
 		}
 
+
         drawDataText(dc,width/2,10,labelText,valueToDraw);
         
         if(vessel.autopilotState.equals("standby")) {
@@ -66,11 +75,19 @@ class AutopilotView extends WatchUi.View {
         }
         
 
+		if(vessel.errorCode != null) {
+			
+			dc.setColor(Graphics.COLOR_DK_RED,Graphics.COLOR_WHITE);
+			stateName = "ERROR -" + vessel.errorCode;
+			
+		
+		}
+
         dc.drawText(
         width/2,                     
         165,                   
         Graphics.FONT_SYSTEM_MEDIUM,     
-        vessel.getNameForActiveState(),                   
+        stateName,                   
         Graphics.TEXT_JUSTIFY_CENTER);
         
         // DRAW RUDDER ANGLE VIEW
@@ -96,9 +113,7 @@ class AutopilotView extends WatchUi.View {
         
         dc.setColor(Graphics.COLOR_ORANGE,Graphics.COLOR_TRANSPARENT);
         drawWindAngle(dc,vessel.apparentWindAngle);
-
-        
-
+    
     }
     
     function drawDataText(dc,x,y,labelText,valueText) {
