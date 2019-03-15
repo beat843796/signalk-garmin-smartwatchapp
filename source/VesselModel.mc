@@ -17,7 +17,7 @@ enum {
 
 class VesselModel {
 
-	const updateInterval = 350;
+	const updateInterval = 500;
 	const retryInterval = 3000;	
 
 	protected var baseURL = null;
@@ -56,9 +56,9 @@ class VesselModel {
     
  	function configureSignalK() {
  	
- 		baseURL = Application.Properties.getValue("baseurl_prop");
-        username = Application.Properties.getValue("username_prop");
-        password = Application.Properties.getValue("password_prop");
+ 		baseURL = "https://seatalk.defectradar.com"; //Application.Properties.getValue("baseurl_prop");
+        username = "garmin"; //Application.Properties.getValue("username_prop");
+        password = "garmin123"; //Application.Properties.getValue("password_prop");
         
         System.println("Settings: " + baseURL + " " + username + " " + password);
         
