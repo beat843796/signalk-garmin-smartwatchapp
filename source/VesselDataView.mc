@@ -61,7 +61,7 @@ class VesselDataView extends WatchUi.View {
         if(!vessel.credentialsAvailable || vessel.errorCode == 401) {
         	errorMessage = "INVALID OR\nMISSING CREDENTIALS";
         }else {
-        	drawDataText(dc,width/2,10,"ERROR",vessel.errorCode);
+        	//drawDataText(dc,width/2,10,"ERROR",vessel.errorCode);
         }
         
         

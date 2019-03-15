@@ -78,7 +78,7 @@ class AutopilotView extends WatchUi.View {
 		if(vessel.errorCode != null) {
 			
 			dc.setColor(Graphics.COLOR_DK_RED,Graphics.COLOR_WHITE);
-			stateName = "ERROR -" + vessel.errorCode;
+			stateName = "ERROR";
 			
 		
 		}

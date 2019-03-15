@@ -19,7 +19,7 @@ class VesselConnectApp extends Application.AppBase {
     
     	System.println("App Start");
     	
-    	vessel.startUpdatingData();
+    	
     }
 
     
@@ -45,19 +45,10 @@ class VesselConnectApp extends Application.AppBase {
 
     function getInitialView() {
     	
-    	var settings = System.getDeviceSettings();
-    	
-    	if (!settings.phoneConnected) {
-    	
-      		return [ new MessageView("Phone not available",null) ];
-      		
-    	} else {
-
-    		// All good
+    	// All good
+			vessel.startUpdatingData();
 
     		return [ new VesselDataView(), new VesselDataViewDelegate() ];
-
-    	}
 
         
     }

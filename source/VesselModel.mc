@@ -3,6 +3,7 @@ using Toybox.Application;
 using Toybox.Timer;
 using Toybox.Communications;
 using Toybox.Math;
+using Toybox.Attention;
 
 enum {
    
@@ -16,7 +17,8 @@ enum {
 
 class VesselModel {
 
-	
+	const updateInterval = 350;
+	const retryInterval = 3000;	
 
 	protected var baseURL = null;
 	protected var username = null;
@@ -76,6 +78,9 @@ class VesselModel {
  	}
     
     function startUpdatingData() {
+
+
+		invalidateTimer(retryTimer);
 
         loginToSignalKServer();
     }
@@ -190,28 +195,26 @@ class VesselModel {
    		return stateName;
    
     }
-    
-    function autoPilotPlusOne() {
-    	System.println("AP +1");
-    }
-    
-    function autoPilotMinusOne() {
-    	System.println("AP -1");
-    }
-    
-    function autoPilotPlusTen() {
-    	System.println("AP +10");
-    }
-    
-    function autoPilotMinusTen() {
-    	System.println("AP -10");
-    }
-    
+        
   
-    function setAutopilotState(apMode) {
-    	System.println("Selected ap mode: " + apMode);
+    function setAutopilotState(state) {
+    	
+    	System.println("Selected ap mode: " + state);
+    	
+    	var command = { "action" => "setState", "value" => state };
+		
+		sendAutopilotCommand(command);
     } 
 
+	function changeHeading(change) {
+	
+		System.println("Change ap heading: " + change);
+	
+		var command = { "action" => "changeHeading", "value" => change };
+		
+		sendAutopilotCommand(command);
+
+	}
 
     function invalidateTimer(timer) {
     
@@ -229,6 +232,10 @@ class VesselModel {
     ////////////////////////////////////////////////////////
     
     function loginToSignalKServer() {
+
+		System.println("Login attempt");
+		
+		token = null;
 
         Communications.makeWebRequest(
             baseURL + "/signalk/v1/auth/login",
@@ -254,8 +261,10 @@ class VesselModel {
     
     	if(responseCode == 200) {
     	
-    		token = data["token"];
+    		token = "JWT " + data["token"];
     		updateVesselDataFromServer();
+    		
+    		System.println("Login success");
     		
     		errorCode = null;
     		
@@ -271,10 +280,10 @@ class VesselModel {
     }
     
     function updateVesselDataFromServer() {
-
+       
        invalidateTimer(updateTimer);
-       System.println("make web request " + baseURL);
-        Communications.makeWebRequest(
+       
+       Communications.makeWebRequest(
             baseURL + "/plugins/minimumvesseldatarest/vesseldata",
             {
             },
@@ -283,7 +292,7 @@ class VesselModel {
               	:headers => {    
                 	"Accept" => "application/json",                                       
                     "Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
-                    "Authorization" => "JWT " + token
+                    "Authorization" => token
                 },
              	:responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON 
              
@@ -329,9 +338,9 @@ class VesselModel {
 			}
 
         	updateTimer = new Timer.Timer();
-        	updateTimer.start(method(:updateVesselDataFromServer), 1000, false);
+        	updateTimer.start(method(:updateVesselDataFromServer), updateInterval, false);
         
-        	logState();
+        	//logState();
         
         	errorCode = null;
         
@@ -349,6 +358,49 @@ class VesselModel {
         }
         
         data = null;
+
+    }
+    
+    function sendAutopilotCommand(command) {
+    	
+		Communications.makeWebRequest(
+            baseURL + "/plugins/raymarineautopilot/command",
+            command,
+            {
+              	:method => Communications.HTTP_REQUEST_METHOD_POST,
+                :headers => {    
+                	"Accept" => "application/json",                                       
+                    "Content-Type" => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON,
+                    "Authorization" => token
+                },
+                :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_TEXT_PLAIN
+             
+            },
+            method(:onAutopilotReceive)
+        );
+
+
+    
+    }
+    
+    function onAutopilotReceive(responseCode, data) {
+    
+    	if(responseCode == 200) {
+
+    		System.println("AP Response data :" + data);
+    		
+    		Attention.playTone(Attention.TONE_KEY);
+    		
+    		if (Attention has :vibrate) {
+    			var vibeData =
+    				[
+       				 new Attention.VibeProfile(50, 100), // On for 200 ms
+       				];
+       				
+       			Attention.vibrate(vibeData);
+			}
+			
+    	} 
 
     }
     
@@ -373,10 +425,10 @@ class VesselModel {
     
     function startRetryTimer() {
     
-    	System.println("Retry in 2 seconds");
+    	System.println("Receivend Networking error. Retry in " + retryInterval / 1000 + " seconds");
     
     	retryTimer = new Timer.Timer();
-        retryTimer.start(method(:startUpdatingData), 2000, false);
+        retryTimer.start(method(:startUpdatingData), retryInterval, false);
     
     }
 

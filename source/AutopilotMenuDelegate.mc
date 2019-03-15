@@ -7,11 +7,30 @@ class AutopilotMenuDelegate extends WatchUi.Menu2InputDelegate {
     }
 
     function onSelect(item) {
-        System.println(item.getId());
+        
+        if(vessel.errorCode != null) {
+			return true;
+		}
 
-		vessel.setAutopilotState(item.getId());
+		switch ( item.getId() ) {
+    		case AP_STATE_STANDBY:
+    			vessel.setAutopilotState("standby");
+    			break;
+    		case AP_STATE_AUTO:
+    			vessel.setAutopilotState("auto");
+    			break;
+    		case AP_STATE_WIND: {
+				vessel.setAutopilotState("wind");
+        		break;
+    		}
+    		case AP_STATE_TRACK: {
+				vessel.setAutopilotState("route");
+        		break;
+    		}
+		}
         
         WatchUi.popView(WatchUi.SLIDE_DOWN);
         
+        return true;
     }
 }

@@ -60,17 +60,17 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
  
         switch ( keyEvent.getKey() ) {
     		case KEY_DOWN:
-    			vessel.autoPilotMinusOne();
+    			vessel.changeHeading(-1);
     			break;
     		case KEY_UP:
-    			vessel.autoPilotPlusOne();
+    			vessel.changeHeading(+1);
     			break;
     		case KEY_CLOCK: {
-        		vessel.autoPilotMinusTen();
+        		vessel.changeHeading(-10);
         		break;
     		}
     		case KEY_MENU: {
-        		vessel.autoPilotPlusTen();
+        		vessel.changeHeading(+10);
         		break;
     		}
     		case KEY_ESC: {
