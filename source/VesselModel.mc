@@ -199,16 +199,12 @@ class VesselModel {
   
     function setAutopilotState(state) {
     	
-    	System.println("Selected ap mode: " + state);
-    	
     	var command = { "action" => "setState", "value" => state };
 		
 		sendAutopilotCommand(command);
     } 
 
 	function changeHeading(change) {
-	
-		System.println("Change ap heading: " + change);
 	
 		var command = { "action" => "changeHeading", "value" => change };
 		
@@ -337,15 +333,15 @@ class VesselModel {
 			
 			}
 
+			errorCode = null;
+
+			WatchUi.requestUpdate();
+
         	updateTimer = new Timer.Timer();
         	updateTimer.start(method(:updateVesselDataFromServer), updateInterval, false);
         
         	//logState();
         
-        	errorCode = null;
-        
-        	WatchUi.requestUpdate();
-        	
         	
         } else {
 	        System.println("Response Code: " + responseCode);
@@ -385,12 +381,12 @@ class VesselModel {
     
     function onAutopilotReceive(responseCode, data) {
     
+    	
+    
     	if(responseCode == 200) {
-
-    		System.println("AP Response data :" + data);
     		
-    		Attention.playTone(Attention.TONE_KEY);
-    		
+    		Attention.playTone(Attention.TONE_LOUD_BEEP);
+    		/*
     		if (Attention has :vibrate) {
     			var vibeData =
     				[
@@ -398,7 +394,7 @@ class VesselModel {
        				];
        				
        			Attention.vibrate(vibeData);
-			}
+			}*/
 			
     	} 
 
