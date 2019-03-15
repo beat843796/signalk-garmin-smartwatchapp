@@ -380,13 +380,12 @@ class VesselModel {
     }
     
     function onAutopilotReceive(responseCode, data) {
-    
-    	
+
     
     	if(responseCode == 200) {
     		
-    		Attention.playTone(Attention.TONE_LOUD_BEEP);
-    		/*
+    		Attention.playTone(Attention.TONE_KEY);
+    		
     		if (Attention has :vibrate) {
     			var vibeData =
     				[
@@ -394,7 +393,7 @@ class VesselModel {
        				];
        				
        			Attention.vibrate(vibeData);
-			}*/
+			}
 			
     	} 
 
