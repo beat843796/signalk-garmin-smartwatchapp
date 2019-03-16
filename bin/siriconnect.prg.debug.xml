@@ -271,126 +271,126 @@
         <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="44" lineNum="173" pc="268442193" symbol="drawRudderAngle"/>
         <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="179" pc="268442277" symbol="drawWindAngle"/>
         <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="183" pc="268442281" symbol="drawWindAngle"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="184" pc="268442312" symbol="drawWindAngle"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="186" pc="268442333" symbol="drawWindAngle"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="188" pc="268442340" symbol="drawWindAngle"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="189" pc="268442392" symbol="drawWindAngle"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="191" pc="268442444" symbol="drawWindAngle"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="192" pc="268442509" symbol="drawWindAngle"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="194" pc="268442574" symbol="drawWindAngle"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="195" pc="268442639" symbol="drawWindAngle"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="197" pc="268442704" symbol="drawWindAngle"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="198" pc="268442732" symbol="drawWindAngle"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="199" pc="268442760" symbol="drawWindAngle"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="203" pc="268442788" symbol="drawWindAngle"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="47" lineNum="5" pc="268442837" symbol="initialize"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="47" lineNum="6" pc="268442841" symbol="initialize"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="9" pc="268442860" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="11" pc="268442864" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="12" pc="268442883" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="15" pc="268442889" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="17" pc="268443001" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="18" pc="268443024" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="20" pc="268443027" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="21" pc="268443050" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="23" pc="268443053" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="24" pc="268443076" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="27" pc="268443079" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="28" pc="268443102" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="32" pc="268443105" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="34" pc="268443133" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="50" lineNum="9" pc="268443137" symbol="initialize"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="50" lineNum="10" pc="268443141" symbol="initialize"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="50" lineNum="12" pc="268443159" symbol="initialize"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="51" lineNum="18" pc="268443190" symbol="onStart"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="51" lineNum="20" pc="268443194" symbol="onStart"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="52" lineNum="26" pc="268443216" symbol="onStop"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="52" lineNum="28" pc="268443220" symbol="onStop"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="52" lineNum="30" pc="268443238" symbol="onStop"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="53" lineNum="34" pc="268443260" symbol="onSettingsChanged"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="53" lineNum="36" pc="268443264" symbol="onSettingsChanged"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="53" lineNum="38" pc="268443285" symbol="onSettingsChanged"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="53" lineNum="39" pc="268443303" symbol="onSettingsChanged"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="53" lineNum="40" pc="268443321" symbol="onSettingsChanged"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="54" lineNum="46" pc="268443340" symbol="getInitialView"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="54" lineNum="49" pc="268443344" symbol="getInitialView"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="54" lineNum="51" pc="268443362" symbol="getInitialView"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="56" lineNum="8" pc="268443430" symbol="meterPerSecondToKnots"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="56" lineNum="10" pc="268443442" symbol="meterPerSecondToKnots"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="56" lineNum="12" pc="268443455" symbol="meterPerSecondToKnots"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="57" lineNum="16" pc="268443459" symbol="degreestToRadians"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="57" lineNum="18" pc="268443471" symbol="degreestToRadians"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="57" lineNum="20" pc="268443498" symbol="degreestToRadians"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="58" lineNum="24" pc="268443502" symbol="radiansToDegrees"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="58" lineNum="26" pc="268443514" symbol="radiansToDegrees"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="58" lineNum="28" pc="268443541" symbol="radiansToDegrees"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/ErrorMessages.mc" id="59" lineNum="68" pc="268443545" symbol="errorMessage"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/ErrorMessages.mc" id="59" lineNum="69" pc="268443557" symbol="errorMessage"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/ErrorMessages.mc" id="59" lineNum="70" pc="268443561" symbol="errorMessage"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/ErrorMessages.mc" id="59" lineNum="71" pc="268443591" symbol="errorMessage"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/ErrorMessages.mc" id="59" lineNum="72" pc="268443614" symbol="errorMessage"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/ErrorMessages.mc" id="59" lineNum="73" pc="268443633" symbol="errorMessage"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/ErrorMessages.mc" id="59" lineNum="76" pc="268443652" symbol="errorMessage"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="61" lineNum="8" pc="268443656" symbol="initialize"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="61" lineNum="9" pc="268443660" symbol="initialize"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="12" pc="268443679" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="14" pc="268443683" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="15" pc="268443702" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="18" pc="268443708" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="19" pc="268443751" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="20" pc="268443794" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="21" pc="268443837" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="23" pc="268443880" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="25" pc="268443887" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="27" pc="268443990" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="28" pc="268443997" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="30" pc="268444000" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="31" pc="268444017" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="32" pc="268444024" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="34" pc="268444027" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="35" pc="268444044" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="36" pc="268444051" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="39" pc="268444054" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="40" pc="268444071" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="41" pc="268444078" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="46" pc="268444081" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="48" pc="268444138" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="49" pc="268444152" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="50" pc="268444166" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="51" pc="268444180" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="53" pc="268444194" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="55" pc="268444246" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="59" pc="268444250" symbol="onKey"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="61" pc="268444254" symbol="onKey"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="63" pc="268444388" symbol="onKey"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="64" pc="268444411" symbol="onKey"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="66" pc="268444414" symbol="onKey"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="67" pc="268444437" symbol="onKey"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="69" pc="268444440" symbol="onKey"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="70" pc="268444463" symbol="onKey"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="73" pc="268444466" symbol="onKey"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="74" pc="268444489" symbol="onKey"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="77" pc="268444492" symbol="onKey"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="78" pc="268444520" symbol="onKey"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="83" pc="268444523" symbol="onKey"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselDataViewDelegate.mc" id="65" lineNum="7" pc="268444527" symbol="initialize"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselDataViewDelegate.mc" id="65" lineNum="8" pc="268444531" symbol="initialize"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselDataViewDelegate.mc" id="66" lineNum="11" pc="268444550" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselDataViewDelegate.mc" id="66" lineNum="12" pc="268444554" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselDataViewDelegate.mc" id="66" lineNum="14" pc="268444575" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselDataViewDelegate.mc" id="66" lineNum="15" pc="268444594" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselDataViewDelegate.mc" id="66" lineNum="18" pc="268444600" symbol="onSelect"/>
-        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselDataViewDelegate.mc" id="66" lineNum="19" pc="268444672" symbol="onSelect"/>
-        <entry filename="Rez" id="73" lineNum="23" pc="268444676" symbol="Testlayout"/>
-        <entry filename="Rez" id="73" lineNum="27" pc="268444688" symbol="Testlayout"/>
-        <entry filename="Rez" id="73" lineNum="28" pc="268444883" symbol="Testlayout"/>
-        <entry filename="Rez" id="73" lineNum="29" pc="268444916" symbol="Testlayout"/>
-        <entry filename="Rez" id="73" lineNum="32" pc="268444968" symbol="Testlayout"/>
-        <entry filename="Rez" id="74" lineNum="43" pc="268444986" symbol="Anotherlayout"/>
-        <entry filename="Rez" id="74" lineNum="47" pc="268444998" symbol="Anotherlayout"/>
-        <entry filename="Rez" id="74" lineNum="48" pc="268445193" symbol="Anotherlayout"/>
-        <entry filename="Rez" id="74" lineNum="49" pc="268445226" symbol="Anotherlayout"/>
-        <entry filename="Rez" id="74" lineNum="52" pc="268445278" symbol="Anotherlayout"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="184" pc="268442310" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="186" pc="268442329" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="188" pc="268442336" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="189" pc="268442388" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="191" pc="268442440" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="192" pc="268442505" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="194" pc="268442570" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="195" pc="268442635" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="197" pc="268442700" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="198" pc="268442728" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="199" pc="268442756" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotView.mc" id="45" lineNum="203" pc="268442784" symbol="drawWindAngle"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="47" lineNum="5" pc="268442833" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="47" lineNum="6" pc="268442837" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="9" pc="268442856" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="11" pc="268442860" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="12" pc="268442879" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="15" pc="268442885" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="17" pc="268442997" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="18" pc="268443020" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="20" pc="268443023" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="21" pc="268443046" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="23" pc="268443049" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="24" pc="268443072" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="27" pc="268443075" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="28" pc="268443098" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="32" pc="268443101" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotMenuDelegate.mc" id="48" lineNum="34" pc="268443129" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="50" lineNum="9" pc="268443133" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="50" lineNum="10" pc="268443137" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="50" lineNum="12" pc="268443155" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="51" lineNum="18" pc="268443186" symbol="onStart"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="51" lineNum="20" pc="268443190" symbol="onStart"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="52" lineNum="26" pc="268443212" symbol="onStop"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="52" lineNum="28" pc="268443216" symbol="onStop"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="52" lineNum="30" pc="268443234" symbol="onStop"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="53" lineNum="34" pc="268443256" symbol="onSettingsChanged"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="53" lineNum="36" pc="268443260" symbol="onSettingsChanged"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="53" lineNum="38" pc="268443281" symbol="onSettingsChanged"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="53" lineNum="39" pc="268443299" symbol="onSettingsChanged"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="53" lineNum="40" pc="268443317" symbol="onSettingsChanged"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="54" lineNum="46" pc="268443336" symbol="getInitialView"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="54" lineNum="49" pc="268443340" symbol="getInitialView"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselConnectApp.mc" id="54" lineNum="51" pc="268443358" symbol="getInitialView"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="56" lineNum="8" pc="268443426" symbol="meterPerSecondToKnots"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="56" lineNum="10" pc="268443438" symbol="meterPerSecondToKnots"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="56" lineNum="12" pc="268443451" symbol="meterPerSecondToKnots"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="57" lineNum="16" pc="268443455" symbol="degreestToRadians"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="57" lineNum="18" pc="268443467" symbol="degreestToRadians"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="57" lineNum="20" pc="268443494" symbol="degreestToRadians"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="58" lineNum="24" pc="268443498" symbol="radiansToDegrees"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="58" lineNum="26" pc="268443510" symbol="radiansToDegrees"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="58" lineNum="28" pc="268443537" symbol="radiansToDegrees"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/ErrorMessages.mc" id="59" lineNum="68" pc="268443541" symbol="errorMessage"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/ErrorMessages.mc" id="59" lineNum="69" pc="268443553" symbol="errorMessage"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/ErrorMessages.mc" id="59" lineNum="70" pc="268443557" symbol="errorMessage"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/ErrorMessages.mc" id="59" lineNum="71" pc="268443587" symbol="errorMessage"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/ErrorMessages.mc" id="59" lineNum="72" pc="268443610" symbol="errorMessage"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/ErrorMessages.mc" id="59" lineNum="73" pc="268443629" symbol="errorMessage"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/ErrorMessages.mc" id="59" lineNum="76" pc="268443648" symbol="errorMessage"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="61" lineNum="8" pc="268443652" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="61" lineNum="9" pc="268443656" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="12" pc="268443675" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="14" pc="268443679" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="15" pc="268443698" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="18" pc="268443704" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="19" pc="268443747" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="20" pc="268443790" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="21" pc="268443833" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="23" pc="268443876" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="25" pc="268443883" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="27" pc="268443986" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="28" pc="268443993" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="30" pc="268443996" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="31" pc="268444013" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="32" pc="268444020" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="34" pc="268444023" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="35" pc="268444040" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="36" pc="268444047" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="39" pc="268444050" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="40" pc="268444067" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="41" pc="268444074" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="46" pc="268444077" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="48" pc="268444134" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="49" pc="268444148" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="50" pc="268444162" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="51" pc="268444176" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="53" pc="268444190" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="62" lineNum="55" pc="268444242" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="59" pc="268444246" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="61" pc="268444250" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="63" pc="268444384" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="64" pc="268444407" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="66" pc="268444410" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="67" pc="268444433" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="69" pc="268444436" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="70" pc="268444459" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="73" pc="268444462" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="74" pc="268444485" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="77" pc="268444488" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="78" pc="268444516" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/AutopilotDelegate.mc" id="63" lineNum="83" pc="268444519" symbol="onKey"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselDataViewDelegate.mc" id="65" lineNum="7" pc="268444523" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselDataViewDelegate.mc" id="65" lineNum="8" pc="268444527" symbol="initialize"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselDataViewDelegate.mc" id="66" lineNum="11" pc="268444546" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselDataViewDelegate.mc" id="66" lineNum="12" pc="268444550" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselDataViewDelegate.mc" id="66" lineNum="14" pc="268444571" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselDataViewDelegate.mc" id="66" lineNum="15" pc="268444590" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselDataViewDelegate.mc" id="66" lineNum="18" pc="268444596" symbol="onSelect"/>
+        <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/VesselDataViewDelegate.mc" id="66" lineNum="19" pc="268444668" symbol="onSelect"/>
+        <entry filename="Rez" id="73" lineNum="23" pc="268444672" symbol="Testlayout"/>
+        <entry filename="Rez" id="73" lineNum="27" pc="268444684" symbol="Testlayout"/>
+        <entry filename="Rez" id="73" lineNum="28" pc="268444879" symbol="Testlayout"/>
+        <entry filename="Rez" id="73" lineNum="29" pc="268444912" symbol="Testlayout"/>
+        <entry filename="Rez" id="73" lineNum="32" pc="268444964" symbol="Testlayout"/>
+        <entry filename="Rez" id="74" lineNum="43" pc="268444982" symbol="Anotherlayout"/>
+        <entry filename="Rez" id="74" lineNum="47" pc="268444994" symbol="Anotherlayout"/>
+        <entry filename="Rez" id="74" lineNum="48" pc="268445189" symbol="Anotherlayout"/>
+        <entry filename="Rez" id="74" lineNum="49" pc="268445222" symbol="Anotherlayout"/>
+        <entry filename="Rez" id="74" lineNum="52" pc="268445274" symbol="Anotherlayout"/>
     </pcToLineNum>
     <symbolTable>
         <entry id="84" method="true" symbol="degreestToRadians"/>
@@ -586,45 +586,45 @@
         <entry endPc="268442276" name="absRudderAngle" stackId="3" startPc="268441981"/>
         <entry endPc="268442277" name="dc" stackId="1" startPc="268441977"/>
         <entry endPc="268442277" name="rudderAngle" stackId="2" startPc="268441977"/>
-        <entry endPc="268442836" name="pointA" stackId="12" startPc="268442281"/>
-        <entry endPc="268442836" name="yB" stackId="9" startPc="268442281"/>
-        <entry endPc="268442836" name="yA" stackId="7" startPc="268442281"/>
-        <entry endPc="268442836" name="correctedAngleDegrees" stackId="3" startPc="268442281"/>
-        <entry endPc="268442836" name="radians" stackId="4" startPc="268442281"/>
-        <entry endPc="268442836" name="xC" stackId="10" startPc="268442281"/>
-        <entry endPc="268442836" name="xB" stackId="8" startPc="268442281"/>
-        <entry endPc="268442836" name="xA" stackId="6" startPc="268442281"/>
-        <entry endPc="268442836" name="arrowLength" stackId="5" startPc="268442281"/>
-        <entry endPc="268442836" name="pointC" stackId="14" startPc="268442281"/>
-        <entry endPc="268442836" name="pointB" stackId="13" startPc="268442281"/>
-        <entry endPc="268442836" name="yC" stackId="11" startPc="268442281"/>
-        <entry endPc="268442837" name="dc" stackId="1" startPc="268442277"/>
-        <entry endPc="268442837" name="angle" stackId="2" startPc="268442277"/>
-        <entry endPc="268443137" name="item" stackId="1" startPc="268442860"/>
-        <entry endPc="268443216" name="state" stackId="1" startPc="268443190"/>
-        <entry endPc="268443260" name="state" stackId="1" startPc="268443216"/>
-        <entry endPc="268443458" name="knots" stackId="2" startPc="268443442"/>
-        <entry endPc="268443459" name="metersPerSecond" stackId="1" startPc="268443430"/>
-        <entry endPc="268443501" name="radians" stackId="2" startPc="268443471"/>
-        <entry endPc="268443502" name="degrees" stackId="1" startPc="268443459"/>
-        <entry endPc="268443544" name="degrees" stackId="2" startPc="268443514"/>
-        <entry endPc="268443545" name="radians" stackId="1" startPc="268443502"/>
-        <entry endPc="268443652" name="i" stackId="3" startPc="268443591"/>
-        <entry endPc="268443655" name="result" stackId="2" startPc="268443557"/>
-        <entry endPc="268443656" name="code" stackId="1" startPc="268443545"/>
-        <entry endPc="268444249" name="focus" stackId="5" startPc="268443683"/>
-        <entry endPc="268444249" name="autoItem" stackId="2" startPc="268443683"/>
-        <entry endPc="268444249" name="trackItem" stackId="4" startPc="268443683"/>
-        <entry endPc="268444249" name="menu" stackId="6" startPc="268443683"/>
-        <entry endPc="268444249" name="standbyItem" stackId="1" startPc="268443683"/>
-        <entry endPc="268444249" name="windItem" stackId="3" startPc="268443683"/>
-        <entry endPc="268444527" name="keyEvent" stackId="1" startPc="268444250"/>
-        <entry endPc="268444985" name="rez_cmp_local_bitmap_Testlabel_fontHeight" stackId="3" startPc="268444688"/>
-        <entry endPc="268444985" name="rez_cmp_local_bitmap_Testlabel" stackId="2" startPc="268444688"/>
-        <entry endPc="268444986" name="dc" stackId="1" startPc="268444676"/>
-        <entry endPc="268445295" name="rez_cmp_local_bitmap_Testlabel_fontHeight" stackId="3" startPc="268444998"/>
-        <entry endPc="268445295" name="rez_cmp_local_bitmap_Testlabel" stackId="2" startPc="268444998"/>
-        <entry endPc="268445296" name="dc" stackId="1" startPc="268444986"/>
+        <entry endPc="268442832" name="pointA" stackId="12" startPc="268442281"/>
+        <entry endPc="268442832" name="yB" stackId="9" startPc="268442281"/>
+        <entry endPc="268442832" name="yA" stackId="7" startPc="268442281"/>
+        <entry endPc="268442832" name="correctedAngleDegrees" stackId="3" startPc="268442281"/>
+        <entry endPc="268442832" name="radians" stackId="4" startPc="268442281"/>
+        <entry endPc="268442832" name="xC" stackId="10" startPc="268442281"/>
+        <entry endPc="268442832" name="xB" stackId="8" startPc="268442281"/>
+        <entry endPc="268442832" name="xA" stackId="6" startPc="268442281"/>
+        <entry endPc="268442832" name="arrowLength" stackId="5" startPc="268442281"/>
+        <entry endPc="268442832" name="pointC" stackId="14" startPc="268442281"/>
+        <entry endPc="268442832" name="pointB" stackId="13" startPc="268442281"/>
+        <entry endPc="268442832" name="yC" stackId="11" startPc="268442281"/>
+        <entry endPc="268442833" name="dc" stackId="1" startPc="268442277"/>
+        <entry endPc="268442833" name="angle" stackId="2" startPc="268442277"/>
+        <entry endPc="268443133" name="item" stackId="1" startPc="268442856"/>
+        <entry endPc="268443212" name="state" stackId="1" startPc="268443186"/>
+        <entry endPc="268443256" name="state" stackId="1" startPc="268443212"/>
+        <entry endPc="268443454" name="knots" stackId="2" startPc="268443438"/>
+        <entry endPc="268443455" name="metersPerSecond" stackId="1" startPc="268443426"/>
+        <entry endPc="268443497" name="radians" stackId="2" startPc="268443467"/>
+        <entry endPc="268443498" name="degrees" stackId="1" startPc="268443455"/>
+        <entry endPc="268443540" name="degrees" stackId="2" startPc="268443510"/>
+        <entry endPc="268443541" name="radians" stackId="1" startPc="268443498"/>
+        <entry endPc="268443648" name="i" stackId="3" startPc="268443587"/>
+        <entry endPc="268443651" name="result" stackId="2" startPc="268443553"/>
+        <entry endPc="268443652" name="code" stackId="1" startPc="268443541"/>
+        <entry endPc="268444245" name="focus" stackId="5" startPc="268443679"/>
+        <entry endPc="268444245" name="autoItem" stackId="2" startPc="268443679"/>
+        <entry endPc="268444245" name="trackItem" stackId="4" startPc="268443679"/>
+        <entry endPc="268444245" name="menu" stackId="6" startPc="268443679"/>
+        <entry endPc="268444245" name="standbyItem" stackId="1" startPc="268443679"/>
+        <entry endPc="268444245" name="windItem" stackId="3" startPc="268443679"/>
+        <entry endPc="268444523" name="keyEvent" stackId="1" startPc="268444246"/>
+        <entry endPc="268444981" name="rez_cmp_local_bitmap_Testlabel_fontHeight" stackId="3" startPc="268444684"/>
+        <entry endPc="268444981" name="rez_cmp_local_bitmap_Testlabel" stackId="2" startPc="268444684"/>
+        <entry endPc="268444982" name="dc" stackId="1" startPc="268444672"/>
+        <entry endPc="268445291" name="rez_cmp_local_bitmap_Testlabel_fontHeight" stackId="3" startPc="268444994"/>
+        <entry endPc="268445291" name="rez_cmp_local_bitmap_Testlabel" stackId="2" startPc="268444994"/>
+        <entry endPc="268445292" name="dc" stackId="1" startPc="268444982"/>
     </localVars>
     <annotations/>
     <functions>

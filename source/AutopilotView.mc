@@ -180,8 +180,8 @@ class AutopilotView extends WatchUi.View {
 
 		// for the wind arrow to be displayed correctly we have to 
 		// subtract 90 degrees as 0 is rotated to 3 o clock position 
-    	var correctedAngleDegrees = vessel.radiansToDegrees(angle) - 90.0d;
-    	var radians =  vessel.degreestToRadians(correctedAngleDegrees);
+    	var correctedAngleDegrees = Utils.radiansToDegrees(angle) - 90.0d;
+    	var radians =  Utils.degreestToRadians(correctedAngleDegrees);
 
     	var arrowLength = 20;
     	
