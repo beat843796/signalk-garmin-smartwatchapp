@@ -27,7 +27,7 @@ class VesselConnectApp extends Application.AppBase {
     	
 		vessel.stopUpdatingData();
     	
-    	System.println("App Stop");
+    	System.println("App Stop\n\n");
     }
 
 	

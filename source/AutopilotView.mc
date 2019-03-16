@@ -2,6 +2,8 @@ using Toybox.WatchUi;
 using Toybox.Graphics;
 using Toybox.Math;
 
+using Utilities as Utils;
+
 class AutopilotView extends WatchUi.View {
 
 	var rudderHeight = 26;
@@ -92,7 +94,7 @@ class AutopilotView extends WatchUi.View {
         
         // DRAW RUDDER ANGLE VIEW
         
-        drawRudderAngle(dc, vessel.radiansToDegrees(vessel.rudderAngle));
+        drawRudderAngle(dc, Utils.radiansToDegrees(vessel.rudderAngle));
         
         dc.setColor(Graphics.COLOR_BLACK,Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);

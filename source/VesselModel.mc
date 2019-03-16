@@ -5,6 +5,8 @@ using Toybox.Communications;
 using Toybox.Math;
 using Toybox.Attention;
 
+using Utilities as Utils;
+
 enum {
    
    AP_STATE_STANDBY = 0,
@@ -17,7 +19,7 @@ enum {
 
 class VesselModel {
 
-	const updateInterval = 500;
+	const updateInterval = 50;
 	const retryInterval = 3000;	
 
 	protected var baseURL = null;
@@ -47,6 +49,9 @@ class VesselModel {
     // Failure indication
     public var credentialsAvailable = false;
     public var errorCode = null;
+    
+    private var requestStarted;
+    private var requestEnded;
     
     function initialize() {
 
@@ -83,6 +88,7 @@ class VesselModel {
 		invalidateTimer(retryTimer);
 
         loginToSignalKServer();
+        
     }
     
     
@@ -115,18 +121,18 @@ class VesselModel {
     
     function getSpeedOverGroundKnotsString() {
 
-    	return meterPerSecondToKnots(speedOverGround).format("%.1f");
+    	return Utils.meterPerSecondToKnots(speedOverGround).format("%.1f");
     	
     }
     
     function getApparentWindSpeedKnotsString() {
 
-    	return meterPerSecondToKnots(apparentWindSpeed).format("%.1f");
+    	return Utils.meterPerSecondToKnots(apparentWindSpeed).format("%.1f");
     }
     
     function getTrueWindSpeedKnotsString() {
 
-    	return meterPerSecondToKnots(trueWindSpeed).format("%.1f");
+    	return Utils.meterPerSecondToKnots(trueWindSpeed).format("%.1f");
     	
     }
     
@@ -138,7 +144,7 @@ class VesselModel {
     
     function getAppearantWindAngleDegreeString() {
 
-		var degrees = radiansToDegrees(apparentWindAngle).abs();
+		var degrees = Utils.radiansToDegrees(apparentWindAngle).abs();
 		
     	return degrees.format("%.0f") + "°";
     	
@@ -146,7 +152,7 @@ class VesselModel {
     
     function getCourseOverGroundDegreeString() {
 
-		var degrees = radiansToDegrees(courseOverGround).abs();
+		var degrees = Utils.radiansToDegrees(courseOverGround).abs();
 
     	return degrees.format("%.0f") + "°";
     	
@@ -154,7 +160,7 @@ class VesselModel {
     
     function getHeadingDegreeString() {
 
-		var degrees = radiansToDegrees(heading).abs();
+		var degrees = Utils.radiansToDegrees(heading).abs();
 
     	return degrees.format("%.0f") + "°";
     	
@@ -162,7 +168,7 @@ class VesselModel {
 
     function getTargetHeadingTrueDegreeString() {
 
-		var degrees = radiansToDegrees(targetHeadingTrue).abs();
+		var degrees = Utils.radiansToDegrees(targetHeadingTrue).abs();
 
     	return degrees.format("%.0f") + "°";
     	
@@ -170,7 +176,7 @@ class VesselModel {
     
     function getTargetHeadingMagneticDegreeString() {
 
-		var degrees = radiansToDegrees(targetHeadingMagnetic).abs();
+		var degrees = Utils.radiansToDegrees(targetHeadingMagnetic).abs();
 
     	return degrees.format("%.0f") + "°";
     	
@@ -178,7 +184,7 @@ class VesselModel {
     
     function getTargetHeadingWindAppearantDegreeString() {
 
-		var degrees = radiansToDegrees(targetHeadingWindAppearant).abs();
+		var degrees = Utils.radiansToDegrees(targetHeadingWindAppearant).abs();
 
     	return degrees.format("%.0f") + "°";
     	
@@ -241,8 +247,7 @@ class VesselModel {
             },
             {
               	:method => Communications.HTTP_REQUEST_METHOD_POST,
-                :headers => {    
-                	"Accept" => "application/json",                                       
+                :headers => {                                          
                     "Content-Type" => Communications.REQUEST_CONTENT_TYPE_JSON,
                 },
                 :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON 
@@ -279,14 +284,15 @@ class VesselModel {
        
        invalidateTimer(updateTimer);
        
+       requestStarted = System.getTimer(); 
+       
        Communications.makeWebRequest(
             baseURL + "/plugins/minimumvesseldatarest/vesseldata",
             {
             },
             {
             	:method => Communications.HTTP_REQUEST_METHOD_GET,
-              	:headers => {    
-                	"Accept" => "application/json",                                       
+              	:headers => {                                         
                     "Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
                     "Authorization" => token
                 },
@@ -300,6 +306,12 @@ class VesselModel {
 
     function onReceive(responseCode, data) {
         
+
+		requestEnded = System.getTimer();
+		
+		var duration = requestEnded - requestStarted;
+
+		System.println("Response Time: " + duration); 
 
         if (responseCode == 200) {
 
@@ -359,17 +371,19 @@ class VesselModel {
     
     function sendAutopilotCommand(command) {
     	
+    	
 		Communications.makeWebRequest(
-            baseURL + "/plugins/raymarineautopilot/command",
+            baseURL + "/plugins/raymarineautopilotfork/command",
             command,
             {
               	:method => Communications.HTTP_REQUEST_METHOD_POST,
                 :headers => {    
-                	"Accept" => "application/json",                                       
-                    "Content-Type" => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON,
+                	"Accept" => "application/json",                                      
+                    "Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
                     "Authorization" => token
                 },
-                :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_TEXT_PLAIN
+                :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
+                
              
             },
             method(:onAutopilotReceive)
@@ -384,9 +398,13 @@ class VesselModel {
     
     	if(responseCode == 200) {
     		
+    		System.println("AP SUCCESS: " + data);
+    		
     		Attention.playTone(Attention.TONE_KEY);
     		
-    		if (Attention has :vibrate) {
+    		
+			}else {
+				if (Attention has :vibrate) {
     			var vibeData =
     				[
        				 new Attention.VibeProfile(50, 100), // On for 200 ms
