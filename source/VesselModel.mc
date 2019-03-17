@@ -20,7 +20,7 @@ enum {
 
 class VesselModel {
 
-	const updateInterval = 100;
+	const updateInterval = 50;
 	const retryInterval = 3000;	
 	
 	const tokenKey = "signalk-token";

@@ -50,7 +50,7 @@ class VesselDataView extends WatchUi.View {
     
     	// DRAW THE GRID
         
-        var errorMessage = errorMessage(vessel.errorCode);
+        var errorMessage = Utils.errorMessage(vessel.errorCode);
         
         dc.setPenWidth(2);
         
@@ -153,7 +153,6 @@ class VesselDataViewDelegate extends WatchUi.BehaviorDelegate {
     }
 
     function onSelect() {
-        System.println("pressed select");
 
 		if(vessel.errorCode != null) {
 			return true;
