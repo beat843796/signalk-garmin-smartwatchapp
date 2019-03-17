@@ -90,6 +90,8 @@ class VesselModel {
     
     function startUpdatingData() {
 
+		System.println("Start updating data");
+
 		if(token != null) {
 		
 			updateVesselDataFromServer();
@@ -107,6 +109,8 @@ class VesselModel {
     
     
     function stopUpdatingData() {
+
+		System.println("Stop updating data");
 
 		Communications.cancelAllRequests();
         invalidateTimer(updateTimer);
@@ -319,6 +323,9 @@ class VesselModel {
 
     function onReceive(responseCode, data) {
  
+ 		if(responseCode == -1003) {
+ 			return;
+ 		}
 
         if (responseCode == 200) {
 

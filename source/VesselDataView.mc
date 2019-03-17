@@ -9,6 +9,8 @@ class VesselDataView extends WatchUi.View {
 	var width;
     var height;
     var blockHeight;
+    
+  
 
     function initialize() {
     	System.println("VesselDataView initialize");

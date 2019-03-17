@@ -4,11 +4,18 @@ using Toybox.Math;
 
 using Utilities as Utils;
 
+var changeHeading = 0;
+var changeHeadingMode;
+
 class AutopilotView extends WatchUi.View {
 
 	var rudderHeight = 26;
 	var width;
     var height;
+    
+    
+    
+     
         
     function initialize() {
         View.initialize();
@@ -29,9 +36,44 @@ class AutopilotView extends WatchUi.View {
         height = dc.getHeight();
         var blockHeight = height/3;
         
-		drawValues(dc);
+        if(changeHeadingMode) {
+        
+        	drawChangeHeading(dc);
+        
+        }else {
+        
+        	drawValues(dc);
+        
+        }
+        
+		
         
 
+    }
+    
+    function drawChangeHeading(dc) {
+    
+    	
+    	dc.setColor(Graphics.COLOR_BLACK,Graphics.COLOR_WHITE);
+        
+   
+        
+        dc.drawText(
+      	width/2,                     
+      	45,                   
+      	Graphics.FONT_SYSTEM_TINY,     
+      	"Change\nHeading",                   
+      	(Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
+        
+        
+        dc.drawText(
+      	width/2,                     
+      	height/2,                   
+      	Graphics.FONT_NUMBER_THAI_HOT,     
+      	changeHeading,                   
+      	(Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
+    
+    
     }
     
 
@@ -191,6 +233,14 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
 		if(vessel.errorCode != null) {
 			return true;
 		}
+		
+		if(changeHeadingMode) {
+			vessel.changeHeading(changeHeading);
+			changeHeading = 0;
+			changeHeadingMode = false;
+			vessel.startUpdatingData();
+			return;
+		}
 
 		var standbyItem = new WatchUi.MenuItem("Standby", null, AP_STATE_STANDBY, null);
 		var autoItem = new WatchUi.MenuItem("Auto", null, AP_STATE_AUTO, null);
@@ -229,6 +279,8 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
 
         WatchUi.pushView(menu, new AutopilotMenuDelegate(), WatchUi.SLIDE_UP );
 
+		vessel.stopUpdatingData();
+
         return true;
 
     }
@@ -237,21 +289,41 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
  
         switch ( keyEvent.getKey() ) {
     		case KEY_DOWN:
-    			vessel.changeHeading(-1);
+    		
+    			updateHeading(-1);
     			break;
     		case KEY_UP:
-    			vessel.changeHeading(+1);
+    		
+    			updateHeading(+1);
     			break;
     		case KEY_CLOCK: {
-        		vessel.changeHeading(-10);
+    		
+    			updateHeading(-10);
         		break;
     		}
     		case KEY_MENU: {
-        		vessel.changeHeading(+10);
+    		
+    			updateHeading(+10);
+    			
         		break;
     		}
     		case KEY_ESC: {
-        		WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+    		
+    			vessel.startUpdatingData();
+    		
+    			if(changeHeadingMode) {
+    			
+    				changeHeadingMode = false;
+    				WatchUi.requestUpdate();
+    				changeHeading = 0;
+    				
+    			}else {
+    			
+    				WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+    				
+    			}
+    		
+        		
         		break;
     		}
     		
@@ -259,6 +331,22 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
 		}
 		
 		return true;
+    }
+    
+    function updateHeading(value) {
+    
+    	vessel.stopUpdatingData();
+    
+    	changeHeadingMode = true;
+        		
+        changeHeading = changeHeading + value;
+        		
+        if(changeHeading > 180) {
+        	changeHeading = 180;
+        }
+        		
+        WatchUi.requestUpdate();
+    
     }
     
     
@@ -291,6 +379,16 @@ class AutopilotMenuDelegate extends WatchUi.Menu2InputDelegate {
         		break;
     		}
 		}
+		
+		vessel.startUpdatingData();
+        
+        WatchUi.popView(WatchUi.SLIDE_DOWN);
+        
+        return true;
+    }
+    
+    function onBack() {
+    	vessel.startUpdatingData();
         
         WatchUi.popView(WatchUi.SLIDE_DOWN);
         
