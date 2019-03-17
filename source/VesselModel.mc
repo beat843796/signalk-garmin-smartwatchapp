@@ -20,7 +20,7 @@ enum {
 
 class VesselModel {
 
-	const updateInterval = 50;
+	const updateInterval = 500;
 	const retryInterval = 3000;	
 	
 	const tokenKey = "signalk-token";
@@ -443,6 +443,8 @@ class VesselModel {
     				[
        				 new Attention.VibeProfile(50, 100), // On for 200 ms
        				];
+       				
+
        				
        			Attention.vibrate(vibeData);
 			}

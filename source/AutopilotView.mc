@@ -238,7 +238,9 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
 			vessel.changeHeading(changeHeading);
 			changeHeading = 0;
 			changeHeadingMode = false;
+			WatchUi.requestUpdate();
 			vessel.startUpdatingData();
+			
 			return;
 		}
 
@@ -343,6 +345,10 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
         		
         if(changeHeading > 180) {
         	changeHeading = 180;
+        }
+        
+        if(changeHeading < -180) {
+        	changeHeading = -180;
         }
         		
         WatchUi.requestUpdate();
