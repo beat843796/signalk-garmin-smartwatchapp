@@ -7,18 +7,18 @@ class VesselConnectApp extends Application.AppBase {
 
 
     function initialize() {
-        AppBase.initialize();
 
-		vessel = new VesselModel();
+        AppBase.initialize();
+        
+        vessel = new VesselModel();
 
     }
 
 
     
     function onStart(state) {
-    
-    	System.println("App Start");
     	
+    	vessel.startUpdatingData();
     	
     }
 
@@ -27,13 +27,10 @@ class VesselConnectApp extends Application.AppBase {
     	
 		vessel.stopUpdatingData();
     	
-    	System.println("App Stop\n\n");
     }
 
 	
 	function onSettingsChanged() {
-		
-		System.println("Settings changed");
 		
 		vessel.stopUpdatingData();
 		vessel.configureSignalK();	
@@ -46,9 +43,9 @@ class VesselConnectApp extends Application.AppBase {
     function getInitialView() {
     	
     	// All good
-			vessel.startUpdatingData();
+		
 
-    		return [ new VesselDataView(), new VesselDataViewDelegate() ];
+    	return [ new VesselDataView(), new VesselDataViewDelegate() ];
 
         
     }

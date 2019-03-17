@@ -2,8 +2,9 @@ using Toybox.System;
 using Toybox.Application;
 using Toybox.Timer;
 using Toybox.Communications;
-using Toybox.Math;
 using Toybox.Attention;
+
+using Toybox.Application.Storage;
 
 using Utilities as Utils;
 
@@ -19,8 +20,10 @@ enum {
 
 class VesselModel {
 
-	const updateInterval = 50;
+	const updateInterval = 100;
 	const retryInterval = 3000;	
+	
+	const tokenKey = "signalk-token";
 
 	protected var baseURL = null;
 	protected var username = null;
@@ -46,12 +49,13 @@ class VesselModel {
     
     public var autopilotState = "---";
     
+    private var isAutopilotRequestPending = false;
+    
     // Failure indication
     public var credentialsAvailable = false;
     public var errorCode = null;
     
-    private var requestStarted;
-    private var requestEnded;
+	
     
     function initialize() {
 
@@ -61,12 +65,12 @@ class VesselModel {
     
  	function configureSignalK() {
  	
- 		baseURL = "https://seatalk.defectradar.com"; //Application.Properties.getValue("baseurl_prop");
+ 		baseURL = "https://seatalk.defectradar.com"; //Application.Properties.getValue("baseurl_prop"); // seatalk.defectradar.com
         username = "garmin"; //Application.Properties.getValue("username_prop");
         password = "garmin123"; //Application.Properties.getValue("password_prop");
         
-        System.println("Settings: " + baseURL + " " + username + " " + password);
-        
+        token = Storage.getValue(tokenKey);
+
         if(baseURL == null || username == null || password == null) {
 		
 			System.println("Missing credentails");
@@ -78,16 +82,25 @@ class VesselModel {
 		
 		}
         
+        
+        
         resetVesselData();
  	
  	}
     
     function startUpdatingData() {
 
+		if(token != null) {
+		
+			updateVesselDataFromServer();
+			
+		} else {
+		
+			loginToSignalKServer();
+			
+		}
 
-		invalidateTimer(retryTimer);
-
-        loginToSignalKServer();
+        
         
     }
     
@@ -234,10 +247,9 @@ class VesselModel {
     ////////////////////////////////////////////////////////
     
     function loginToSignalKServer() {
-
-		System.println("Login attempt");
 		
 		token = null;
+		Storage.setValue(tokenKey,null);
 
         Communications.makeWebRequest(
             baseURL + "/signalk/v1/auth/login",
@@ -263,14 +275,17 @@ class VesselModel {
     	if(responseCode == 200) {
     	
     		token = "JWT " + data["token"];
-    		updateVesselDataFromServer();
     		
-    		System.println("Login success");
+    		Storage.setValue(tokenKey,token);
+    		
+    		updateVesselDataFromServer();
     		
     		errorCode = null;
     		
     		
     	}else {
+   
+   			System.println("Login failed: " + responseCode);
    
     		showNetworkError(responseCode);
     		
@@ -283,9 +298,7 @@ class VesselModel {
     function updateVesselDataFromServer() {
        
        invalidateTimer(updateTimer);
-       
-       requestStarted = System.getTimer(); 
-       
+
        Communications.makeWebRequest(
             baseURL + "/plugins/minimumvesseldatarest/vesseldata",
             {
@@ -296,7 +309,7 @@ class VesselModel {
                     "Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
                     "Authorization" => token
                 },
-             	:responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON 
+             	:responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
              
             },
             method(:onReceive)
@@ -305,13 +318,7 @@ class VesselModel {
     
 
     function onReceive(responseCode, data) {
-        
-
-		requestEnded = System.getTimer();
-		
-		var duration = requestEnded - requestStarted;
-
-		System.println("Response Time: " + duration); 
+ 
 
         if (responseCode == 200) {
 
@@ -341,6 +348,7 @@ class VesselModel {
 			}
 			catch (ex) {
 			
+				ex.printStackTrace();
 				resetVesselData();
 			
 			}
@@ -356,14 +364,26 @@ class VesselModel {
         
         	
         } else {
-	        System.println("Response Code: " + responseCode);
+        
+        	System.println("Response Code: " + responseCode);
+        
+        	if(responseCode == 401 || responseCode == -400) {
+        	
+        		loginToSignalKServer();
+        	
+        	}else {
+        	
+        	
             resetVesselData();
 
             showNetworkError(responseCode);
             
             startRetryTimer();
-            
+        	
+        	}
+
         }
+        
         
         data = null;
 
@@ -371,6 +391,15 @@ class VesselModel {
     
     function sendAutopilotCommand(command) {
     	
+    	
+    	
+    	if(isAutopilotRequestPending == true) {
+    		
+    		return;
+    	
+    	}
+    	
+    	isAutopilotRequestPending = true;
     	
 		Communications.makeWebRequest(
             baseURL + "/plugins/raymarineautopilotfork/command",
@@ -395,10 +424,8 @@ class VesselModel {
     
     function onAutopilotReceive(responseCode, data) {
 
-    
+		
     	if(responseCode == 200) {
-    		
-    		System.println("AP SUCCESS: " + data);
     		
     		Attention.playTone(Attention.TONE_KEY);
     		
@@ -414,6 +441,10 @@ class VesselModel {
 			}
 			
     	} 
+    	
+    	
+    	isAutopilotRequestPending = false;
+    	
 
     }
     

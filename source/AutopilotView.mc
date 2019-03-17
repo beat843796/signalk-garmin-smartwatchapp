@@ -22,8 +22,7 @@ class AutopilotView extends WatchUi.View {
         View.onUpdate(dc);
         
         dc.setColor(Graphics.COLOR_BLACK,Graphics.COLOR_WHITE);
-        
-        
+
         dc.clear();
         
         width = dc.getWidth();
@@ -96,7 +95,7 @@ class AutopilotView extends WatchUi.View {
         
         drawRudderAngle(dc, Utils.radiansToDegrees(vessel.rudderAngle));
         
-        dc.setColor(Graphics.COLOR_BLACK,Graphics.COLOR_TRANSPARENT);
+        dc.setColor(Graphics.COLOR_BLACK,Graphics.COLOR_WHITE);
         dc.setPenWidth(2);
         
         var xOffsetTens = width/8;
@@ -105,7 +104,7 @@ class AutopilotView extends WatchUi.View {
         	dc.drawLine(0+xOffsetTens*i, height/2-rudderHeight/2, +xOffsetTens*i, height/2+rudderHeight/2);
         }
                 
-        dc.setColor(Graphics.COLOR_BLACK,Graphics.COLOR_TRANSPARENT);
+        dc.setColor(Graphics.COLOR_BLACK,Graphics.COLOR_WHITE);
         dc.setPenWidth(4);
         
         dc.drawLine(0, height/2-rudderHeight/2, width, height/2-rudderHeight/2);
@@ -113,8 +112,8 @@ class AutopilotView extends WatchUi.View {
 
         dc.drawLine(width/2, height/2-rudderHeight/2, width/2, height/2+rudderHeight/2);
         
-        dc.setColor(Graphics.COLOR_ORANGE,Graphics.COLOR_TRANSPARENT);
-        drawWindAngle(dc,vessel.apparentWindAngle);
+        dc.setColor(Graphics.COLOR_ORANGE,Graphics.COLOR_WHITE);
+        Utils.drawWindAngle(dc,vessel.apparentWindAngle,width);
     
     }
     
@@ -158,9 +157,9 @@ class AutopilotView extends WatchUi.View {
 		}
 		
 		if(rudderAngle < 0) {
-			dc.setColor(Graphics.COLOR_DK_GREEN,Graphics.COLOR_TRANSPARENT);
+			dc.setColor(Graphics.COLOR_DK_GREEN,Graphics.COLOR_WHITE);
 		} else {
-			dc.setColor(Graphics.COLOR_DK_RED,Graphics.COLOR_TRANSPARENT);
+			dc.setColor(Graphics.COLOR_DK_RED,Graphics.COLOR_WHITE);
 		}
 	
 	
@@ -176,32 +175,125 @@ class AutopilotView extends WatchUi.View {
 	
 	}
 	
-	function drawWindAngle(dc, angle) {
 
-		// for the wind arrow to be displayed correctly we have to 
-		// subtract 90 degrees as 0 is rotated to 3 o clock position 
-    	var correctedAngleDegrees = Utils.radiansToDegrees(angle) - 90.0d;
-    	var radians =  Utils.degreestToRadians(correctedAngleDegrees);
+}
 
-    	var arrowLength = 20;
-    	
-    	var xA = width/2 + (width/2-arrowLength) * Math.cos(radians);
-		var yA = width/2 + (width/2-arrowLength) * Math.sin(radians);
-		
-		var xB = width/2 + (width/2+5) * Math.cos(radians+0.15d);
-		var yB = width/2 + (width/2+5) * Math.sin(radians+0.15d);
-		
-		var xC = width/2 + (width/2+5) * Math.cos(radians-0.15d);
-		var yC = width/2 + (width/2+5) * Math.sin(radians-0.15d);
-		
-		var pointA = [xA,yA];
-    	var pointB = [xB,yB];
-    	var pointC = [xC,yC];
-		
-		
-		
-		dc.fillPolygon([pointA, pointB, pointC]);
+class AutopilotDelegate extends WatchUi.BehaviorDelegate {
 
+	
+
+	function initialize() {
+        BehaviorDelegate.initialize();
     }
 
+    function onSelect() {
+
+		if(vessel.errorCode != null) {
+			return true;
+		}
+
+		var standbyItem = new WatchUi.MenuItem("Standby", null, AP_STATE_STANDBY, null);
+		var autoItem = new WatchUi.MenuItem("Auto", null, AP_STATE_AUTO, null);
+		var windItem = new WatchUi.MenuItem("Wind", null, AP_STATE_WIND, null);
+		var trackItem = new WatchUi.MenuItem("Track", null, AP_STATE_TRACK, null);
+		
+		var focus = 0;
+		
+		switch ( vessel.autopilotState ) {
+    		case "standby":
+    			focus = 0;
+    			break;
+    		case "auto":
+    			autoItem.setSubLabel("Active");
+    			focus = 1;
+    			break;
+    		case "wind": {
+        		windItem.setSubLabel("Active");
+        		focus = 2;
+        		break;
+    		}
+    		case "route": {
+        		trackItem.setSubLabel("Active");
+        		focus = 3;
+        		break;
+    		}
+		}
+    	
+    	
+    	var menu = new WatchUi.Menu2({:title=>"SET MODE", :focus=>focus});
+
+		menu.addItem(standbyItem);
+        menu.addItem(autoItem);
+        menu.addItem(windItem);
+        menu.addItem(trackItem);
+
+        WatchUi.pushView(menu, new AutopilotMenuDelegate(), WatchUi.SLIDE_UP );
+
+        return true;
+
+    }
+    
+    function onKey(keyEvent) {
+ 
+        switch ( keyEvent.getKey() ) {
+    		case KEY_DOWN:
+    			vessel.changeHeading(-1);
+    			break;
+    		case KEY_UP:
+    			vessel.changeHeading(+1);
+    			break;
+    		case KEY_CLOCK: {
+        		vessel.changeHeading(-10);
+        		break;
+    		}
+    		case KEY_MENU: {
+        		vessel.changeHeading(+10);
+        		break;
+    		}
+    		case KEY_ESC: {
+        		WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+        		break;
+    		}
+    		
+
+		}
+		
+		return true;
+    }
+    
+    
+}
+
+class AutopilotMenuDelegate extends WatchUi.Menu2InputDelegate {
+    function initialize() {
+        Menu2InputDelegate.initialize();
+    }
+
+    function onSelect(item) {
+        
+        if(vessel.errorCode != null) {
+			return true;
+		}
+
+		switch ( item.getId() ) {
+    		case AP_STATE_STANDBY:
+    			vessel.setAutopilotState("standby");
+    			break;
+    		case AP_STATE_AUTO:
+    			vessel.setAutopilotState("auto");
+    			break;
+    		case AP_STATE_WIND: {
+				vessel.setAutopilotState("wind");
+        		break;
+    		}
+    		case AP_STATE_TRACK: {
+				vessel.setAutopilotState("route");
+        		break;
+    		}
+		}
+        
+        WatchUi.popView(WatchUi.SLIDE_DOWN);
+        
+        return true;
+    }
 }
