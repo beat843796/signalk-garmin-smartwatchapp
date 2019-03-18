@@ -4,7 +4,7 @@ Connect IQ App that display boat data and let you control an autopilot using the
 
 For the garmin app to work you need the following plugin installed on your [signalk nodejs server](https://github.com/SignalK/signalk-server-node).
 
-[Autopilot plugin](https://www.npmjs.com/package/signalk-raymarine-autopilot)
+[Autopilot plugin](https://github.com/beat843796/signalk-raymarine-autopilot)
 
 ### Screenshots
 
