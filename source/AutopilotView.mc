@@ -87,12 +87,12 @@ class AutopilotView extends WatchUi.View {
         
         switch ( vessel.autopilotState ) {
     		case "standby":
-    			valueToDraw = vessel.getHeadingDegreeString();
+    			valueToDraw = vessel.getHeadingMagneticDegreeString();
     			labelText = "HDG";
     		
     			break;
     		case "auto":
-    			valueToDraw = vessel.getTargetHeadingTrueDegreeString();
+    			valueToDraw = vessel.getTargetHeadingMagneticDegreeString();
     			labelText = "HDG";
     	
     			break;
@@ -102,7 +102,7 @@ class AutopilotView extends WatchUi.View {
         		        		break;
     		}
     		case "route": {
-        		valueToDraw = "3.6";
+        		valueToDraw = "---";
         		labelText = "DTW";
         		break;
     		}
@@ -199,9 +199,9 @@ class AutopilotView extends WatchUi.View {
 		}
 		
 		if(rudderAngle < 0) {
-			dc.setColor(Graphics.COLOR_DK_GREEN,Graphics.COLOR_WHITE);
-		} else {
 			dc.setColor(Graphics.COLOR_DK_RED,Graphics.COLOR_WHITE);
+		} else {
+			dc.setColor(Graphics.COLOR_DK_GREEN,Graphics.COLOR_WHITE);
 		}
 	
 	
@@ -277,7 +277,7 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
 		menu.addItem(standbyItem);
         menu.addItem(autoItem);
         menu.addItem(windItem);
-        menu.addItem(trackItem);
+        //menu.addItem(trackItem);
 
         WatchUi.pushView(menu, new AutopilotMenuDelegate(), WatchUi.SLIDE_UP );
 

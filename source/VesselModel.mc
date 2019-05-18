@@ -38,9 +38,10 @@ class VesselModel {
     public var apparentWindSpeed;			// meter/second
     public var trueWindSpeed;				// meter/second
     public var depthBelowTranscuder;		// meter
+    public var tripTotal;					// meter
     public var apparentWindAngle;			// radians
     public var courseOverGround;			// radians
-    public var heading;						// radians
+    public var headingMagnetic;				// radians
     public var rudderAngle;					// radians
     
     public var targetHeadingTrue;			// radians
@@ -126,11 +127,12 @@ class VesselModel {
     	depthBelowTranscuder = 0.0d;
     	apparentWindAngle = 0.0d;
     	courseOverGround = 0.0d;
-    	heading = 0.0d;
+    	headingMagnetic = 0.0d;
     	rudderAngle = 0.0d;
     	targetHeadingTrue = 0.0d;
     	targetHeadingMagnetic = 0.0d;
     	targetHeadingWindAppearant = 0.0d;
+    	tripTotal = 0.0d;
     	
     	autopilotState = "---";
         
@@ -175,9 +177,9 @@ class VesselModel {
     	
     }
     
-    function getHeadingDegreeString() {
+    function getHeadingMagneticDegreeString() {
 
-		var degrees = Utils.radiansToDegrees(heading).abs();
+		var degrees = Utils.radiansToDegrees(headingMagnetic).abs();
 
     	return degrees.format("%.0f") + "°";
     	
@@ -230,6 +232,8 @@ class VesselModel {
 	function changeHeading(change) {
 	
 		var command = { "action" => "changeHeading", "value" => change };
+		
+		System.println("COMMAND: " + command); 
 		
 		sendAutopilotCommand(command);
 
@@ -334,15 +338,17 @@ class VesselModel {
 				// FLOAT VALUES
 
 				depthBelowTranscuder = setValueIfPresent(data["depthBelowTransducer"]);
-				trueWindSpeed = setValueIfPresent(data["windSpeedTrue"]);
+				//trueWindSpeed = setValueIfPresent(data["windSpeedTrue"]);
 				apparentWindSpeed = setValueIfPresent(data["windSpeedApparent"]);
 				speedOverGround = setValueIfPresent(data["speedOverGround"]);
 				courseOverGround = setValueIfPresent(data["courseOverGroundTrue"]);
-				apparentWindAngle = setValueIfPresent(data["headingTrue"]);
+				apparentWindAngle = setValueIfPresent(data["windAngleApparent"]);
 				rudderAngle = setValueIfPresent(data["rudderAngle"]);
+				headingMagnetic = setValueIfPresent(data["headingMagnetic"]);
 				targetHeadingMagnetic = setValueIfPresent(data["autopilotTargetHeadingMagnetic"]);
 				targetHeadingTrue = setValueIfPresent(data["autopilotTargetHeadingTrue"]);
 				targetHeadingWindAppearant = setValueIfPresent(data["autopilotTargetWindAngleApparent"]);
+				tripTotal = setValueIfPresent(data["tripTotal"]);
 
 				// STRING VALUES
 				
@@ -367,7 +373,7 @@ class VesselModel {
         	updateTimer = new Timer.Timer();
         	updateTimer.start(method(:updateVesselDataFromServer), updateInterval, false);
         
-        	//logState();
+        	logState();
         
         	
         } else {
@@ -492,11 +498,11 @@ class VesselModel {
     function logState() {
     	System.println("SOG: " + speedOverGround + 
         "\nAWS: " + apparentWindSpeed + 
-        "\nTWS: " + trueWindSpeed + 
         "\nDBT: " + depthBelowTranscuder  +
         "\nAWA: " + apparentWindAngle +
         "\nCOG: " + courseOverGround +
-        "\nHDG: " + heading +
+        "\nHDG(m): " + headingMagnetic +
+        "\nTripTotal: " + tripTotal +
         "\nTARGET_HDG_MAG: " + targetHeadingMagnetic + 
         "\nTARGET_HDG_TRUE: " + targetHeadingTrue + 
         "\nTARGET_AWA: " + targetHeadingWindAppearant + 
