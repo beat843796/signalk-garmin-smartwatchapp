@@ -22,11 +22,27 @@ module Utilities {
 	
 	}
 	
+	function metersToNauticalMiles(meters) {
+	
+		var nm = meters * 0.00053995680d;
+		
+		return nm;
+	
+	}
+	
 	function radiansToDegrees(radians) {
 		
 		var degrees = radians * 180.0d / Math.PI;
 		
 		return degrees;
+	
+	}
+	
+	function kelvinToCelsius(kelvin) {
+		
+		var celsius = kelvin - 273.15d;
+		
+		return celsius;
 	
 	}
 	

@@ -43,6 +43,7 @@ class VesselModel {
     public var courseOverGround;			// radians
     public var headingMagnetic;				// radians
     public var rudderAngle;					// radians
+    public var waterTemperature;			// kelvin
     
     public var targetHeadingTrue;			// radians
     public var targetHeadingMagnetic;		// radians
@@ -133,6 +134,7 @@ class VesselModel {
     	targetHeadingMagnetic = 0.0d;
     	targetHeadingWindAppearant = 0.0d;
     	tripTotal = 0.0d;
+    	waterTemperature = 0.0d;
     	
     	autopilotState = "---";
         
@@ -144,6 +146,7 @@ class VesselModel {
     	
     }
     
+
     function getApparentWindSpeedKnotsString() {
 
     	return Utils.meterPerSecondToKnots(apparentWindSpeed).format("%.1f");
@@ -158,6 +161,18 @@ class VesselModel {
     function getDepthBelowTranscuderMeterString() {
 
     	return depthBelowTranscuder.format("%.1f") + "m";
+    	
+    }
+    
+    function getTripTotalString() {
+
+    	return Utils.metersToNauticalMiles(tripTotal).format("%.1f") + "nm";
+    	
+    }
+    
+    function getWaterTemperatureString() {
+
+    	return Utils.kelvinToCelsius(waterTemperature).format("%.1f") + "°C";
     	
     }
     
@@ -233,7 +248,7 @@ class VesselModel {
 	
 		var command = { "action" => "changeHeading", "value" => change };
 		
-		System.println("COMMAND: " + command); 
+		//System.println("COMMAND: " + command); 
 		
 		sendAutopilotCommand(command);
 
@@ -340,6 +355,7 @@ class VesselModel {
 				depthBelowTranscuder = setValueIfPresent(data["depthBelowTransducer"]);
 				//trueWindSpeed = setValueIfPresent(data["windSpeedTrue"]);
 				apparentWindSpeed = setValueIfPresent(data["windSpeedApparent"]);
+				waterTemperature = setValueIfPresent(data["waterTemperature"]);
 				speedOverGround = setValueIfPresent(data["speedOverGround"]);
 				courseOverGround = setValueIfPresent(data["courseOverGroundTrue"]);
 				apparentWindAngle = setValueIfPresent(data["windAngleApparent"]);
@@ -373,7 +389,7 @@ class VesselModel {
         	updateTimer = new Timer.Timer();
         	updateTimer.start(method(:updateVesselDataFromServer), updateInterval, false);
         
-        	logState();
+        	//logState();
         
         	
         } else {
@@ -421,7 +437,7 @@ class VesselModel {
               	:method => Communications.HTTP_REQUEST_METHOD_POST,
                 :headers => {    
                 	"Accept" => "application/json",                                      
-                    "Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
+                    "Content-Type" => Communications.REQUEST_CONTENT_TYPE_JSON,
                     "Authorization" => token
                 },
                 :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
@@ -502,7 +518,8 @@ class VesselModel {
         "\nAWA: " + apparentWindAngle +
         "\nCOG: " + courseOverGround +
         "\nHDG(m): " + headingMagnetic +
-        "\nTripTotal: " + tripTotal +
+        "\nWaterTemp: " + getWaterTemperatureString() +
+        "\nTripTotal: " + getTripTotalString() +
         "\nTARGET_HDG_MAG: " + targetHeadingMagnetic + 
         "\nTARGET_HDG_TRUE: " + targetHeadingTrue + 
         "\nTARGET_AWA: " + targetHeadingWindAppearant + 
