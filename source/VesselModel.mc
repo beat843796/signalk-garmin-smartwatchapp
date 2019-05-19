@@ -20,7 +20,7 @@ enum {
 
 class VesselModel {
 
-	const updateInterval = 500;
+	const updateInterval = 100;
 	const retryInterval = 3000;	
 	
 	const tokenKey = "signalk-token";
@@ -159,6 +159,10 @@ class VesselModel {
     }
     
     function getDepthBelowTranscuderMeterString() {
+
+		if(depthBelowTranscuder > 500.0d) {
+			return "---";
+		}
 
     	return depthBelowTranscuder.format("%.1f") + "m";
     	
