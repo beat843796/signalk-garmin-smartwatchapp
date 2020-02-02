@@ -418,155 +418,151 @@
         <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="72" lineNum="151" pc="268444854" symbol="errorMessage"/>
         <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="72" lineNum="152" pc="268444873" symbol="errorMessage"/>
         <entry filename="/Users/clemens/Documents/Development/signalk-garmin-smartwatchapp/source/Utilities.mc" id="72" lineNum="157" pc="268444892" symbol="errorMessage"/>
-        <entry filename="Rez" id="79" lineNum="23" pc="268444896" symbol="Testlayout"/>
-        <entry filename="Rez" id="79" lineNum="27" pc="268444908" symbol="Testlayout"/>
-        <entry filename="Rez" id="79" lineNum="28" pc="268445103" symbol="Testlayout"/>
-        <entry filename="Rez" id="79" lineNum="29" pc="268445136" symbol="Testlayout"/>
-        <entry filename="Rez" id="79" lineNum="32" pc="268445188" symbol="Testlayout"/>
-        <entry filename="Rez" id="80" lineNum="43" pc="268445206" symbol="Anotherlayout"/>
-        <entry filename="Rez" id="80" lineNum="47" pc="268445218" symbol="Anotherlayout"/>
-        <entry filename="Rez" id="80" lineNum="48" pc="268445413" symbol="Anotherlayout"/>
-        <entry filename="Rez" id="80" lineNum="49" pc="268445446" symbol="Anotherlayout"/>
-        <entry filename="Rez" id="80" lineNum="52" pc="268445498" symbol="Anotherlayout"/>
+        <entry filename="Rez" id="78" lineNum="15" pc="268444896" symbol="Testlayout"/>
+        <entry filename="Rez" id="78" lineNum="17" pc="268444908" symbol="Testlayout"/>
+        <entry filename="Rez" id="78" lineNum="19" pc="268445068" symbol="Testlayout"/>
+        <entry filename="Rez" id="79" lineNum="28" pc="268445086" symbol="Anotherlayout"/>
+        <entry filename="Rez" id="79" lineNum="30" pc="268445098" symbol="Anotherlayout"/>
+        <entry filename="Rez" id="79" lineNum="32" pc="268445258" symbol="Anotherlayout"/>
     </pcToLineNum>
     <symbolTable>
-        <entry id="87" method="true" symbol="degreestToRadians"/>
-        <entry id="8388644" module="true" symbol="System"/>
-        <entry id="76" method="true" symbol="onAutopilotReceive"/>
-        <entry id="8388987" method="true" symbol="vibrate"/>
-        <entry id="93" method="true" symbol="errorMessage"/>
-        <entry field="true" id="14" symbol="AP_STATE_NOT_SUPPORTED"/>
-        <entry id="8389124" method="true" symbol="onUpdate"/>
-        <entry id="82" method="true" symbol="drawError"/>
-        <entry id="8389349" symbol="justification"/>
-        <entry id="8388637" module="true" symbol="Communications"/>
-        <entry id="17" object="true" symbol="VesselDataViewDelegate"/>
-        <entry id="80" method="true" symbol="logState"/>
-        <entry field="true" id="49" symbol="&lt;globals/VesselModel/&lt;&gt;isAutopilotRequestPending&gt;"/>
-        <entry field="true" id="23" symbol="vessel"/>
-        <entry field="true" id="11" symbol="AP_STATE_AUTO"/>
-        <entry id="54" method="true" symbol="stopUpdatingData"/>
-        <entry id="71" method="true" symbol="loginToSignalKServer"/>
-        <entry field="true" id="8389642" symbol="title"/>
-        <entry field="true" id="99" symbol="username_title"/>
-        <entry id="8389097" method="true" symbol="onKey"/>
-        <entry field="true" id="51" symbol="errorCode"/>
-        <entry id="8390424" module="true" symbol="Storage"/>
-        <entry field="true" id="30" symbol="username"/>
-        <entry field="true" id="37" symbol="trueWindSpeed"/>
-        <entry field="true" id="39" symbol="tripTotal"/>
-        <entry field="true" id="8388611" module="true" symbol="Toybox"/>
-        <entry field="true" id="38" symbol="depthBelowTranscuder"/>
-        <entry field="true" id="41" symbol="courseOverGround"/>
-        <entry id="8389619" method="true" symbol="onSelect"/>
-        <entry id="15" object="true" symbol="VesselModel"/>
-        <entry id="106" method="true" symbol="drawRudderAngle"/>
-        <entry field="true" id="35" symbol="speedOverGround"/>
-        <entry id="90" method="true" symbol="kelvinToCelsius"/>
-        <entry id="8388770" module="true" object="true" symbol="Strings"/>
-        <entry id="8389280" method="true" symbol="getInitialView"/>
-        <entry id="24" object="true" symbol="VesselConnectApp"/>
-        <entry field="true" id="28" symbol="tokenKey"/>
-        <entry field="true" id="26" symbol="updateInterval"/>
-        <entry id="8390436" symbol="focus"/>
+        <entry id="107" symbol="code"/>
         <entry id="8388639" module="true" symbol="Graphics"/>
-        <entry id="69" method="true" symbol="setAutopilotState"/>
-        <entry field="true" id="43" symbol="rudderAngle"/>
-        <entry field="true" id="50" symbol="credentialsAvailable"/>
-        <entry id="8388769" module="true" object="true" symbol="Rez"/>
-        <entry field="true" id="34" symbol="retryTimer"/>
-        <entry id="78" method="true" symbol="showNetworkError"/>
-        <entry id="91" method="true" symbol="drawWindAngle"/>
-        <entry id="8388636" module="true" symbol="Attention"/>
-        <entry id="72" method="true" symbol="onLoginReceive"/>
-        <entry id="8388702" method="true" symbol="initialize"/>
-        <entry field="true" id="102" symbol="AppName"/>
-        <entry field="true" id="19" symbol="changeHeadingMode"/>
-        <entry id="60" method="true" symbol="getTripTotalString"/>
-        <entry field="true" id="104" symbol="rudderHeight"/>
-        <entry id="8389594" symbol="headers"/>
-        <entry field="true" id="13" symbol="AP_STATE_TRACK"/>
-        <entry field="true" id="81" symbol="blockHeight"/>
-        <entry field="true" id="100" symbol="password_title"/>
-        <entry id="61" method="true" symbol="getWaterTemperatureString"/>
+        <entry id="8389346" symbol="text"/>
         <entry id="58" method="true" symbol="getTrueWindSpeedKnotsString"/>
+        <entry id="77" method="true" symbol="setValueIfPresent"/>
+        <entry field="true" id="29" symbol="baseURL"/>
         <entry id="25" module="true" symbol="Utilities"/>
-        <entry id="88" method="true" symbol="metersToNauticalMiles"/>
-        <entry id="98" method="true" symbol="Anotherlayout"/>
-        <entry id="68" method="true" symbol="getNameForActiveState"/>
-        <entry id="8388641" module="true" symbol="Math"/>
-        <entry id="53" method="true" symbol="startUpdatingData"/>
-        <entry id="105" method="true" symbol="drawChangeHeading"/>
-        <entry field="true" id="96" symbol="LauncherIcon"/>
-        <entry field="true" id="18" method="true" symbol="changeHeading"/>
-        <entry field="true" id="12" symbol="AP_STATE_WIND"/>
-        <entry id="20" object="true" symbol="AutopilotView"/>
-        <entry id="8388646" module="true" object="true" symbol="Timer"/>
         <entry id="8389683" method="true" symbol="onSettingsChanged"/>
-        <entry field="true" id="85" symbol="FACTOR_MS_TO_KNOTS"/>
-        <entry id="8389081" method="true" symbol="onBack"/>
-        <entry id="8388786" method="true" symbol="method"/>
-        <entry id="8388648" module="true" symbol="WatchUi"/>
-        <entry field="true" id="45" symbol="targetHeadingTrue"/>
-        <entry field="true" id="92" symbol="errorList"/>
-        <entry id="8389281" method="true" symbol="onStop"/>
+        <entry field="true" id="12" symbol="AP_STATE_WIND"/>
+        <entry id="21" object="true" symbol="AutopilotDelegate"/>
+        <entry field="true" id="42" symbol="headingMagnetic"/>
+        <entry id="80" method="true" symbol="logState"/>
+        <entry field="true" id="104" symbol="rudderHeight"/>
+        <entry field="true" id="14" symbol="AP_STATE_NOT_SUPPORTED"/>
+        <entry id="71" method="true" symbol="loginToSignalKServer"/>
+        <entry id="8390424" module="true" symbol="Storage"/>
+        <entry id="53" method="true" symbol="startUpdatingData"/>
+        <entry field="true" id="48" symbol="autopilotState"/>
+        <entry field="true" id="8388611" module="true" symbol="Toybox"/>
+        <entry id="8390436" symbol="focus"/>
+        <entry id="65" method="true" symbol="getTargetHeadingTrueDegreeString"/>
+        <entry id="78" method="true" symbol="showNetworkError"/>
+        <entry field="true" id="19" symbol="changeHeadingMode"/>
+        <entry id="87" method="true" symbol="degreestToRadians"/>
+        <entry field="true" id="102" symbol="AppName"/>
+        <entry id="79" method="true" symbol="startRetryTimer"/>
+        <entry id="16" object="true" symbol="VesselDataView"/>
+        <entry field="true" id="51" symbol="errorCode"/>
+        <entry id="67" method="true" symbol="getTargetHeadingWindAppearantDegreeString"/>
+        <entry id="8389594" symbol="headers"/>
+        <entry id="8388772" module="true" object="true" symbol="Fonts"/>
+        <entry id="62" method="true" symbol="getAppearantWindAngleDegreeString"/>
         <entry id="75" method="true" symbol="sendAutopilotCommand"/>
-        <entry id="22" object="true" symbol="AutopilotMenuDelegate"/>
-        <entry id="73" method="true" symbol="updateVesselDataFromServer"/>
-        <entry id="103" method="true" symbol="updateHeading"/>
+        <entry id="69" method="true" symbol="setAutopilotState"/>
+        <entry field="true" id="85" symbol="FACTOR_MS_TO_KNOTS"/>
+        <entry id="8388648" module="true" symbol="WatchUi"/>
+        <entry id="8389081" method="true" symbol="onBack"/>
+        <entry field="true" id="32" symbol="token"/>
+        <entry id="15" object="true" symbol="VesselModel"/>
+        <entry field="true" id="36" symbol="apparentWindSpeed"/>
+        <entry field="true" id="50" symbol="credentialsAvailable"/>
+        <entry id="105" method="true" symbol="drawChangeHeading"/>
+        <entry id="108" symbol="msg"/>
+        <entry id="57" method="true" symbol="getApparentWindSpeedKnotsString"/>
+        <entry id="59" method="true" symbol="getDepthBelowTranscuderMeterString"/>
+        <entry id="8389124" method="true" symbol="onUpdate"/>
         <entry field="true" id="8389065" symbol="locY"/>
         <entry field="true" id="8389064" symbol="locX"/>
+        <entry id="98" method="true" symbol="Anotherlayout"/>
+        <entry id="63" method="true" symbol="getCourseOverGroundDegreeString"/>
         <entry id="8388771" module="true" object="true" symbol="Drawables"/>
-        <entry id="16" object="true" symbol="VesselDataView"/>
-        <entry id="57" method="true" symbol="getApparentWindSpeedKnotsString"/>
-        <entry field="true" id="10" symbol="AP_STATE_STANDBY"/>
-        <entry id="8389279" method="true" symbol="onStart"/>
-        <entry field="true" id="33" symbol="updateTimer"/>
         <entry id="8389348" symbol="font"/>
-        <entry field="true" id="40" symbol="apparentWindAngle"/>
-        <entry id="21" object="true" symbol="AutopilotDelegate"/>
-        <entry id="55" method="true" symbol="resetVesselData"/>
-        <entry id="79" method="true" symbol="startRetryTimer"/>
-        <entry id="77" method="true" symbol="setValueIfPresent"/>
-        <entry id="108" symbol="msg"/>
         <entry field="true" id="8389067" symbol="height"/>
-        <entry field="true" id="48" symbol="autopilotState"/>
-        <entry id="95" module="true" symbol="Layouts"/>
-        <entry id="62" method="true" symbol="getAppearantWindAngleDegreeString"/>
-        <entry field="true" id="31" symbol="password"/>
-        <entry field="true" id="32" symbol="token"/>
-        <entry id="89" method="true" symbol="radiansToDegrees"/>
-        <entry id="70" method="true" symbol="invalidateTimer"/>
-        <entry id="56" method="true" symbol="getSpeedOverGroundKnotsString"/>
-        <entry field="true" id="44" symbol="waterTemperature"/>
-        <entry id="67" method="true" symbol="getTargetHeadingWindAppearantDegreeString"/>
-        <entry id="8390088" module="true" object="true" symbol="JsonData"/>
-        <entry id="107" symbol="code"/>
-        <entry id="8389844" symbol="responseType"/>
-        <entry id="8389346" symbol="text"/>
+        <entry field="true" id="99" symbol="username_title"/>
+        <entry id="95" module="true" symbol="Menus"/>
+        <entry field="true" id="101" symbol="baseurl_title"/>
+        <entry id="61" method="true" symbol="getWaterTemperatureString"/>
+        <entry id="66" method="true" symbol="getTargetHeadingMagneticDegreeString"/>
         <entry field="true" id="8389066" symbol="width"/>
+        <entry field="true" id="81" symbol="blockHeight"/>
+        <entry field="true" id="30" symbol="username"/>
+        <entry id="84" method="true" symbol="drawDataText"/>
         <entry field="true" id="8389063" symbol="identifier"/>
         <entry id="52" method="true" symbol="configureSignalK"/>
-        <entry id="84" method="true" symbol="drawDataText"/>
-        <entry id="83" method="true" symbol="drawValues"/>
-        <entry id="66" method="true" symbol="getTargetHeadingMagneticDegreeString"/>
-        <entry id="64" method="true" symbol="getHeadingMagneticDegreeString"/>
-        <entry field="true" id="29" symbol="baseURL"/>
-        <entry id="65" method="true" symbol="getTargetHeadingTrueDegreeString"/>
-        <entry id="94" module="true" symbol="Menus"/>
-        <entry id="63" method="true" symbol="getCourseOverGroundDegreeString"/>
-        <entry field="true" id="36" symbol="apparentWindSpeed"/>
-        <entry id="97" method="true" symbol="Testlayout"/>
-        <entry id="74" method="true" symbol="onReceive"/>
-        <entry field="true" id="42" symbol="headingMagnetic"/>
-        <entry field="true" id="27" symbol="retryInterval"/>
-        <entry id="8388772" module="true" object="true" symbol="Fonts"/>
-        <entry id="86" method="true" symbol="meterPerSecondToKnots"/>
-        <entry field="true" id="101" symbol="baseurl_title"/>
+        <entry id="8389349" symbol="justification"/>
+        <entry field="true" id="44" symbol="waterTemperature"/>
+        <entry id="17" object="true" symbol="VesselDataViewDelegate"/>
         <entry field="true" id="47" symbol="targetHeadingWindAppearant"/>
+        <entry id="70" method="true" symbol="invalidateTimer"/>
+        <entry id="8388987" method="true" symbol="vibrate"/>
+        <entry field="true" id="92" symbol="errorList"/>
+        <entry id="76" method="true" symbol="onAutopilotReceive"/>
+        <entry field="true" id="49" symbol="&lt;globals/VesselModel/&lt;&gt;isAutopilotRequestPending&gt;"/>
+        <entry id="8388637" module="true" symbol="Communications"/>
+        <entry id="73" method="true" symbol="updateVesselDataFromServer"/>
+        <entry id="55" method="true" symbol="resetVesselData"/>
+        <entry field="true" id="35" symbol="speedOverGround"/>
+        <entry id="8389844" symbol="responseType"/>
+        <entry id="24" object="true" symbol="VesselConnectApp"/>
+        <entry id="60" method="true" symbol="getTripTotalString"/>
+        <entry field="true" id="13" symbol="AP_STATE_TRACK"/>
+        <entry id="20" object="true" symbol="AutopilotView"/>
+        <entry id="8388786" method="true" symbol="method"/>
+        <entry id="8388644" module="true" symbol="System"/>
+        <entry id="103" method="true" symbol="updateHeading"/>
+        <entry field="true" id="34" symbol="retryTimer"/>
+        <entry id="8389619" method="true" symbol="onSelect"/>
+        <entry id="8388769" module="true" object="true" symbol="Rez"/>
+        <entry field="true" id="31" symbol="password"/>
+        <entry id="74" method="true" symbol="onReceive"/>
+        <entry id="88" method="true" symbol="metersToNauticalMiles"/>
+        <entry field="true" id="39" symbol="tripTotal"/>
+        <entry id="106" method="true" symbol="drawRudderAngle"/>
+        <entry id="8390088" module="true" object="true" symbol="JsonData"/>
+        <entry field="true" id="100" symbol="password_title"/>
+        <entry id="22" object="true" symbol="AutopilotMenuDelegate"/>
+        <entry field="true" id="96" symbol="LauncherIcon"/>
+        <entry field="true" id="37" symbol="trueWindSpeed"/>
+        <entry field="true" id="23" symbol="vessel"/>
         <entry field="true" id="46" symbol="targetHeadingMagnetic"/>
-        <entry id="59" method="true" symbol="getDepthBelowTranscuderMeterString"/>
+        <entry field="true" id="33" symbol="updateTimer"/>
+        <entry id="68" method="true" symbol="getNameForActiveState"/>
+        <entry field="true" id="27" symbol="retryInterval"/>
+        <entry field="true" id="40" symbol="apparentWindAngle"/>
+        <entry id="8388770" module="true" object="true" symbol="Strings"/>
+        <entry id="97" method="true" symbol="Testlayout"/>
+        <entry id="8388702" method="true" symbol="initialize"/>
+        <entry field="true" id="28" symbol="tokenKey"/>
+        <entry id="8389279" method="true" symbol="onStart"/>
+        <entry id="82" method="true" symbol="drawError"/>
+        <entry field="true" id="18" method="true" symbol="changeHeading"/>
+        <entry field="true" id="26" symbol="updateInterval"/>
+        <entry id="8388641" module="true" symbol="Math"/>
+        <entry id="83" method="true" symbol="drawValues"/>
+        <entry id="8389280" method="true" symbol="getInitialView"/>
+        <entry id="8389281" method="true" symbol="onStop"/>
+        <entry id="64" method="true" symbol="getHeadingMagneticDegreeString"/>
+        <entry id="90" method="true" symbol="kelvinToCelsius"/>
+        <entry id="8389097" method="true" symbol="onKey"/>
+        <entry field="true" id="10" symbol="AP_STATE_STANDBY"/>
+        <entry field="true" id="11" symbol="AP_STATE_AUTO"/>
+        <entry id="8388646" module="true" object="true" symbol="Timer"/>
+        <entry id="94" module="true" symbol="Layouts"/>
+        <entry id="8388636" module="true" symbol="Attention"/>
+        <entry id="89" method="true" symbol="radiansToDegrees"/>
+        <entry id="93" method="true" symbol="errorMessage"/>
+        <entry field="true" id="41" symbol="courseOverGround"/>
+        <entry id="54" method="true" symbol="stopUpdatingData"/>
+        <entry id="72" method="true" symbol="onLoginReceive"/>
+        <entry id="86" method="true" symbol="meterPerSecondToKnots"/>
+        <entry field="true" id="45" symbol="targetHeadingTrue"/>
+        <entry field="true" id="43" symbol="rudderAngle"/>
         <entry id="8388635" module="true" symbol="Application"/>
+        <entry field="true" id="8389642" symbol="title"/>
+        <entry field="true" id="38" symbol="depthBelowTranscuder"/>
+        <entry id="91" method="true" symbol="drawWindAngle"/>
+        <entry id="56" method="true" symbol="getSpeedOverGroundKnotsString"/>
     </symbolTable>
     <localVars>
         <entry endPc="268436388" name="degrees" stackId="1" startPc="268436331"/>
@@ -659,14 +655,30 @@
         <entry endPc="268444892" name="i" stackId="3" startPc="268444831"/>
         <entry endPc="268444895" name="result" stackId="2" startPc="268444797"/>
         <entry endPc="268444896" name="code" stackId="1" startPc="268444785"/>
-        <entry endPc="268445205" name="rez_cmp_local_bitmap_Testlabel_fontHeight" stackId="3" startPc="268444908"/>
-        <entry endPc="268445205" name="rez_cmp_local_bitmap_Testlabel" stackId="2" startPc="268444908"/>
-        <entry endPc="268445206" name="dc" stackId="1" startPc="268444896"/>
-        <entry endPc="268445515" name="rez_cmp_local_bitmap_Testlabel_fontHeight" stackId="3" startPc="268445218"/>
-        <entry endPc="268445515" name="rez_cmp_local_bitmap_Testlabel" stackId="2" startPc="268445218"/>
-        <entry endPc="268445516" name="dc" stackId="1" startPc="268445206"/>
+        <entry endPc="268445085" name="rez_cmp_local_text_Testlabel" stackId="2" startPc="268444908"/>
+        <entry endPc="268445086" name="dc" stackId="1" startPc="268444896"/>
+        <entry endPc="268445275" name="rez_cmp_local_text_Testlabel" stackId="2" startPc="268445098"/>
+        <entry endPc="268445276" name="dc" stackId="1" startPc="268445086"/>
     </localVars>
     <annotations/>
+    <dataEntryOffsetMappings>
+        <dataEntry offset="95" parentId="" symbolId="globals" type="module"/>
+        <dataEntry offset="270" parentId="globals" symbolId="AutopilotMenuDelegate" type="class"/>
+        <dataEntry offset="333" parentId="globals" symbolId="VesselModel" type="class"/>
+        <dataEntry offset="828" parentId="globals" symbolId="VesselDataViewDelegate" type="class"/>
+        <dataEntry offset="883" parentId="globals" symbolId="VesselDataView" type="class"/>
+        <dataEntry offset="986" parentId="globals" symbolId="Utilities" type="module"/>
+        <dataEntry offset="1089" parentId="globals" symbolId="Rez" type="module"/>
+        <dataEntry offset="1168" parentId="Rez" symbolId="Drawables" type="module"/>
+        <dataEntry offset="1207" parentId="Rez" symbolId="Menus" type="module"/>
+        <dataEntry offset="1238" parentId="Rez" symbolId="Fonts" type="module"/>
+        <dataEntry offset="1269" parentId="Rez" symbolId="Layouts" type="module"/>
+        <dataEntry offset="1316" parentId="Rez" symbolId="JsonData" type="module"/>
+        <dataEntry offset="1347" parentId="Rez" symbolId="Strings" type="module"/>
+        <dataEntry offset="1410" parentId="globals" symbolId="VesselConnectApp" type="class"/>
+        <dataEntry offset="1489" parentId="globals" symbolId="AutopilotDelegate" type="class"/>
+        <dataEntry offset="1560" parentId="globals" symbolId="AutopilotView" type="class"/>
+    </dataEntryOffsetMappings>
     <functions>
         <functionEntry accessMode="public" name="initialize" parent="VesselModel">
             <documentation/>
@@ -903,33 +915,11 @@
         </functionEntry>
         <functionEntry accessMode="public" name="Testlayout" parent="Layouts">
             <param id="dc"/>
-            <documentation>
-                <![CDATA[<div class="description"> Draw the layout<br/> param The context<br/></div>]]>
-            </documentation>
+            <documentation/>
         </functionEntry>
         <functionEntry accessMode="public" name="Anotherlayout" parent="Layouts">
             <param id="dc"/>
-            <documentation>
-                <![CDATA[<div class="description"> Draw the layout<br/> param The context<br/></div>]]>
-            </documentation>
+            <documentation/>
         </functionEntry>
     </functions>
-    <dataEntryOffsetMappings>
-        <dataEntry offset="95" parentId="" symbolId="globals" type="module"/>
-        <dataEntry offset="310" parentId="globals" symbolId="AutopilotMenuDelegate" type="class"/>
-        <dataEntry offset="373" parentId="globals" symbolId="VesselModel" type="class"/>
-        <dataEntry offset="868" parentId="globals" symbolId="VesselDataViewDelegate" type="class"/>
-        <dataEntry offset="923" parentId="globals" symbolId="VesselDataView" type="class"/>
-        <dataEntry offset="1026" parentId="globals" symbolId="Utilities" type="module"/>
-        <dataEntry offset="1129" parentId="globals" symbolId="Rez" type="module"/>
-        <dataEntry offset="1208" parentId="Rez" symbolId="Drawables" type="module"/>
-        <dataEntry offset="1247" parentId="Rez" symbolId="Menus" type="module"/>
-        <dataEntry offset="1278" parentId="Rez" symbolId="Fonts" type="module"/>
-        <dataEntry offset="1309" parentId="Rez" symbolId="JsonData" type="module"/>
-        <dataEntry offset="1340" parentId="Rez" symbolId="Layouts" type="module"/>
-        <dataEntry offset="1387" parentId="Rez" symbolId="Strings" type="module"/>
-        <dataEntry offset="1450" parentId="globals" symbolId="VesselConnectApp" type="class"/>
-        <dataEntry offset="1529" parentId="globals" symbolId="AutopilotDelegate" type="class"/>
-        <dataEntry offset="1600" parentId="globals" symbolId="AutopilotView" type="class"/>
-    </dataEntryOffsetMappings>
 </debugInfo>
