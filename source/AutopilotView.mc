@@ -241,7 +241,7 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
 			WatchUi.requestUpdate();
 			vessel.startUpdatingData();
 			
-			return;
+			return false;
 		}
 
 		var standbyItem = new WatchUi.MenuItem("Standby", null, AP_STATE_STANDBY, null);

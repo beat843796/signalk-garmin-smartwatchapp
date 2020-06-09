@@ -67,7 +67,7 @@ class VesselModel {
     
  	function configureSignalK() {
  	
- 		baseURL = "https://0.0.0.0:3443"; //Application.Properties.getValue("baseurl_prop"); // seatalk.defectradar.com
+ 		baseURL = "http://192.168.1.4:3000"; //Application.Properties.getValue("baseurl_prop"); // seatalk.defectradar.com
         username = "garmin"; //Application.Properties.getValue("username_prop");
         password = "garmin123"; //Application.Properties.getValue("password_prop");
         
