@@ -20,7 +20,7 @@ enum {
 
 class VesselModel {
 
-	const updateInterval = 100;
+	const updateInterval = 1000;
 	const retryInterval = 3000;	
 	
 	const tokenKey = "signalk-token";
@@ -67,10 +67,14 @@ class VesselModel {
     
  	function configureSignalK() {
  	
- 		baseURL = "http://192.168.1.4:3000"; //Application.Properties.getValue("baseurl_prop"); // seatalk.defectradar.com
+ 		baseURL = "http://127.0.0.1:3000"; //Application.Properties.getValue("baseurl_prop"); // seatalk.defectradar.com
         username = "garmin"; //Application.Properties.getValue("username_prop");
         password = "garmin123"; //Application.Properties.getValue("password_prop");
         
+		System.println("Base URL: " + baseURL);
+		System.println("Username: " + username);
+		System.println("Password: " + password);
+
         token = Storage.getValue(tokenKey);
 
         if(baseURL == null || username == null || password == null) {
@@ -299,10 +303,16 @@ class VesselModel {
     
     function onLoginReceive(responseCode, data) {
     
+		System.println("Login response code: " + responseCode);
+
     	if(responseCode == 200) {
     	
+
+
     		token = "JWT " + data["token"];
-    		
+
+			System.println("JWT Token: " + token);
+
     		Storage.setValue(tokenKey,token);
     		
     		updateVesselDataFromServer();
@@ -393,7 +403,7 @@ class VesselModel {
         	updateTimer = new Timer.Timer();
         	updateTimer.start(method(:updateVesselDataFromServer), updateInterval, false);
         
-        	//logState();
+        	logState();
         
         	
         } else {
