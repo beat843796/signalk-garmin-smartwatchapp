@@ -21,7 +21,6 @@ using Toybox.Application;
 using Toybox.Timer;
 using Toybox.Communications;
 using Toybox.Attention;
-using Toybox.Cryptography;
 using Toybox.Lang;
 using Toybox.WatchUi;
 
@@ -29,36 +28,8 @@ using Toybox.Application.Storage;
 
 using Utilities as Utils;
 
-/*
- * Autopilot modes — used as menu-item IDs and as the "value" sent to the
- * raymarine-autopilot plugin. Values are stable; do not renumber.
- */
-enum {
-   AP_STATE_STANDBY = 0,
-   AP_STATE_AUTO = 1,
-   AP_STATE_WIND = 2,
-   AP_STATE_TRACK = 3,
-   AP_STATE_NOT_SUPPORTED = 4,
-}
-
-/*
- * Auth / config state machine. Transitions:
- *   NO_URL        -> NEEDS_REQUEST (user sets baseurl_prop in Garmin Connect)
- *   NEEDS_REQUEST -> PENDING       (user taps the request button)
- *   PENDING       -> CONNECTED     (poll returns COMPLETED/APPROVED)
- *   PENDING       -> DENIED        (poll returns COMPLETED/DENIED)
- *   CONNECTED     -> NEEDS_REQUEST (401 from data endpoint — token revoked)
- *   DENIED        -> NEEDS_REQUEST (user taps Reset — fresh clientId)
- *   any           -> NO_URL        (user clears baseurl_prop)
- */
-enum {
-   AUTH_NO_URL = -1,
-   AUTH_NEEDS_REQUEST = 0,
-   AUTH_PENDING = 1,
-   AUTH_CONNECTED = 2,
-   AUTH_DENIED = 3,
-   AUTH_ERROR = 4,
-}
+// AUTH_* and AP_STATE_* enums now live in Constants.mc so views can
+// reference them without going through VesselModel's namespace.
 
 class VesselModel {
 
@@ -199,47 +170,18 @@ asdasdasd
          * Settings panel). No default: SignalK servers live on local boat
          * networks (Raspberry Pi on a yacht LAN, etc.), so a hardcoded
          * localhost default would be misleading for real users.
+         *
+         * Sanitisation (null/empty/trailing-slash) and state derivation
+         * live in Utilities so they can be unit-tested separately.
          */
-        var configured = Application.Properties.getValue("baseurl_prop");
-        if (configured == null || !(configured instanceof Lang.String) || configured.length() == 0) {
-            baseURL = null;
-        } else {
-            /*
-             * Trim any accidental trailing slash so URL composition below
-             * (baseURL + "/signalk/...") stays canonical.
-             */
-            if (configured.substring(configured.length() - 1, configured.length()).equals("/")) {
-                configured = configured.substring(0, configured.length() - 1);
-            }
-            baseURL = configured;
-        }
+        baseURL = Utils.normalizeBaseUrl(Application.Properties.getValue("baseurl_prop"));
         logDebug("Base URL: " + baseURL);
 
         token = Storage.getValue(StorageKeys.TOKEN);
         clientId = Storage.getValue(StorageKeys.CLIENT_ID);
         accessRequestHref = Storage.getValue(StorageKeys.ACCESS_HREF);
 
-        // Derive initial auth state.
-        if (baseURL == null) {
-            /*
-             * Nothing we can do until the user configures a server URL.
-             * Persisted token / href stay intact so that once a URL is
-             * entered, the user resumes where they left off (assuming it's
-             * the same server — otherwise the first HTTP call will 401
-             * and the normal flow bounces back to NEEDS_REQUEST).
-             */
-            authState = AUTH_NO_URL;
-        } else if (token != null) {
-            authState = AUTH_CONNECTED;
-        } else if (accessRequestHref != null) {
-            /*
-             * Restart mid-pending: we submitted a request last session but
-             * never got approved. Resume polling the same href.
-             */
-            authState = AUTH_PENDING;
-        } else {
-            authState = AUTH_NEEDS_REQUEST;
-        }
+        authState = Utils.deriveInitialAuthState(baseURL, token, accessRequestHref);
 
         resetVesselData();
     }
@@ -297,30 +239,27 @@ asdasdasd
     }
 
     function getSpeedOverGroundKnotsString() {
-        return Utils.meterPerSecondToKnots(speedOverGround).format("%.1f");
+        return Utils.formatSpeedKnots(speedOverGround);
     }
 
     function getApparentWindSpeedKnotsString() {
-        return Utils.meterPerSecondToKnots(apparentWindSpeed).format("%.1f");
+        return Utils.formatSpeedKnots(apparentWindSpeed);
     }
 
     function getTrueWindSpeedKnotsString() {
-        return Utils.meterPerSecondToKnots(trueWindSpeed).format("%.1f");
+        return Utils.formatSpeedKnots(trueWindSpeed);
     }
 
     function getDepthBelowTranscuderMeterString() {
-        if (depthBelowTranscuder > 500.0d) {
-            return "---";
-        }
-        return depthBelowTranscuder.format("%.1f") + "m";
+        return Utils.formatDepthMeters(depthBelowTranscuder);
     }
 
     function getTripTotalString() {
-        return Utils.metersToNauticalMiles(tripTotal).format("%.1f") + "nm";
+        return Utils.formatTripNauticalMiles(tripTotal);
     }
 
     function getWaterTemperatureString() {
-        return Utils.kelvinToCelsius(waterTemperature).format("%.1f") + "°C";
+        return Utils.formatTemperatureCelsius(waterTemperature);
     }
 
     function getAppearantWindAngleDegreeString() {
@@ -398,7 +337,7 @@ asdasdasd
         if (clientId != null) {
             return clientId;
         }
-        clientId = generateUuidV4();
+        clientId = Utils.generateUuidV4();
         Storage.setValue(StorageKeys.CLIENT_ID, clientId);
         logDebug("Generated new clientId: " + clientId);
         return clientId;
@@ -1104,36 +1043,8 @@ asdasdasd
         retryTimer.start(method(:startUpdatingData), retryInterval, false);
     }
 
-    /*
-     * //////////////////////////////////////////////////////
-     * ////////////////// UUID v4 HELPER ////////////////////
-     * //////////////////////////////////////////////////////
-     */
-
-    /*
-     * Generates a RFC 4122 version-4 UUID as a lowercase hex string with
-     * dashes, e.g. "550e8400-e29b-41d4-a716-446655440000". Uses the CIQ
-     * cryptographic RNG for the 16 random bytes.
-     */
-    function generateUuidV4() as Lang.String {
-        var bytes = Cryptography.randomBytes(16);
-
-        // Force the version and variant bits per RFC 4122 §4.4.
-        bytes[6] = (bytes[6] & 0x0F) | 0x40;  // version 4
-        bytes[8] = (bytes[8] & 0x3F) | 0x80;  // variant 10xxxxxx
-
-        var hex = "0123456789abcdef";
-        var out = "";
-        for (var i = 0; i < 16; i++) {
-            if (i == 4 || i == 6 || i == 8 || i == 10) {
-                out += "-";
-            }
-            var b = bytes[i] & 0xFF;
-            out += hex.substring((b >> 4) & 0x0F, ((b >> 4) & 0x0F) + 1);
-            out += hex.substring(b & 0x0F, (b & 0x0F) + 1);
-        }
-        return out;
-    }
+    // UUID v4 generator moved to Utilities.generateUuidV4 so it's
+    // unit-testable without constructing a VesselModel.
 
     /*
      * //////////////////////////////////////////////////////

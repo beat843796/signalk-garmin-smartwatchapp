@@ -8,11 +8,16 @@
 
 using Toybox.Math;
 using Toybox.Graphics;
+using Toybox.Lang;
+using Toybox.Cryptography;
 
 module Utilities {
 
     // Exact m/s → knots factor: 1 m/s = 3600/1852 kn = 1.943844 kn.
     const FACTOR_MS_TO_KNOTS = 1.943844d;
+    // Depth readings above this threshold are rendered as "---" (sentinel
+    // for invalid / no reading). Matches the historical VesselModel rule.
+    const MAX_VALID_DEPTH_M = 500.0d;
 
     function meterPerSecondToKnots(metersPerSecond) {
         return metersPerSecond * FACTOR_MS_TO_KNOTS;
@@ -36,6 +41,111 @@ module Utilities {
 
     function kelvinToCelsius(kelvin) {
         return kelvin - 273.15d;
+    }
+
+    /*
+     * ================== Display formatters ==================
+     * Pure, side-effect-free string formatters used by VesselModel's
+     * getters. Extracted so they can be unit-tested without constructing
+     * a VesselModel. The naming convention: `format{Quantity}{Unit}`.
+     */
+
+    // m/s → "1.2" (knots, one decimal, no unit suffix).
+    function formatSpeedKnots(metersPerSecond) {
+        return meterPerSecondToKnots(metersPerSecond).format("%.1f");
+    }
+
+    /*
+     * Depth in meters → "1.5m" below MAX_VALID_DEPTH_M; "---" at/above
+     * that threshold. SignalK transducers report a large sentinel value
+     * when they can't get a bottom echo; we hide that rather than
+     * rendering nonsense.
+     */
+    function formatDepthMeters(meters) {
+        if (meters >= MAX_VALID_DEPTH_M) {
+            return "---";
+        }
+        return meters.format("%.1f") + "m";
+    }
+
+    // Kelvin → "23.4°C".
+    function formatTemperatureCelsius(kelvin) {
+        return kelvinToCelsius(kelvin).format("%.1f") + "°C";
+    }
+
+    // Meters → "5.3nm".
+    function formatTripNauticalMiles(meters) {
+        return metersToNauticalMiles(meters).format("%.1f") + "nm";
+    }
+
+    /*
+     * ================== Configuration helpers ==================
+     */
+
+    /*
+     * Base-URL sanitiser. Returns null for null / non-string / empty
+     * input; otherwise strips a single trailing slash so URL composition
+     * (`baseURL + "/signalk/..."`) stays canonical. Extracted from
+     * VesselModel.configureSignalK to enable unit testing.
+     */
+    function normalizeBaseUrl(raw) {
+        if (raw == null || !(raw instanceof Lang.String) || raw.length() == 0) {
+            return null;
+        }
+        if (raw.substring(raw.length() - 1, raw.length()).equals("/")) {
+            return raw.substring(0, raw.length() - 1);
+        }
+        return raw;
+    }
+
+    /*
+     * Computes the initial AUTH_* state from persisted inputs. Pure so
+     * the 8 input combinations can be unit-tested without setting up
+     * Application.Storage. Precedence: URL missing > token present >
+     * pending href > nothing.
+     */
+    function deriveInitialAuthState(baseURL, token, accessRequestHref) {
+        if (baseURL == null) {
+            return AUTH_NO_URL;
+        }
+        if (token != null) {
+            return AUTH_CONNECTED;
+        }
+        if (accessRequestHref != null) {
+            return AUTH_PENDING;
+        }
+        return AUTH_NEEDS_REQUEST;
+    }
+
+    /*
+     * ================== UUID v4 ==================
+     */
+
+    /*
+     * Generates a RFC 4122 version-4 UUID as a lowercase hex string with
+     * dashes, e.g. "550e8400-e29b-41d4-a716-446655440000". Uses the CIQ
+     * cryptographic RNG for the 16 random bytes. Moved here from
+     * VesselModel so the format can be validated with unit tests without
+     * wiring up a full model.
+     */
+    function generateUuidV4() {
+        var bytes = Cryptography.randomBytes(16);
+
+        // Force the version and variant bits per RFC 4122 §4.4.
+        bytes[6] = (bytes[6] & 0x0F) | 0x40;  // version 4
+        bytes[8] = (bytes[8] & 0x3F) | 0x80;  // variant 10xxxxxx
+
+        var hex = "0123456789abcdef";
+        var out = "";
+        for (var i = 0; i < 16; i++) {
+            if (i == 4 || i == 6 || i == 8 || i == 10) {
+                out += "-";
+            }
+            var b = bytes[i] & 0xFF;
+            out += hex.substring((b >> 4) & 0x0F, ((b >> 4) & 0x0F) + 1);
+            out += hex.substring(b & 0x0F, (b & 0x0F) + 1);
+        }
+        return out;
     }
 
     /*

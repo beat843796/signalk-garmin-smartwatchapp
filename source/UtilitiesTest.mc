@@ -143,3 +143,167 @@ function test_errorMessage_unmappedCode_returnsCodeItself(logger) {
     logger.debug("99999 -> " + actual);
     return actual == 99999;
 }
+
+
+/*
+ * ================== UUID v4 format ==================
+ * Catches regressions where the version / variant bit-forcing or the
+ * dash placement breaks. Values are random so we validate shape, not
+ * content.
+ */
+
+(:test)
+function test_generateUuidV4_length_is_36(logger) {
+    var uuid = Utils.generateUuidV4();
+    logger.debug("uuid=" + uuid);
+    return uuid.length() == 36;
+}
+
+(:test)
+function test_generateUuidV4_dashes_at_8_13_18_23(logger) {
+    var uuid = Utils.generateUuidV4();
+    return uuid.substring(8, 9).equals("-")
+        && uuid.substring(13, 14).equals("-")
+        && uuid.substring(18, 19).equals("-")
+        && uuid.substring(23, 24).equals("-");
+}
+
+(:test)
+function test_generateUuidV4_versionNibble_is_4(logger) {
+    // Per RFC 4122: the 13th character (index 14) must be '4' for v4.
+    var uuid = Utils.generateUuidV4();
+    logger.debug("version nibble = " + uuid.substring(14, 15));
+    return uuid.substring(14, 15).equals("4");
+}
+
+(:test)
+function test_generateUuidV4_variantNibble_is_8_9_a_or_b(logger) {
+    // Variant bits: 10xx → the nibble at index 19 must be one of 8/9/a/b.
+    var uuid = Utils.generateUuidV4();
+    var nibble = uuid.substring(19, 20);
+    logger.debug("variant nibble = " + nibble);
+    return nibble.equals("8") || nibble.equals("9")
+        || nibble.equals("a") || nibble.equals("b");
+}
+
+
+/*
+ * ================== Display formatters ==================
+ */
+
+(:test)
+function test_formatSpeedKnots_zero_isZero(logger) {
+    return Utils.formatSpeedKnots(0.0d).equals("0.0");
+}
+
+(:test)
+function test_formatSpeedKnots_oneMps(logger) {
+    // 1 m/s = 1.943844 kn → formatted with 1 decimal = "1.9".
+    return Utils.formatSpeedKnots(1.0d).equals("1.9");
+}
+
+(:test)
+function test_formatDepth_zero_isZeroPoint0m(logger) {
+    return Utils.formatDepthMeters(0.0d).equals("0.0m");
+}
+
+(:test)
+function test_formatDepth_underSentinel_formatted(logger) {
+    return Utils.formatDepthMeters(12.34d).equals("12.3m");
+}
+
+(:test)
+function test_formatDepth_exactlyMaxValid_isTripleDash(logger) {
+    // Boundary: 500.0 triggers the sentinel (>= MAX_VALID_DEPTH_M).
+    return Utils.formatDepthMeters(500.0d).equals("---");
+}
+
+(:test)
+function test_formatDepth_aboveSentinel_isTripleDash(logger) {
+    return Utils.formatDepthMeters(999.0d).equals("---");
+}
+
+(:test)
+function test_formatTemperature_freezingPoint(logger) {
+    return Utils.formatTemperatureCelsius(273.15d).equals("0.0°C");
+}
+
+(:test)
+function test_formatTemperature_boilingPoint(logger) {
+    return Utils.formatTemperatureCelsius(373.15d).equals("100.0°C");
+}
+
+(:test)
+function test_formatTrip_oneNauticalMile(logger) {
+    // 1852 m is effectively 1 nm (historical factor 0.00053995680 gives 1.0).
+    var actual = Utils.formatTripNauticalMiles(1852.0d);
+    logger.debug("1852m -> " + actual);
+    return actual.equals("1.0nm");
+}
+
+(:test)
+function test_formatTrip_zero_isZero(logger) {
+    return Utils.formatTripNauticalMiles(0.0d).equals("0.0nm");
+}
+
+
+/*
+ * ================== URL normalisation ==================
+ */
+
+(:test)
+function test_normalizeBaseUrl_null_returnsNull(logger) {
+    return Utils.normalizeBaseUrl(null) == null;
+}
+
+(:test)
+function test_normalizeBaseUrl_empty_returnsNull(logger) {
+    return Utils.normalizeBaseUrl("") == null;
+}
+
+(:test)
+function test_normalizeBaseUrl_trailingSlash_stripped(logger) {
+    var actual = Utils.normalizeBaseUrl("http://signalk.local:3000/");
+    logger.debug("normalized -> " + actual);
+    return actual.equals("http://signalk.local:3000");
+}
+
+(:test)
+function test_normalizeBaseUrl_noTrailingSlash_unchanged(logger) {
+    return Utils.normalizeBaseUrl("http://127.0.0.1:3000")
+        .equals("http://127.0.0.1:3000");
+}
+
+
+/*
+ * ================== deriveInitialAuthState ==================
+ * Pure function from (baseURL, token, href) -> AUTH_* state. Hits every
+ * reachable branch of the precedence rules.
+ */
+
+(:test)
+function test_deriveInitialAuthState_noUrl_isNoUrl(logger) {
+    // No URL wins over everything else.
+    return Utils.deriveInitialAuthState(null, "Bearer xyz", "/href") == AUTH_NO_URL;
+}
+
+(:test)
+function test_deriveInitialAuthState_url_noToken_noHref_isNeedsRequest(logger) {
+    return Utils.deriveInitialAuthState("http://x", null, null) == AUTH_NEEDS_REQUEST;
+}
+
+(:test)
+function test_deriveInitialAuthState_url_hasHref_noToken_isPending(logger) {
+    return Utils.deriveInitialAuthState("http://x", null, "/signalk/v1/requests/abc") == AUTH_PENDING;
+}
+
+(:test)
+function test_deriveInitialAuthState_url_hasToken_isConnected(logger) {
+    return Utils.deriveInitialAuthState("http://x", "Bearer xyz", null) == AUTH_CONNECTED;
+}
+
+(:test)
+function test_deriveInitialAuthState_url_hasTokenAndHref_tokenWins(logger) {
+    // Token takes precedence over a lingering pending href.
+    return Utils.deriveInitialAuthState("http://x", "Bearer xyz", "/href") == AUTH_CONNECTED;
+}
