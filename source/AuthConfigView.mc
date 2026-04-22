@@ -1,35 +1,41 @@
-// AuthConfigView.mc
-// Single view for the device-access-request lifecycle. Renders differently
-// based on `vessel.authState`:
-//
-//   NEEDS_REQUEST   "SignalK"     Tap to request access      [FRESH]
-//   PENDING         "Waiting"     for approval on admin      [PENDING]
-//   DENIED          "Denied"      Tap to try again           [DENIED]
-//   CONNECTED       "Granted"     Tap to continue            [CONNECTED] + ✓
-//
-// Benefits of unifying:
-//   - DENIED → NEEDS_REQUEST → request took two taps; now one (select in
-//     DENIED does reset + request atomically).
-//   - Approval lands on an acknowledgement screen instead of teleporting
-//     the user straight to live data — one more tap to commit, but the
-//     grant moment is visible.
-//   - State transitions within the auth flow don't require switchToView;
-//     the same view re-renders with new content when VesselModel calls
-//     WatchUi.requestUpdate().
-//
-// Button behavior (delegate below):
-//   select  - NEEDS_REQUEST: fire request
-//             PENDING:       no-op
-//             DENIED:        reset + fire request in one action
-//             CONNECTED:     switch to VesselDataView + start data poll
-//   menu    - PENDING only: open Menu2 with "Reset request" (escape hatch
-//             to abandon a pending submission; the old request stays
-//             orphaned on the server until admin denies it — no
-//             client-side cancel endpoint exists in SignalK).
+/*
+ * AuthConfigView.mc
+ * Single view for the device-access-request lifecycle. Renders differently
+ * based on `vessel.authState`:
+ *
+ *   NO_URL          "Setup"       Open Garmin Connect app    [NOT SET]
+ *   NEEDS_REQUEST   "SignalK"     Tap to request              [FRESH]
+ *                                 access from
+ *                                 <server url>
+ *   PENDING         "Waiting"     for approval on admin      [PENDING]
+ *   DENIED          "Denied"      Tap to try again           [DENIED]
+ *   CONNECTED       "Granted"     Tap to continue            [CONNECTED] + ✓
+ *
+ * Benefits of unifying:
+ *   - DENIED → NEEDS_REQUEST → request took two taps; now one (select in
+ *     DENIED does reset + request atomically).
+ *   - Approval lands on an acknowledgement screen instead of teleporting
+ *     the user straight to live data — one more tap to commit, but the
+ *     grant moment is visible.
+ *   - State transitions within the auth flow don't require switchToView;
+ *     the same view re-renders with new content when VesselModel calls
+ *     WatchUi.requestUpdate().
+ *
+ * Button behavior (delegate below):
+ *   select  - NEEDS_REQUEST: fire request
+ *             PENDING:       no-op
+ *             DENIED:        reset + fire request in one action
+ *             CONNECTED:     switch to VesselDataView + start data poll
+ *   menu    - PENDING only: open Menu2 with "Reset request" (escape hatch
+ *             to abandon a pending submission; the old request stays
+ *             orphaned on the server until admin denies it — no
+ *             client-side cancel endpoint exists in SignalK).
+ */
 
 using Toybox.WatchUi;
 using Toybox.Graphics;
 using Toybox.Lang;
+using Toybox.System;
 
 using Utilities as Utils;
 
@@ -42,28 +48,65 @@ class AuthConfigView extends WatchUi.View {
     function onUpdate(dc) {
         View.onUpdate(dc);
 
+        /*
+         * Only render the spinner overlay once the request has been in
+         * flight for longer than VesselModel.spinnerShowAfterMs — fast
+         * responses complete before the spinner is shown, avoiding a
+         * flash of the loading screen.
+         */
+        if (vessel.isSpinnerVisible()) {
+            drawRequestingOverlay(dc);
+            return;
+        }
+
         var state = vessel.authState;
 
-        if (state == AUTH_PENDING) {
+        if (state == AUTH_NO_URL) {
+            Utils.drawStatusScreen(dc, "Setup", Graphics.COLOR_DK_RED, "Set SignalK URL\nin Garmin Connect\napp settings");
+            //drawStateChip(dc, "NOT SET", Graphics.COLOR_DK_RED);
+        } else if (state == AUTH_PENDING) {
             Utils.drawStatusScreen(dc, "Waiting", Graphics.COLOR_DK_BLUE, "for approval on\nSignalK admin");
             drawDeviceLabel(dc);
-            drawStateChip(dc, "PENDING", Graphics.COLOR_DK_BLUE);
+            //drawStateChip(dc, "PENDING", Graphics.COLOR_DK_BLUE);
         } else if (state == AUTH_DENIED) {
             Utils.drawStatusScreen(dc, "Denied", Graphics.COLOR_DK_RED, "Tap to try again");
-            drawStateChip(dc, "DENIED", Graphics.COLOR_DK_RED);
+            //drawStateChip(dc, "DENIED", Graphics.COLOR_DK_RED);
         } else if (state == AUTH_CONNECTED) {
             Utils.drawStatusScreen(dc, "Granted", Graphics.COLOR_DK_GREEN, "Tap to continue");
             drawCheckmark(dc);
-            drawStateChip(dc, "CONNECTED", Graphics.COLOR_DK_GREEN);
+            //drawStateChip(dc, "CONNECTED", Graphics.COLOR_DK_GREEN);
         } else {
             // NEEDS_REQUEST / ERROR / anything else not explicitly handled.
-            Utils.drawStatusScreen(dc, "SignalK", Graphics.COLOR_DK_BLUE, "Tap to request\naccess from\nyour server");
-            drawStateChip(dc, "FRESH", Graphics.COLOR_DK_GRAY);
+            Utils.drawStatusScreen(dc, "SignalK", Graphics.COLOR_DK_BLUE, "Tap to request\naccess from");
+            drawServerUrl(dc);
+           // drawStateChip(dc, "FRESH", Graphics.COLOR_DK_GRAY);
         }
     }
 
-    // Small device-identifier line so the user knows which row to approve
-    // in the SignalK admin UI. Only meaningful in PENDING state.
+    /*
+     * Shows the configured SignalK URL in small text so the user knows
+     * which server the tap will hit. Only meaningful in NEEDS_REQUEST
+     * state; sits at the same y-offset as PendingView's device label so
+     * the layout stays consistent across states.
+     */
+    function drawServerUrl(dc) {
+        var url = vessel.getBaseURL();
+        if (url == null) {
+            return;
+        }
+        dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_WHITE);
+        dc.drawText(
+            dc.getWidth() / 2,
+            dc.getHeight() - 50,
+            Graphics.FONT_SYSTEM_XTINY,
+            url,
+            Graphics.TEXT_JUSTIFY_CENTER);
+    }
+
+    /*
+     * Small device-identifier line so the user knows which row to approve
+     * in the SignalK admin UI. Only meaningful in PENDING state.
+     */
     function drawDeviceLabel(dc) {
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_WHITE);
         dc.drawText(
@@ -74,21 +117,50 @@ class AuthConfigView extends WatchUi.View {
             Graphics.TEXT_JUSTIFY_CENTER);
     }
 
-    // Current-state indicator near the bottom. Always visible so the user
-    // has a persistent cue to which phase they're in.
-    function drawStateChip(dc, label, color) {
-        dc.setColor(color, Graphics.COLOR_WHITE);
+ 
+
+    /*
+     * "Requesting..." screen shown while the access-request POST is in
+     * flight. Connect IQ doesn't ship an indeterminate-progress widget, so
+     * we roll our own: a 90° arc rotating around a central point.
+     * VesselModel drives redraws at ~150 ms cadence via its spinner timer.
+     */
+    function drawRequestingOverlay(dc) {
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
+        dc.clear();
+
+        var w = dc.getWidth();
+        var h = dc.getHeight();
+        var cx = w / 2;
+        var cy = h / 2;
+        var r = (h * 0.05).toNumber();
+
+        /*
+         * Rotate one full turn per second. System.getTimer() returns ms
+         * since boot; we turn that into a 0..359 angle.
+         */
+        var degrees = (System.getTimer() / 3) % 360;
+        var start = 360 - degrees;
+        var end = (start - 90 + 360) % 360;
+
+        dc.setColor(Graphics.COLOR_DK_BLUE, Graphics.COLOR_WHITE);
+        dc.setPenWidth(5);
+        dc.drawArc(cx, cy, r, Graphics.ARC_CLOCKWISE, start, end);
+
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
         dc.drawText(
-            dc.getWidth() / 2,
-            dc.getHeight() - 25,
-            Graphics.FONT_SYSTEM_XTINY,
-            label,
-            Graphics.TEXT_JUSTIFY_CENTER);
+            w / 2,
+            h * 0.65,
+            Graphics.FONT_SYSTEM_TINY,
+            "Requesting...",
+            (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
     }
 
-    // Draws a green check mark in the top area of the screen (above the
-    // "Granted" title). Built from two straight strokes so we don't rely on
-    // a font containing the Unicode check glyph.
+    /*
+     * Draws a green check mark in the top area of the screen (above the
+     * "Granted" title). Built from two straight strokes so we don't rely on
+     * a font containing the Unicode check glyph.
+     */
     function drawCheckmark(dc) {
         var w = dc.getWidth();
         var h = dc.getHeight();
@@ -118,13 +190,21 @@ class AuthConfigViewDelegate extends WatchUi.BehaviorDelegate {
             vessel.startUpdatingData();
             WatchUi.switchToView(new VesselDataView(), new VesselDataViewDelegate(), WatchUi.SLIDE_LEFT);
         } else if (state == AUTH_DENIED) {
-            // Single-tap recovery: wipe the burned clientId, generate a
-            // fresh one, fire the new request in one go.
+            /*
+             * Single-tap recovery: wipe the burned clientId, generate a
+             * fresh one, fire the new request in one go.
+             */
             vessel.resetAccessRequest();
             vessel.requestAccess();
-        } else if (state != AUTH_PENDING) {
-            // NEEDS_REQUEST (and any residual states). PENDING is a no-op
-            // because the user can't progress further without admin action.
+        } else if (state == AUTH_NO_URL || state == AUTH_PENDING) {
+            /*
+             * NO_URL: nothing the user can do on the watch — must set URL
+             *   in the phone's Garmin Connect app.
+             * PENDING: can't progress further without admin action.
+             * Both are no-ops on select.
+             */
+        } else {
+            // NEEDS_REQUEST / ERROR / residual states.
             vessel.requestAccess();
         }
         return true;

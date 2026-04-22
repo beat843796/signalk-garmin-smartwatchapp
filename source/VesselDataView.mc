@@ -1,12 +1,14 @@
-// VesselDataView.mc
-// Main "connected" screen: three-cell layout with SOG on top, AWA/AWS in the
-// middle, depth at the bottom, plus an orange wind-arrow and port/starboard
-// arc indicator. The enter/select key pushes AutopilotView.
-//
-// Errors (transient network, auth revocation, etc.) are handled globally by
-// VesselModel — it pushes ErrorView on top of this view for transient
-// failures, and switches to AuthConfigView on auth revocation. This view
-// only has to render the happy-path dashboard.
+/*
+ * VesselDataView.mc
+ * Main "connected" screen: three-cell layout with SOG on top, AWA/AWS in the
+ * middle, depth at the bottom, plus an orange wind-arrow and port/starboard
+ * arc indicator. The enter/select key pushes AutopilotView.
+ *
+ * Errors (transient network, auth revocation, etc.) are handled globally by
+ * VesselModel — it pushes ErrorView on top of this view for transient
+ * failures, and switches to AuthConfigView on auth revocation. This view
+ * only has to render the happy-path dashboard.
+ */
 
 using Toybox.WatchUi;
 using Toybox.Graphics;
@@ -38,9 +40,11 @@ class VesselDataView extends WatchUi.View {
 
         drawValues(dc);
 
-        // Connection dot — green while data is flowing. When an error
-        // occurs, VesselModel pushes the full-screen ErrorView on top of
-        // this one, so the dot only shows "healthy" states here.
+        /*
+         * Connection dot — green while data is flowing. When an error
+         * occurs, VesselModel pushes the full-screen ErrorView on top of
+         * this one, so the dot only shows "healthy" states here.
+         */
         dc.setColor(Graphics.COLOR_DK_GREEN, Graphics.COLOR_WHITE);
         dc.fillCircle(width/2, 3, 3);
     }
@@ -88,9 +92,11 @@ class VesselDataView extends WatchUi.View {
     }
 }
 
-// Input delegate for VesselDataView. Only the select/enter key is used; it
-// opens the AutopilotView (which has its own key bindings for heading
-// adjustment and the mode menu).
+/*
+ * Input delegate for VesselDataView. Only the select/enter key is used; it
+ * opens the AutopilotView (which has its own key bindings for heading
+ * adjustment and the mode menu).
+ */
 class VesselDataViewDelegate extends WatchUi.BehaviorDelegate {
 
     function initialize() {

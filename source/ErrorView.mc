@@ -1,13 +1,15 @@
-// ErrorView.mc
-// Full-screen error display. Pushed by VesselModel on any network error
-// regardless of which view is currently showing; popped automatically when
-// a later request succeeds (errorCode clears). The user can also pop it
-// manually with the back key — if the error is still active, the next
-// failed poll will push it again.
-//
-// Rendering matches the original drawError() layout from VesselDataView:
-// two horizontal dark-red lines dividing the screen into thirds, with the
-// Utilities.errorMessage(code) label centred in the middle band.
+/*
+ * ErrorView.mc
+ * Full-screen error display. Pushed by VesselModel on any network error
+ * regardless of which view is currently showing; popped automatically when
+ * a later request succeeds (errorCode clears). The user can also pop it
+ * manually with the back key — if the error is still active, the next
+ * failed poll will push it again.
+ *
+ * Rendering matches the original drawError() layout from VesselDataView:
+ * two horizontal dark-red lines dividing the screen into thirds, with the
+ * Utilities.errorMessage(code) label centred in the middle band.
+ */
 
 using Toybox.WatchUi;
 using Toybox.Graphics;
@@ -57,10 +59,12 @@ class ErrorView extends WatchUi.View {
     }
 }
 
-// Back key dismisses the error view. VesselModel's errorViewVisible flag is
-// cleared so a subsequent failed poll can re-push the view; if the user
-// just wants to read the error once, they can hit back and only see it
-// again when the error recurs.
+/*
+ * Back key dismisses the error view. VesselModel's errorViewVisible flag is
+ * cleared so a subsequent failed poll can re-push the view; if the user
+ * just wants to read the error once, they can hit back and only see it
+ * again when the error recurs.
+ */
 class ErrorViewDelegate extends WatchUi.BehaviorDelegate {
 
     function initialize() {

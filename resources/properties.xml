@@ -1,11 +1,11 @@
 <resources>
 
     <properties>
-        <property id="baseurl_prop" type="string">http://127.0.0.1:3000</property>
+        <property id="baseurl_prop" type="string"></property>
     </properties>
 
     <strings>
-       <string id="baseurl_title">SignalK URL</string>
+       <string id="baseurl_title">SignalK Server URL</string>
     </strings>
 
     <settings>

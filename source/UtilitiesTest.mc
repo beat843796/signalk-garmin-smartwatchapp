@@ -30,8 +30,10 @@ function test_mpsToKnots_tenMps(logger) {
 
 (:test)
 function test_degToRad_halfTurn_isPi(logger) {
-    // Tolerance 1e-9, not 1e-12: the implementation uses Math.PI (Float)
-    // multiplied against an Int argument, which won't hold Double precision.
+    /*
+     * Tolerance 1e-9, not 1e-12: the implementation uses Math.PI (Float)
+     * multiplied against an Int argument, which won't hold Double precision.
+     */
     var actual = Utils.degreesToRadians(180.0d);
     logger.debug("180 deg -> " + actual + " rad");
     return almostEqual(actual, Math.PI, 1.0e-9d);
@@ -70,9 +72,11 @@ function test_radToDeg_roundTrip(logger) {
 
 (:test)
 function test_metersToNm_oneNauticalMile(logger) {
-    // 1 nm = 1852 m. The code's factor (0.00053995680) has a tiny error:
-    // 1852 * 0.00053695680 would be the "pure" value, but 1852 * 0.00053995680
-    // gives 0.9999985536. Pin the factor's actual behaviour.
+    /*
+     * 1 nm = 1852 m. The code's factor (0.00053995680) has a tiny error:
+     * 1852 * 0.00053695680 would be the "pure" value, but 1852 * 0.00053995680
+     * gives 0.9999985536. Pin the factor's actual behaviour.
+     */
     var actual = Utils.metersToNauticalMiles(1852.0d);
     logger.debug("1852 m -> " + actual + " nm");
     return almostEqual(actual, 1852.0d * 0.00053995680d, 1.0e-12d);
@@ -100,7 +104,7 @@ function test_kelvinToCelsius_boilingPoint(logger) {
 function test_errorMessage_http404_isSignalKServerNotFound(logger) {
     var msg = Utils.errorMessage(404);
     logger.debug("404 -> " + msg);
-    return msg.equals("SignalK Server\nNot\nFound");
+    return msg.equals("Server not\nfound");
 }
 
 (:test)
@@ -125,14 +129,16 @@ function test_errorMessage_bleMinus104_isPhoneConnectionUnavailable(logger) {
 
 (:test)
 function test_errorMessage_networkTimeout(logger) {
-    return Utils.errorMessage(-300).equals("NETWORK REQUEST\nTIMED OUT");
+    return Utils.errorMessage(-300).equals("Server not\nfound");
 }
 
 (:test)
 function test_errorMessage_unmappedCode_returnsCodeItself(logger) {
-    // Characterisation: when code is not in the table, errorMessage returns
-    // the code itself unchanged. Pins the existing behaviour so future
-    // refactors (e.g. returning null or "UNKNOWN") fail loudly.
+    /*
+     * Characterisation: when code is not in the table, errorMessage returns
+     * the code itself unchanged. Pins the existing behaviour so future
+     * refactors (e.g. returning null or "UNKNOWN") fail loudly.
+     */
     var actual = Utils.errorMessage(99999);
     logger.debug("99999 -> " + actual);
     return actual == 99999;

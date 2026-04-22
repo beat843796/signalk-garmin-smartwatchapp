@@ -1,20 +1,24 @@
-// VesselConnectApp.mc
-// App entry point. AppBase lifecycle hooks; picks the right initial view
-// based on auth state and exposes the glance view for the glance carousel.
-//
-// IMPORTANT: `vessel` is constructed lazily in getInitialView() — which is
-// the ONLY lifecycle hook guaranteed to run in the main-app slice. The
-// glance slice runs initialize() and onStart() too on some devices, and
-// `new VesselModel()` from those hooks crashes with "Class not available
-// to 'Glance'" because VesselModel isn't in the glance compile slice.
+/*
+ * VesselConnectApp.mc
+ * App entry point. AppBase lifecycle hooks; picks the right initial view
+ * based on auth state and exposes the glance view for the glance carousel.
+ *
+ * IMPORTANT: `vessel` is constructed lazily in getInitialView() — which is
+ * the ONLY lifecycle hook guaranteed to run in the main-app slice. The
+ * glance slice runs initialize() and onStart() too on some devices, and
+ * `new VesselModel()` from those hooks crashes with "Class not available
+ * to 'Glance'" because VesselModel isn't in the glance compile slice.
+ */
 
 using Toybox.Application;
 using Toybox.System;
 using Toybox.WatchUi;
 using Toybox.Lang;
 
-// Singleton SignalK model. Constructed lazily on first main-app getInitialView
-// call; stays null in glance context. Read by every main-app view.
+/*
+ * Singleton SignalK model. Constructed lazily on first main-app getInitialView
+ * call; stays null in glance context. Read by every main-app view.
+ */
 var vessel = null;
 
 class VesselConnectApp extends Application.AppBase {
@@ -24,9 +28,11 @@ class VesselConnectApp extends Application.AppBase {
         System.println("[App] initialize");
     }
 
-    // onStart runs in BOTH main-app and glance contexts on some devices, so
-    // we can't touch VesselModel here. Construction happens later in
-    // getInitialView (main-app only).
+    /*
+     * onStart runs in BOTH main-app and glance contexts on some devices, so
+     * we can't touch VesselModel here. Construction happens later in
+     * getInitialView (main-app only).
+     */
     function onStart(state) {
         System.println("[App] onStart");
     }
@@ -43,12 +49,20 @@ class VesselConnectApp extends Application.AppBase {
             vessel.stopUpdatingData();
             vessel.configureSignalK();
             vessel.startUpdatingData();
+            /*
+             * Nudge the currently-visible view so a URL change from "none"
+             * to "set" (or vice versa) is reflected immediately without
+             * waiting for the next natural redraw.
+             */
+            WatchUi.requestUpdate();
         }
     }
 
-    // Called only when the app launches as a full watch-app (not as a
-    // glance). Safe to construct VesselModel here because we know we're in
-    // the main-app compile slice.
+    /*
+     * Called only when the app launches as a full watch-app (not as a
+     * glance). Safe to construct VesselModel here because we know we're in
+     * the main-app compile slice.
+     */
     function getInitialView() {
         System.println("[App] getInitialView");
         if (vessel == null) {
@@ -61,14 +75,18 @@ class VesselConnectApp extends Application.AppBase {
         if (vessel.authState == AUTH_CONNECTED) {
             return [new VesselDataView(), new VesselDataViewDelegate()];
         }
-        // NEEDS_REQUEST / PENDING / DENIED / ERROR — all handled by the
-        // single AuthConfigView which renders per authState.
+        /*
+         * NEEDS_REQUEST / PENDING / DENIED / ERROR — all handled by the
+         * single AuthConfigView which renders per authState.
+         */
         return [new AuthConfigView(), new AuthConfigViewDelegate()];
     }
 
-    // Glance carousel entry — runs in the glance compile slice with a much
-    // smaller memory budget. Does not touch VesselModel; SignalKGlanceView
-    // reads last-known state directly from Application.Storage.
+    /*
+     * Glance carousel entry — runs in the glance compile slice with a much
+     * smaller memory budget. Does not touch VesselModel; SignalKGlanceView
+     * reads last-known state directly from Application.Storage.
+     */
     (:glance)
     function getGlanceView() {
         return [new SignalKGlanceView()];

@@ -1,17 +1,19 @@
-// SignalKGlanceView.mc
-// Glance-carousel tile shown on the watch's glance screen. Two rows:
-//   Row 1: connection state ("Connected" / "Waiting" / "Disconnected").
-//   Row 2: SOG / AWS / AP-state when the main app has cached values; blank
-//          otherwise.
-//
-// The (:glance) annotation restricts this class to the glance compile slice.
-// Glances get a much smaller memory budget than the full app and can't make
-// network requests, so this view reads cached values straight from
-// Application.Storage. The main app (VesselModel) writes a combined snapshot
-// there every few seconds while the user is interacting with it.
-//
-// Keys live in the StorageKeys module (see source/Constants.mc) so writer
-// and reader share the same names.
+/*
+ * SignalKGlanceView.mc
+ * Glance-carousel tile shown on the watch's glance screen. Two rows:
+ *   Row 1: connection state ("Connected" / "Waiting" / "Disconnected").
+ *   Row 2: SOG / AWS / AP-state when the main app has cached values; blank
+ *          otherwise.
+ *
+ * The (:glance) annotation restricts this class to the glance compile slice.
+ * Glances get a much smaller memory budget than the full app and can't make
+ * network requests, so this view reads cached values straight from
+ * Application.Storage. The main app (VesselModel) writes a combined snapshot
+ * there every few seconds while the user is interacting with it.
+ *
+ * Keys live in the StorageKeys module (see source/Constants.mc) so writer
+ * and reader share the same names.
+ */
 
 using Toybox.WatchUi;
 using Toybox.Graphics;
@@ -55,8 +57,10 @@ class SignalKGlanceView extends WatchUi.GlanceView {
             stateText,
             Graphics.TEXT_JUSTIFY_LEFT);
 
-        // Row 2: last-known data summary. Only shown if the main app ran
-        // recently enough to write a snapshot — otherwise blank.
+        /*
+         * Row 2: last-known data summary. Only shown if the main app ran
+         * recently enough to write a snapshot — otherwise blank.
+         */
         if (token != null) {
             var snapshot = Storage.getValue(StorageKeys.GLANCE_SNAPSHOT);
             if (snapshot instanceof Lang.Dictionary) {

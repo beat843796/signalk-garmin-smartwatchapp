@@ -1,13 +1,15 @@
-// AutopilotView.mc
-// Autopilot control screen. Pushed on top of VesselDataView when the user
-// presses the select/enter key. Shows current heading/target, a rudder-angle
-// bar, and the current AP state. Key bindings let the user adjust the target
-// heading (±1°/±10°) and, via a Menu2, switch modes (standby/auto/wind).
-//
-// Contains three classes:
-//   AutopilotView           — the View renderer
-//   AutopilotDelegate       — BehaviorDelegate for heading-change + mode menu
-//   AutopilotMenuDelegate   — Menu2InputDelegate for the mode-select popup
+/*
+ * AutopilotView.mc
+ * Autopilot control screen. Pushed on top of VesselDataView when the user
+ * presses the select/enter key. Shows current heading/target, a rudder-angle
+ * bar, and the current AP state. Key bindings let the user adjust the target
+ * heading (±1°/±10°) and, via a Menu2, switch modes (standby/auto/wind).
+ *
+ * Contains three classes:
+ *   AutopilotView           — the View renderer
+ *   AutopilotDelegate       — BehaviorDelegate for heading-change + mode menu
+ *   AutopilotMenuDelegate   — Menu2InputDelegate for the mode-select popup
+ */
 
 using Toybox.WatchUi;
 using Toybox.Graphics;
@@ -16,15 +18,19 @@ using Toybox.Lang;
 
 using Utilities as Utils;
 
-// Global state shared between AutopilotView (rendering) and AutopilotDelegate
-// (input handling). Kept module-level so both classes can see the same value
-// without threading it through constructors.
+/*
+ * Global state shared between AutopilotView (rendering) and AutopilotDelegate
+ * (input handling). Kept module-level so both classes can see the same value
+ * without threading it through constructors.
+ */
 var changeHeading = 0;
 var changeHeadingMode = false;
 
-// Renders either the normal autopilot dashboard (current heading, rudder bar,
-// AP state) or the "change heading" edit screen when the user has started
-// adjusting the target with the up/down/clock/menu keys.
+/*
+ * Renders either the normal autopilot dashboard (current heading, rudder bar,
+ * AP state) or the "change heading" edit screen when the user has started
+ * adjusting the target with the up/down/clock/menu keys.
+ */
 class AutopilotView extends WatchUi.View {
 
     var rudderHeight = 26;
@@ -52,8 +58,10 @@ class AutopilotView extends WatchUi.View {
         }
     }
 
-    // Edit-mode overlay: shown while the user is dialing in a ±N° delta
-    // before committing it with the select key.
+    /*
+     * Edit-mode overlay: shown while the user is dialing in a ±N° delta
+     * before committing it with the select key.
+     */
     function drawChangeHeading(dc) {
 
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
@@ -73,8 +81,10 @@ class AutopilotView extends WatchUi.View {
             (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
     }
 
-    // Main autopilot screen: label + current/target heading at the top,
-    // rudder-angle bar across the middle, AP state name at the bottom.
+    /*
+     * Main autopilot screen: label + current/target heading at the top,
+     * rudder-angle bar across the middle, AP state name at the bottom.
+     */
     function drawValues(dc) {
 
         var valueToDraw = "---";
@@ -109,8 +119,10 @@ class AutopilotView extends WatchUi.View {
             dc.setColor(Graphics.COLOR_DK_RED, Graphics.COLOR_WHITE);
         }
 
-        // Errors are handled globally by ErrorView (pushed on top by
-        // VesselModel). No inline error handling needed here.
+        /*
+         * Errors are handled globally by ErrorView (pushed on top by
+         * VesselModel). No inline error handling needed here.
+         */
 
         dc.drawText(
             width/2,
@@ -155,9 +167,11 @@ class AutopilotView extends WatchUi.View {
             Graphics.TEXT_JUSTIFY_CENTER);
     }
 
-    // Rudder-angle indicator: a red (port) / green (starboard) filled bar
-    // extending from the centreline by a fraction of the half-width
-    // proportional to the rudder angle (clamped at ±40°).
+    /*
+     * Rudder-angle indicator: a red (port) / green (starboard) filled bar
+     * extending from the centreline by a fraction of the half-width
+     * proportional to the rudder angle (clamped at ±40°).
+     */
     function drawRudderAngle(dc, rudderAngle) {
 
         if (rudderAngle == 0) {
@@ -189,18 +203,22 @@ class AutopilotView extends WatchUi.View {
     }
 }
 
-// Input delegate for the autopilot screen. Maps keys to heading adjustments
-// (up/down/clock/menu) and opens the mode-select Menu2 on the select key.
-// Stops the 100 ms data poll while a menu or edit is open so inbound updates
-// don't overwrite the user's in-progress changes.
+/*
+ * Input delegate for the autopilot screen. Maps keys to heading adjustments
+ * (up/down/clock/menu) and opens the mode-select Menu2 on the select key.
+ * Stops the 100 ms data poll while a menu or edit is open so inbound updates
+ * don't overwrite the user's in-progress changes.
+ */
 class AutopilotDelegate extends WatchUi.BehaviorDelegate {
 
     function initialize() {
         BehaviorDelegate.initialize();
     }
 
-    // Select key: either commit a pending heading change, or open the
-    // mode-select menu. No-op while the model is in an error state.
+    /*
+     * Select key: either commit a pending heading change, or open the
+     * mode-select menu. No-op while the model is in an error state.
+     */
     function onSelect() as Lang.Boolean {
 
         if (vessel.errorCode != null) {
@@ -251,9 +269,11 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
         return true;
     }
 
-    // Directional keys adjust the pending heading delta. Clock / Menu keys
-    // are wired for ±10° coarse steps since up/down are typically rocker keys
-    // that auto-repeat slowly. ESC exits edit mode or pops the view.
+    /*
+     * Directional keys adjust the pending heading delta. Clock / Menu keys
+     * are wired for ±10° coarse steps since up/down are typically rocker keys
+     * that auto-repeat slowly. ESC exits edit mode or pops the view.
+     */
     function onKey(keyEvent as WatchUi.KeyEvent) as Lang.Boolean {
 
         switch (keyEvent.getKey()) {
@@ -283,8 +303,10 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
         return true;
     }
 
-    // Accumulate a pending heading delta, enter edit mode, and suspend the
-    // data poll so incoming server updates don't stomp on the user's edit.
+    /*
+     * Accumulate a pending heading delta, enter edit mode, and suspend the
+     * data poll so incoming server updates don't stomp on the user's edit.
+     */
     function updateHeading(value) {
         vessel.stopUpdatingData();
         changeHeadingMode = true;
@@ -299,9 +321,11 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
     }
 }
 
-// Delegate for the mode-select Menu2 opened from AutopilotDelegate.onSelect.
-// Dispatches the chosen mode to VesselModel, resumes data polling, pops the
-// menu.
+/*
+ * Delegate for the mode-select Menu2 opened from AutopilotDelegate.onSelect.
+ * Dispatches the chosen mode to VesselModel, resumes data polling, pops the
+ * menu.
+ */
 class AutopilotMenuDelegate extends WatchUi.Menu2InputDelegate {
 
     function initialize() {

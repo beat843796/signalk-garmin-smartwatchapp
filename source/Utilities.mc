@@ -1,8 +1,10 @@
-// Utilities.mc
-// Pure unit-conversion helpers (knots/m-s, nautical miles, radians/degrees,
-// Kelvin/Celsius), the wind-arrow rendering primitive shared by the main view
-// and the autopilot view, and the HTTP/BLE error-code → display-string table.
-// Everything here is side-effect-free and unit-tested in UtilitiesTest.mc.
+/*
+ * Utilities.mc
+ * Pure unit-conversion helpers (knots/m-s, nautical miles, radians/degrees,
+ * Kelvin/Celsius), the wind-arrow rendering primitive shared by the main view
+ * and the autopilot view, and the HTTP/BLE error-code → display-string table.
+ * Everything here is side-effect-free and unit-tested in UtilitiesTest.mc.
+ */
 
 using Toybox.Math;
 using Toybox.Graphics;
@@ -21,8 +23,10 @@ module Utilities {
     }
 
     function metersToNauticalMiles(meters) {
-        // Historical factor — slightly different from the pure 1/1852 (see
-        // UtilitiesTest.mc test_metersToNm_oneNauticalMile for the tolerance).
+        /*
+         * Historical factor — slightly different from the pure 1/1852 (see
+         * UtilitiesTest.mc test_metersToNm_oneNauticalMile for the tolerance).
+         */
         return meters * 0.00053995680d;
     }
 
@@ -34,19 +38,21 @@ module Utilities {
         return kelvin - 273.15d;
     }
 
-    // Draws a small orange arrow along the edge of a circular display,
-    // pointing outward in the direction given by `angle` (radians). Used to
-    // render apparent-wind direction on VesselDataView and AutopilotView.
-    // `width` is the diameter of the drawing area in pixels; the arrow sits
-    // just outside it.
-    // Renders a centred title + body pair on an otherwise blank screen.
-    // Used by AuthConfigView (per-authState variants) and ErrorView;
-    // extracted so those views stay short and the visual style stays
-    // consistent.
-    //
-    // Title sits in the upper third, body in the lower half. Proportional
-    // offsets keep them from overlapping on tall multi-line bodies across
-    // every target display size (240px watches up to 454px round).
+    /*
+     * Draws a small orange arrow along the edge of a circular display,
+     * pointing outward in the direction given by `angle` (radians). Used to
+     * render apparent-wind direction on VesselDataView and AutopilotView.
+     * `width` is the diameter of the drawing area in pixels; the arrow sits
+     * just outside it.
+     * Renders a centred title + body pair on an otherwise blank screen.
+     * Used by AuthConfigView (per-authState variants) and ErrorView;
+     * extracted so those views stay short and the visual style stays
+     * consistent.
+     *
+     * Title sits in the upper third, body in the lower half. Proportional
+     * offsets keep them from overlapping on tall multi-line bodies across
+     * every target display size (240px watches up to 454px round).
+     */
     function drawStatusScreen(dc, title, titleColor, body) {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
         dc.clear();
@@ -73,8 +79,10 @@ module Utilities {
 
     function drawWindAngle(dc, angle, width) {
 
-        // 0 rad on the compass means north (12 o'clock); trig functions put 0
-        // at the 3 o'clock position, so subtract 90° to compensate.
+        /*
+         * 0 rad on the compass means north (12 o'clock); trig functions put 0
+         * at the 3 o'clock position, so subtract 90° to compensate.
+         */
         var correctedAngleDegrees = radiansToDegrees(angle) - 90.0d;
         var radians =  degreesToRadians(correctedAngleDegrees);
 
@@ -97,10 +105,12 @@ module Utilities {
         dc.fillPolygon([pointA, pointB, pointC]);
     }
 
-    // Maps Connect IQ Communications response codes (both positive HTTP and
-    // negative Communications.* constants) to short multi-line labels the
-    // views can render directly. Keyed by code for O(1) lookup in
-    // errorMessage() and to keep the type checker happy.
+    /*
+     * Maps Connect IQ Communications response codes (both positive HTTP and
+     * negative Communications.* constants) to short multi-line labels the
+     * views can render directly. Keyed by code for O(1) lookup in
+     * errorMessage() and to keep the type checker happy.
+     */
     var errorMessages as Toybox.Lang.Dictionary<Toybox.Lang.Number, Toybox.Lang.String> = {
          0   => "UNKNOWN ERROR",
         -1   => "BLE ERROR",
@@ -115,10 +125,15 @@ module Utilities {
         -200 => "INVALID HTTP\nHEADER FIELDS\nIN REQUEST",
         -201 => "INVALID HTTP\nBODY IN REQUEST",
         -202 => "INVALID HTTP\nMETHOD IN REQUEST",
-        -300 => "NETWORK REQUEST\nTIMED OUT",
-        -400 => "INVALID HTTP\nBODY IN\nNETWORK RESPONSE",
-        -401 => "INVALID HTTP\nHEADER FIELDS\nIN NETWORK RESPONSE",
-        -402 => "NETWORK RESPONSE\nTOO LARGE",
+        /*
+         * Timeout, malformed-response, unparseable-body, oversized-body all
+         * mean "we got nothing useful from the server" — collapse to one
+         * user-friendly label. Raw codes still appear in System.println logs.
+         */
+        -300 => "Server not\nfound",
+        -400 => "Server not\nfound",
+        -401 => "Server not\nfound",
+        -402 => "Server not\nfound",
         -403 => "NETWORK RESPONSE\nOUT OF MEMORY",
         -1001 => "HTTPS\nREQUIRED",
         -1002 => "UNSUPPORTED\nCONTENT TYPE",
@@ -142,7 +157,7 @@ module Utilities {
          400 => "Bad Request",
          401 => "Unauthorized",
          403 => "Forbidden",
-         404 => "SignalK Server\nNot Found",
+         404 => "Server not\nfound",
          405 => "Method\nNot Allowed",
          406 => "Not Acceptable",
          407 => "Proxy Authentication\nRequired",
@@ -170,9 +185,11 @@ module Utilities {
          511 => "Network\nAuthentication Required"
     };
 
-    // Returns a short label for a Communications response code, or the raw
-    // code itself when unmapped (so unknown errors still surface a number
-    // the developer can look up).
+    /*
+     * Returns a short label for a Communications response code, or the raw
+     * code itself when unmapped (so unknown errors still surface a number
+     * the developer can look up).
+     */
     function errorMessage(code as Toybox.Lang.Number) {
         var mapped = errorMessages[code];
         if (mapped != null) {
