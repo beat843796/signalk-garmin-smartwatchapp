@@ -32,19 +32,19 @@ function test_mpsToKnots_tenMps(logger) {
 function test_degToRad_halfTurn_isPi(logger) {
     // Tolerance 1e-9, not 1e-12: the implementation uses Math.PI (Float)
     // multiplied against an Int argument, which won't hold Double precision.
-    var actual = Utils.degreestToRadians(180.0d);
+    var actual = Utils.degreesToRadians(180.0d);
     logger.debug("180 deg -> " + actual + " rad");
     return almostEqual(actual, Math.PI, 1.0e-9d);
 }
 
 (:test)
 function test_degToRad_zero_isZero(logger) {
-    return almostEqual(Utils.degreestToRadians(0.0d), 0.0d, 1.0e-12d);
+    return almostEqual(Utils.degreesToRadians(0.0d), 0.0d, 1.0e-12d);
 }
 
 (:test)
 function test_degToRad_fullTurn_isTwoPi(logger) {
-    var actual = Utils.degreestToRadians(360.0d);
+    var actual = Utils.degreesToRadians(360.0d);
     return almostEqual(actual, 2.0d * Math.PI, 1.0e-9d);
 }
 
@@ -63,7 +63,7 @@ function test_radToDeg_zero_isZero(logger) {
 (:test)
 function test_radToDeg_roundTrip(logger) {
     var original = 42.0d;
-    var roundTrip = Utils.radiansToDegrees(Utils.degreestToRadians(original));
+    var roundTrip = Utils.radiansToDegrees(Utils.degreesToRadians(original));
     logger.debug("42 deg -> rad -> deg = " + roundTrip);
     return almostEqual(roundTrip, original, 1.0e-9d);
 }

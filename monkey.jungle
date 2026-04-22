@@ -1,8 +1,23 @@
 project.manifest = manifest.xml
 
-# Type checking disabled: the legacy code (SDK 3.1.0 era) has pre-existing
-# signature mismatches in BehaviorDelegate.onKey return types and in the
-# callback types passed to Communications.makeWebRequest / Timer.start.
-# SDK 9.1.0's gradual type checker rejects these as errors. Fixing them is
-# a code change out of scope for the SDK migration; see CLAUDE.md.
-project.typecheck = 0
+# Per-device launcher-icon resource folders. The base resources/ directory
+# no longer contains launcher_icon.png — each device explicitly picks a size
+# folder here so the compiler never sees two candidate icons at once.
+# Icon-size requirements per device are taken from each device's
+# compiler.json `launcherIcon.width/height`.
+
+# 65x65 launcher slot
+fenix847mm.resourcePath = $(base.resourcePath);resources-icon-65
+fenix8pro47mm.resourcePath = $(base.resourcePath);resources-icon-65
+fr965.resourcePath = $(base.resourcePath);resources-icon-65
+fr970.resourcePath = $(base.resourcePath);resources-icon-65
+
+# 60x60 launcher slot
+fenix843mm.resourcePath = $(base.resourcePath);resources-icon-60
+epix2pro42mm.resourcePath = $(base.resourcePath);resources-icon-60
+epix2pro47mm.resourcePath = $(base.resourcePath);resources-icon-60
+epix2pro51mm.resourcePath = $(base.resourcePath);resources-icon-60
+
+# 40x40 launcher slot
+fenix8solar47mm.resourcePath = $(base.resourcePath);resources-icon-40
+fenix8solar51mm.resourcePath = $(base.resourcePath);resources-icon-40
