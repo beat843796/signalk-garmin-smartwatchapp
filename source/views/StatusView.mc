@@ -143,6 +143,11 @@ class StatusViewDelegate extends WatchUi.BehaviorDelegate {
             :boatType,
             null));
 
+        // Item 4: Debug — fires a known-good GET to test the HTTP
+        // stack independent of the auth flow. Result toasted.
+        menu.addItem(new WatchUi.MenuItem(
+            "Debug", "Probe SignalK", :debugProbe, null));
+
         WatchUi.pushView(menu, new ConfigMenuDelegate(), WatchUi.SLIDE_UP);
         return true;
     }
@@ -187,6 +192,11 @@ class ConfigMenuDelegate extends WatchUi.Menu2InputDelegate {
             var next = current.equals(BoatType.SAIL) ? BoatType.MOTOR : BoatType.SAIL;
             vessel.setBoatType(next);
             item.setSubLabel(ConfigMenu.labelForBoatType(next));
+        } else if (id == :debugProbe) {
+            // Pop the menu first so the toast lands over StatusView,
+            // not over the menu (toasts can be obscured by Menu2).
+            WatchUi.popView(WatchUi.SLIDE_DOWN);
+            vessel.connect.debugProbe();
         }
     }
 

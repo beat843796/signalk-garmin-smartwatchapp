@@ -83,7 +83,6 @@ class RESTVesselConnect extends VesselConnect {
     private var spinnerVisible = false;
     private var isAutopilotRequestPending = false;
 
-    private var glanceSnapshotCounter = 0;
     private var lastAuthStateObserved = -1;
 
     /*
@@ -721,6 +720,41 @@ class RESTVesselConnect extends VesselConnect {
         System.println("[Probe] code=" + responseCode);
         probeOk = (responseCode == 200);
         WatchUi.requestUpdate();
+    }
+
+    /*
+     * Diagnostic GET to the public SignalK discovery endpoint at a
+     * known-good server. Used from the Config menu to test whether the
+     * device's HTTP stack works at all — independent of our auth
+     * flow, configured baseURL, or vesseldata plugin. Result toasted
+     * to the screen so it's visible without log access.
+     *
+     * Same shape as our other requests (TEXT_PLAIN response type, body
+     * parsed via Json.parse on success) so a crash here points at the
+     * real-device network layer the same way the access POST would.
+     */
+    function debugProbe() as Void {
+        var url = "https://signalk.rpi.cb84.io/signalk";
+        System.println("[DebugProbe] GET " + url);
+        Communications.makeWebRequest(
+            url,
+            null,
+            {
+                :method => Communications.HTTP_REQUEST_METHOD_GET,
+                :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_TEXT_PLAIN
+            },
+            method(:onDebugProbeReceive)
+        );
+    }
+
+    function onDebugProbeReceive(responseCode as Lang.Number, data as Lang.Dictionary or Lang.String or Null) as Void {
+        System.println("[DebugProbe] code=" + responseCode);
+        var label = "Probe: " + responseCode;
+        if (responseCode == 200) {
+            var parsed = tryParseBody(data);
+            label = (parsed != null) ? "Probe: 200 OK" : "Probe: 200 unparseable";
+        }
+        WatchUi.showToast(label, null);
     }
 
     /*

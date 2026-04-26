@@ -23,13 +23,33 @@ using Toybox.WatchUi;
 using Toybox.Graphics;
 using Toybox.Lang;
 using Toybox.System;
+using Toybox.Timer;
 
 using Utilities as Utils;
 
 class RequestAccessView extends WatchUi.View {
 
+    /*
+     * One-shot timer used to defer popView() out of the onUpdate call
+     * stack. Calling popView from inside View.onUpdate crashes on
+     * real device firmware (the render pipeline and view-stack
+     * mutation race). The simulator is permissive about it, real
+     * devices are not.
+     */
+    private var popTimer;
+    private var popScheduled = false;
+
     function initialize() {
         View.initialize();
+    }
+
+    function onHide() {
+        // If the user backs out manually, cancel any pending pop so
+        // the timer can't fire against a now-destroyed view.
+        if (popTimer != null) {
+            popTimer.stop();
+            popTimer = null;
+        }
     }
 
     function onUpdate(dc) {
@@ -45,7 +65,20 @@ class RequestAccessView extends WatchUi.View {
         // Terminal state — auth flow is over. The APPROVED / DENIED
         // toast is fired from RESTVesselConnect.finalize* so it shows
         // even when the user backed out of this view before the auth
-        // flow finished. Just pop here.
+        // flow finished. Schedule the pop on the next event-loop tick
+        // (popView from inside onUpdate is fragile on real devices).
+        if (!popScheduled) {
+            popScheduled = true;
+            popTimer = new Timer.Timer();
+            popTimer.start(method(:doPop), 50, false);
+        }
+        // Keep showing the spinner for the brief deferred-pop window
+        // so the screen doesn't flicker to blank.
+        drawRequestingOverlay(dc);
+    }
+
+    function doPop() as Void {
+        popTimer = null;
         WatchUi.popView(WatchUi.SLIDE_RIGHT);
     }
 
