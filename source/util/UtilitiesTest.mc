@@ -307,3 +307,118 @@ function test_deriveInitialAuthState_url_hasTokenAndHref_tokenWins(logger) {
     // Token takes precedence over a lingering pending href.
     return Utils.deriveInitialAuthState("http://x", "Bearer xyz", "/href") == AUTH_CONNECTED;
 }
+
+/*
+ * deriveConnectivity — full state-transition matrix. Combines URL
+ * presence, auth state, last network code, and the discovery-probe
+ * outcome into a single CONN_* value rendered on the config view.
+ */
+
+(:test)
+function test_deriveConn_nullUrl_isNoUrl(logger) {
+    return Utils.deriveConnectivity(null, true, true, 200, true) == CONN_NO_URL;
+}
+
+(:test)
+function test_deriveConn_emptyUrl_isNoUrl(logger) {
+    return Utils.deriveConnectivity("", false, false, null, null) == CONN_NO_URL;
+}
+
+(:test)
+function test_deriveConn_minus1001_isNoHttps(logger) {
+    // -1001 from any request → HTTPS-required policy hit. Wins over
+    // every other state except NO_URL.
+    return Utils.deriveConnectivity("http://x", false, false, -1001, null) == CONN_NO_HTTPS;
+}
+
+(:test)
+function test_deriveConn_minus1001_evenWithToken_isNoHttps(logger) {
+    return Utils.deriveConnectivity("http://x", true, false, -1001, null) == CONN_NO_HTTPS;
+}
+
+(:test)
+function test_deriveConn_url_noToken_noHref_isNotAuth(logger) {
+    return Utils.deriveConnectivity("http://x", false, false, null, null) == CONN_NOT_AUTH;
+}
+
+(:test)
+function test_deriveConn_url_noToken_hasHref_isPending(logger) {
+    return Utils.deriveConnectivity("http://x", false, true, null, null) == CONN_PENDING;
+}
+
+(:test)
+function test_deriveConn_url_token_noPollYet_isConnected(logger) {
+    // Optimistic: assume connected until first poll says otherwise.
+    return Utils.deriveConnectivity("http://x", true, false, null, null) == CONN_CONNECTED;
+}
+
+(:test)
+function test_deriveConn_url_token_poll200_isConnected(logger) {
+    return Utils.deriveConnectivity("http://x", true, false, 200, null) == CONN_CONNECTED;
+}
+
+(:test)
+function test_deriveConn_url_token_poll401_isNotAuth(logger) {
+    // Token revoked / expired — even though hasToken is still true at
+    // the storage layer, the server says no.
+    return Utils.deriveConnectivity("http://x", true, false, 401, null) == CONN_NOT_AUTH;
+}
+
+(:test)
+function test_deriveConn_url_token_poll403_isNotAuth(logger) {
+    return Utils.deriveConnectivity("http://x", true, false, 403, null) == CONN_NOT_AUTH;
+}
+
+(:test)
+function test_deriveConn_url_token_pollMinus300_isNotReachable(logger) {
+    // -300 = NETWORK_REQUEST_TIMED_OUT
+    return Utils.deriveConnectivity("http://x", true, false, -300, null) == CONN_NOT_REACHABLE;
+}
+
+(:test)
+function test_deriveConn_url_token_poll503_isNotReachable(logger) {
+    return Utils.deriveConnectivity("http://x", true, false, 503, null) == CONN_NOT_REACHABLE;
+}
+
+(:test)
+function test_deriveConn_url_token_poll404_probeOk_isMissingPlugin(logger) {
+    // Server is alive but plugin route doesn't exist.
+    return Utils.deriveConnectivity("http://x", true, false, 404, true) == CONN_MISSING_PLUGIN;
+}
+
+(:test)
+function test_deriveConn_url_token_poll404_probeFail_isNotReachable(logger) {
+    // The 404 actually came from somewhere that isn't the SignalK server
+    // (captive portal, wrong port, etc).
+    return Utils.deriveConnectivity("http://x", true, false, 404, false) == CONN_NOT_REACHABLE;
+}
+
+(:test)
+function test_deriveConn_url_token_poll404_probeNull_isMissingPlugin(logger) {
+    // No probe yet — assume MISSING_PLUGIN as the more common case;
+    // the probe (if it later runs) can demote to NOT_REACHABLE.
+    return Utils.deriveConnectivity("http://x", true, false, 404, null) == CONN_MISSING_PLUGIN;
+}
+
+(:test)
+function test_deriveConn_url_token_poll400_probeOk_isMissingPlugin(logger) {
+    return Utils.deriveConnectivity("http://x", true, false, 400, true) == CONN_MISSING_PLUGIN;
+}
+
+(:test)
+function test_deriveConn_url_token_poll400_probeFail_isNotReachable(logger) {
+    return Utils.deriveConnectivity("http://x", true, false, 400, false) == CONN_NOT_REACHABLE;
+}
+
+(:test)
+function test_deriveConn_url_token_pollUnknown_isNotReachable(logger) {
+    // Defensive default for unmapped codes.
+    return Utils.deriveConnectivity("http://x", true, false, 999, null) == CONN_NOT_REACHABLE;
+}
+
+(:test)
+function test_deriveConn_noHttpsTakesPrecedenceOverPending(logger) {
+    // If somehow we have a pending href but the URL is bad, the actionable
+    // state is NO_HTTPS — fixing the URL is the only way out.
+    return Utils.deriveConnectivity("http://x", false, true, -1001, null) == CONN_NO_HTTPS;
+}

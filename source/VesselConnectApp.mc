@@ -60,8 +60,13 @@ class VesselConnectApp extends Application.AppBase {
 
     /*
      * Called only when the app launches as a full watch-app (not as a
-     * glance). Safe to construct VesselModel here because we know we're in
-     * the main-app compile slice.
+     * glance). Safe to construct VesselModel here because we know we
+     * are in the main-app compile slice.
+     *
+     * Always returns the ViewLoop. The initial page depends on the
+     * connectivity state: CONNECTED lands on the data dashboard; any
+     * other state lands on the Status page so the user sees the
+     * connection issue immediately.
      */
     function getInitialView() {
         System.println("[App] getInitialView");
@@ -71,15 +76,10 @@ class VesselConnectApp extends Application.AppBase {
         }
         vessel.startUpdatingData();
 
-        System.println("[App] authState=" + vessel.authState);
-        if (vessel.authState == AUTH_CONNECTED) {
-            return [new VesselDataView(), new VesselDataViewDelegate()];
-        }
-        /*
-         * NEEDS_REQUEST / PENDING / DENIED / ERROR — all handled by the
-         * single AuthConfigView which renders per authState.
-         */
-        return [new AuthConfigView(), new AuthConfigViewDelegate()];
+        var conn = vessel.getConnectivity();
+        System.println("[App] connectivity=" + conn);
+        var initialPage = (conn == CONN_CONNECTED) ? VIEWLOOP_PAGE_DATA : VIEWLOOP_PAGE_STATUS;
+        return VesselViewLoop.build(initialPage);
     }
 
     /*

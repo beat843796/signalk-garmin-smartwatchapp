@@ -19,6 +19,14 @@ module Utilities {
     // for invalid / no reading). Matches the historical VesselModel rule.
     const MAX_VALID_DEPTH_M = 500.0d;
 
+    /*
+     * Synthetic error code for "data plugin not installed on the SignalK
+     * server". Outside the HTTP and Communications.* ranges to avoid any
+     * collision; mapped to "MISSING\nPLUGIN" in errorMessages so ErrorView
+     * renders it without any per-code branching.
+     */
+    const ERR_MISSING_PLUGIN = -2000;
+
     function meterPerSecondToKnots(metersPerSecond) {
         return metersPerSecond * FACTOR_MS_TO_KNOTS;
     }
@@ -118,6 +126,70 @@ module Utilities {
     }
 
     /*
+     * Derives the user-visible CONN_* connectivity state by combining all
+     * inputs the transport / auth layers produce. Pure — every (input
+     * tuple) → state transition is deterministic and unit-tested.
+     *
+     * Inputs:
+     *   baseURL       — Lang.String? configured server URL
+     *   hasToken      — Lang.Boolean — JWT acquired?
+     *   hasHref       — Lang.Boolean — access-request submitted, awaiting
+     *                   admin approval?
+     *   lastNetCode   — Lang.Number? — most recent HTTP / CIQ code from
+     *                   any request to baseURL. null = nothing observed
+     *                   yet (fresh launch).
+     *   probeOk       — Lang.Boolean? — most recent /signalk discovery
+     *                   probe outcome. Only consulted when lastNetCode
+     *                   is in the ambiguous range (404/400) — distinguishes
+     *                   "server is up, plugin route missing" (probe=true)
+     *                   from "server is down, the 404 is from a captive
+     *                   portal or similar" (probe=false). null = haven't
+     *                   probed yet.
+     *
+     * Precedence (top wins):
+     *   1. NO_URL       — empty/missing URL
+     *   2. NO_HTTPS     — last request returned -1001 (Garmin's HTTPS
+     *                     enforcement). Surfaces from any request, including
+     *                     the access-request POST.
+     *   3. NOT_AUTH     — no token, no pending request
+     *   4. PENDING      — no token, but request submitted
+     *   5. CONNECTED    — token + (no poll yet OR last poll 200)
+     *   6. NOT_AUTH     — token + last poll 401/403 (token revoked)
+     *   7. MISSING_PLUGIN / NOT_REACHABLE — token + last poll 404/400,
+     *                     disambiguated by probe
+     *   8. NOT_REACHABLE — token + any other failure (-300 timeout, 5xx,
+     *                     unknown)
+     */
+    function deriveConnectivity(baseURL, hasToken, hasHref, lastNetCode, probeOk) {
+        if (baseURL == null || baseURL.length() == 0) {
+            return CONN_NO_URL;
+        }
+        if (lastNetCode != null && lastNetCode == -1001) {
+            return CONN_NO_HTTPS;
+        }
+        if (!hasToken) {
+            if (hasHref) {
+                return CONN_PENDING;
+            }
+            return CONN_NOT_AUTH;
+        }
+        // hasToken — branch on data-poll outcome
+        if (lastNetCode == null || lastNetCode == 200) {
+            return CONN_CONNECTED;
+        }
+        if (lastNetCode == 401 || lastNetCode == 403) {
+            return CONN_NOT_AUTH;
+        }
+        if (lastNetCode == 404 || lastNetCode == 400) {
+            if (probeOk == false) {
+                return CONN_NOT_REACHABLE;
+            }
+            return CONN_MISSING_PLUGIN;
+        }
+        return CONN_NOT_REACHABLE;
+    }
+
+    /*
      * ================== UUID v4 ==================
      */
 
@@ -150,43 +222,11 @@ module Utilities {
 
     /*
      * Draws a small orange arrow along the edge of a circular display,
-     * pointing outward in the direction given by `angle` (radians). Used to
-     * render apparent-wind direction on VesselDataView and AutopilotView.
-     * `width` is the diameter of the drawing area in pixels; the arrow sits
-     * just outside it.
-     * Renders a centred title + body pair on an otherwise blank screen.
-     * Used by AuthConfigView (per-authState variants) and ErrorView;
-     * extracted so those views stay short and the visual style stays
-     * consistent.
-     *
-     * Title sits in the upper third, body in the lower half. Proportional
-     * offsets keep them from overlapping on tall multi-line bodies across
-     * every target display size (240px watches up to 454px round).
+     * pointing outward in the direction given by `angle` (radians). Used
+     * to render apparent-wind direction on VesselDataView and
+     * AutopilotView. `width` is the diameter of the drawing area in
+     * pixels; the arrow sits just outside it.
      */
-    function drawStatusScreen(dc, title, titleColor, body) {
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
-        dc.clear();
-
-        var w = dc.getWidth();
-        var h = dc.getHeight();
-
-        dc.setColor(titleColor, Graphics.COLOR_WHITE);
-        dc.drawText(
-            w/2,
-            h * 0.3,
-            Graphics.FONT_SYSTEM_MEDIUM,
-            title,
-            (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
-
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
-        dc.drawText(
-            w/2,
-            h * 0.6,
-            Graphics.FONT_SYSTEM_TINY,
-            body,
-            (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
-    }
-
     function drawWindAngle(dc, angle, width) {
 
         /*
@@ -211,7 +251,7 @@ module Utilities {
         var pointB = [xB,yB];
         var pointC = [xC,yC];
 
-        dc.setColor(Graphics.COLOR_ORANGE, Graphics.COLOR_WHITE);
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
         dc.fillPolygon([pointA, pointB, pointC]);
     }
 
@@ -292,7 +332,10 @@ module Utilities {
          503 => "SignalK Service\nUnavailable",
          504 => "Gateway Timeout",
          505 => "HTTP Version\nNot Supported",
-         511 => "Network\nAuthentication Required"
+         511 => "Network\nAuthentication Required",
+
+         // Synthetic — see ERR_MISSING_PLUGIN above.
+        -2000 => "MISSING\nPLUGIN"
     };
 
     /*

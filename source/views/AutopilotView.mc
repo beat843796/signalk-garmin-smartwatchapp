@@ -15,6 +15,8 @@ using Toybox.WatchUi;
 using Toybox.Graphics;
 using Toybox.Math;
 using Toybox.Lang;
+using Toybox.System;
+using Toybox.Attention;
 
 using Utilities as Utils;
 
@@ -45,7 +47,7 @@ class AutopilotView extends WatchUi.View {
 
         View.onUpdate(dc);
 
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
         dc.clear();
 
         width = dc.getWidth();
@@ -60,30 +62,40 @@ class AutopilotView extends WatchUi.View {
 
     /*
      * Edit-mode overlay: shown while the user is dialing in a ±N° delta
-     * before committing it with the select key.
+     * before committing it with the select key. Two-row layout —
+     * "Change Heading" label centred in the top half, the pending delta
+     * centred in the bottom half.
      */
     function drawChangeHeading(dc) {
 
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
+        var labelFont = Graphics.FONT_SYSTEM_TINY;
+        var valueFont = Graphics.FONT_NUMBER_THAI_HOT;
+
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
 
         dc.drawText(
-            width/2,
-            45,
-            Graphics.FONT_SYSTEM_TINY,
+            width / 2,
+            height / 4,
+            labelFont,
             "Change\nHeading",
             (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
 
         dc.drawText(
-            width/2,
-            height/2,
-            Graphics.FONT_NUMBER_THAI_HOT,
+            width / 2,
+            (height / 2) + 30,
+            valueFont,
             changeHeading,
             (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
     }
 
     /*
-     * Main autopilot screen: label + current/target heading at the top,
-     * rudder-angle bar across the middle, AP state name at the bottom.
+     * Main autopilot screen — two equal rows:
+     *   top half: heading label + value (label small above, value big
+     *             centred)
+     *   bottom half: state name centred
+     *
+     * Rudder-angle bar drawn on the boundary between the two rows so
+     * it doesn't compete with either text block.
      */
     function drawValues(dc) {
 
@@ -111,60 +123,98 @@ class AutopilotView extends WatchUi.View {
                 break;
         }
 
-        drawDataText(dc, width/2, 10, labelText, valueToDraw);
+        // Top row: heading display centred at height/4.
+        drawHeadingCell(dc, width / 2, height / 4, labelText, valueToDraw);
 
-        if (vessel.autopilotState.equals("standby")) {
-            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
-        } else {
-            dc.setColor(Graphics.COLOR_DK_RED, Graphics.COLOR_WHITE);
-        }
-
-        /*
-         * Errors are handled globally by ErrorView (pushed on top by
-         * VesselModel). No inline error handling needed here.
-         */
-
+        // Bottom row: state name centred at 3*height/4. Standby is
+        // neutral (grey); active modes use red so the running state
+        // is visually distinct.
+        var stateColor = vessel.autopilotState.equals("standby")
+            ? Graphics.COLOR_LT_GRAY
+            : Graphics.COLOR_RED;
+        dc.setColor(stateColor, Graphics.COLOR_BLACK);
         dc.drawText(
-            width/2,
-            165,
+            width / 2,
+            (height * 3) / 4,
             Graphics.FONT_SYSTEM_MEDIUM,
             stateName,
-            Graphics.TEXT_JUSTIFY_CENTER);
+            (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
 
-        // Rudder bar, tick marks, centreline.
-        drawRudderAngle(dc, Utils.radiansToDegrees(vessel.rudderAngle));
-
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
-        dc.setPenWidth(2);
-
-        var xOffsetTens = width/8;
-        for (var i = 1; i < 8; i += 1) {
-            dc.drawLine(xOffsetTens*i, height/2-rudderHeight/2, xOffsetTens*i, height/2+rudderHeight/2);
+        // Rudder bar straddles the row boundary. Skip when no rudder
+        // reading is available.
+        if (vessel.rudderAngle != null) {
+            drawRudderAngle(dc, Utils.radiansToDegrees(vessel.rudderAngle));
         }
 
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
-        dc.setPenWidth(4);
-        dc.drawLine(0, height/2-rudderHeight/2, width, height/2-rudderHeight/2);
-        dc.drawLine(0, height/2+rudderHeight/2, width, height/2+rudderHeight/2);
-        dc.drawLine(width/2, height/2-rudderHeight/2, width/2, height/2+rudderHeight/2);
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
+        dc.setPenWidth(2);
 
-        dc.setColor(Graphics.COLOR_ORANGE, Graphics.COLOR_WHITE);
-        Utils.drawWindAngle(dc, vessel.apparentWindAngle, width);
+        var xOffsetTens = width / 8;
+        for (var i = 1; i < 8; i += 1) {
+            dc.drawLine(xOffsetTens * i, height / 2 - rudderHeight / 2, xOffsetTens * i, height / 2 + rudderHeight / 2);
+        }
+
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
+        dc.setPenWidth(4);
+        dc.drawLine(0, height / 2 - rudderHeight / 2, width, height / 2 - rudderHeight / 2);
+        dc.drawLine(0, height / 2 + rudderHeight / 2, width, height / 2 + rudderHeight / 2);
+        dc.drawLine(width / 2, height / 2 - rudderHeight / 2, width / 2, height / 2 + rudderHeight / 2);
+
+        if (vessel.apparentWindAngle != null) {
+            dc.setColor(Graphics.COLOR_ORANGE, Graphics.COLOR_BLACK);
+            Utils.drawWindAngle(dc, vessel.apparentWindAngle, width);
+        }
     }
 
-    function drawDataText(dc, x, y, labelText, valueText) {
+    /*
+     * Heading display cell — label small, value big, both centred
+     * vertically as a pair around (cx, cy). Title sits a real
+     * font-derived gap above the value so it isn't clipped by the
+     * value's ascender.
+     */
+    function drawHeadingCell(dc, cx, cy, labelText, valueText) {
+        var labelFont = Graphics.FONT_SYSTEM_XTINY;
+        var valueFont = Graphics.FONT_NUMBER_HOT;
+        var labelH = dc.getFontHeight(labelFont);
+        var valueH = dc.getFontHeight(valueFont);
+        var gap = -25;
+
+        dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
-            x,
-            y-2,
-            Graphics.FONT_SYSTEM_XTINY,
+            cx,
+            cy - valueH / 2 - labelH / 2 - gap,
+            labelFont,
             labelText,
-            Graphics.TEXT_JUSTIFY_CENTER);
+            (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
+
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
-            x,
-            y+28,
-            Graphics.FONT_NUMBER_HOT,
-            valueText,
-            Graphics.TEXT_JUSTIFY_CENTER);
+            cx,
+            cy+15,
+            valueFont,
+            sanitizeForNumberFont(valueText),
+            (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
+    }
+
+    /*
+     * FONT_NUMBER_HOT is a number-only font: digits and a few
+     * punctuation glyphs only. The degree symbol "°" and the em-dash
+     * "—" used in our model formatters render as missing-glyph boxes.
+     * Substitute them with safe characters here so the heading display
+     * stays legible. The label ("HDG"/"AWA") already implies degrees.
+     */
+    function sanitizeForNumberFont(value) {
+        if (value == null) {
+            return "---";
+        }
+        if (value.equals("—")) {
+            return "---";
+        }
+        var len = value.length();
+        if (len > 0 && value.substring(len - 1, len).equals("°")) {
+            return value.substring(0, len - 1);
+        }
+        return value;
     }
 
     /*
@@ -189,9 +239,9 @@ class AutopilotView extends WatchUi.View {
         }
 
         if (rudderAngle < 0) {
-            dc.setColor(Graphics.COLOR_DK_RED, Graphics.COLOR_WHITE);
+            dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_BLACK);
         } else {
-            dc.setColor(Graphics.COLOR_DK_GREEN, Graphics.COLOR_WHITE);
+            dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_BLACK);
         }
 
         var xOffset = 0;
@@ -211,6 +261,16 @@ class AutopilotView extends WatchUi.View {
  */
 class AutopilotDelegate extends WatchUi.BehaviorDelegate {
 
+    /*
+     * Press timestamps (ms since boot) for long-press detection on
+     * UP/DOWN. Garmin's hardware mapping fires KEY_MENU on long-press
+     * UP, but there's no equivalent for long-press DOWN — we have to
+     * detect duration ourselves via onKeyPressed/onKeyReleased.
+     */
+    private var downPressedAt = null;
+    private var upPressedAt = null;
+    private const longPressMs = 500;
+
     function initialize() {
         BehaviorDelegate.initialize();
     }
@@ -221,7 +281,7 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
      */
     function onSelect() as Lang.Boolean {
 
-        if (vessel.errorCode != null) {
+        if (vessel.getConnectivity() != CONN_CONNECTED) {
             return true;
         }
 
@@ -270,24 +330,20 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
     }
 
     /*
-     * Directional keys adjust the pending heading delta. Clock / Menu keys
-     * are wired for ±10° coarse steps since up/down are typically rocker keys
-     * that auto-repeat slowly. ESC exits edit mode or pops the view.
+     * Directional keys adjust the pending heading delta. UP/DOWN are
+     * handled by the press/release pair below for long-press support.
+     * KEY_MENU fires on hardware long-press UP (Garmin convention) and
+     * also gives +10. KEY_CLOCK gives -10 for parity. ESC exits edit
+     * mode or pops the view.
      */
     function onKey(keyEvent as WatchUi.KeyEvent) as Lang.Boolean {
 
         switch (keyEvent.getKey()) {
-            case KEY_DOWN:
-                updateHeading(-1);
-                break;
-            case KEY_UP:
-                updateHeading(+1);
-                break;
             case KEY_CLOCK:
-                updateHeading(-10);
+                applyDelta(-10);
                 break;
             case KEY_MENU:
-                updateHeading(+10);
+                applyDelta(+10);
                 break;
             case KEY_ESC:
                 vessel.startUpdatingData();
@@ -301,6 +357,55 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
                 break;
         }
         return true;
+    }
+
+    /*
+     * Press/release pair for KEY_UP and KEY_DOWN. Returning true from
+     * onKeyPressed stops CIQ from synthesising the higher-level onKey
+     * event for the same key, so we don't double-fire. Other keys are
+     * passed through to the default mapping via super().
+     */
+    function onKeyPressed(keyEvent as WatchUi.KeyEvent) as Lang.Boolean {
+        var key = keyEvent.getKey();
+        if (key == KEY_DOWN) {
+            downPressedAt = System.getTimer();
+            return true;
+        }
+        if (key == KEY_UP) {
+            upPressedAt = System.getTimer();
+            return true;
+        }
+        return BehaviorDelegate.onKeyPressed(keyEvent);
+    }
+
+    function onKeyReleased(keyEvent as WatchUi.KeyEvent) as Lang.Boolean {
+        var key = keyEvent.getKey();
+        if (key == KEY_DOWN && downPressedAt != null) {
+            var heldMs = System.getTimer() - downPressedAt;
+            downPressedAt = null;
+            applyDelta(heldMs >= longPressMs ? -10 : -1);
+            return true;
+        }
+        if (key == KEY_UP && upPressedAt != null) {
+            var heldMs = System.getTimer() - upPressedAt;
+            upPressedAt = null;
+            applyDelta(heldMs >= longPressMs ? +10 : +1);
+            return true;
+        }
+        return BehaviorDelegate.onKeyReleased(keyEvent);
+    }
+
+    /*
+     * Applies a heading delta. Beeps on the ±10 coarse step so the
+     * user gets audible confirmation of the long-press detection.
+     */
+    private function applyDelta(delta) {
+        if (delta == 10 || delta == -10) {
+            if (Attention has :playTone) {
+                Attention.playTone(Attention.TONE_KEY);
+            }
+        }
+        updateHeading(delta);
     }
 
     /*
@@ -334,7 +439,7 @@ class AutopilotMenuDelegate extends WatchUi.Menu2InputDelegate {
 
     function onSelect(item as WatchUi.MenuItem) as Void {
 
-        if (vessel.errorCode != null) {
+        if (vessel.getConnectivity() != CONN_CONNECTED) {
             return;
         }
 

@@ -28,7 +28,7 @@ class SignalKGlanceView extends WatchUi.GlanceView {
     }
 
     function onUpdate(dc) {
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
         dc.clear();
 
         var h = dc.getHeight();
@@ -49,7 +49,7 @@ class SignalKGlanceView extends WatchUi.GlanceView {
             stateColor = Graphics.COLOR_DK_GRAY;
         }
 
-        dc.setColor(stateColor, Graphics.COLOR_WHITE);
+        dc.setColor(stateColor, Graphics.COLOR_BLACK);
         dc.drawText(
             5,
             h * 0.15,
@@ -70,7 +70,7 @@ class SignalKGlanceView extends WatchUi.GlanceView {
                 var sogStr = (sog != null) ? sog.format("%.1f") : "--";
                 var awsStr = (aws != null) ? aws.format("%.1f") : "--";
                 var apStr  = (ap  != null) ? ap : "--";
-                dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
+                dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
                 dc.drawText(
                     5,
                     h * 0.55,
