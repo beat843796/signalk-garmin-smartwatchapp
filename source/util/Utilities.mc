@@ -10,6 +10,7 @@ using Toybox.Math;
 using Toybox.Graphics;
 using Toybox.Lang;
 using Toybox.Cryptography;
+using Toybox.System;
 
 module Utilities {
 
@@ -253,6 +254,40 @@ module Utilities {
 
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
         dc.fillPolygon([pointA, pointB, pointC]);
+    }
+
+    /*
+     * Animated indeterminate-progress spinner shared across views (auth
+     * request flow, BLE scan flow, …). Black background, rotating 90° blue
+     * arc near the centre, label below. Stateless — callers must drive
+     * redraws via WatchUi.requestUpdate on a ~150 ms cadence for the
+     * rotation to be visible.
+     */
+    function drawSpinner(dc, label) {
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
+        dc.clear();
+
+        var w = dc.getWidth();
+        var h = dc.getHeight();
+        var cx = w / 2;
+        var cy = h / 2;
+        var r = (h * 0.05).toNumber();
+
+        var degrees = (System.getTimer() / 3) % 360;
+        var start = 360 - degrees;
+        var end = (start - 90 + 360) % 360;
+
+        dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_BLACK);
+        dc.setPenWidth(5);
+        dc.drawArc(cx, cy, r, Graphics.ARC_CLOCKWISE, start, end);
+
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(
+            w / 2,
+            h * 0.65,
+            Graphics.FONT_SYSTEM_TINY,
+            label,
+            (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
     }
 
     /*

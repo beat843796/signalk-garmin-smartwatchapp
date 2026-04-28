@@ -35,9 +35,7 @@ Use websearch if necessary for research to get details on documentation for the 
 
 ### Garmin
 
-- Developer Forum: https://forums.garmin.com/developer/connect-iq/f/discussion
-- API Documentation: https://developer.garmin.com/connect-iq/api-docs/
-- SDK Doc: https://developer.garmin.com/connect-iq/overview/
+
 
 ## SignalK
 
@@ -99,25 +97,31 @@ Files are organised into `source/{model,views,util}/` (the app entry and
 
 | File | Purpose |
 | --- | --- |
-| `source/VesselConnectApp.mc` | App entry. Lazily constructs the global `vessel` in `getInitialView` (NOT `initialize` — that runs in the glance slice too and crashes on `new VesselModel()`). Always returns the ViewLoop; initial page = data dashboard if connected, status page otherwise. `getGlanceView` is `(:glance)`-annotated and returns the glance tile. |
-| `source/Constants.mc` | Shared constants for both main-app and glance slices: `StorageKeys`, `ApStates`, `AUTH_*` (internal auth FSM), `AP_STATE_*`, `CONN_*` (user-facing connectivity enum). |
-| `source/model/VesselModel.mc` | Transport-agnostic vessel face. ~310 LOC. Vessel data fields, formatters, glance writer, command surface (`changeHeading`, `setAutopilotState`) that delegates to `connect`, `applyVesselDataDict(dict)` callback, `getConnectivity()` getter. |
-| `source/model/VesselConnect.mc` | Abstract base for transports. Holds shared `lastNetCode` / `probeOk` state. Subclasses implement `start/stop/setAutopilotState/changeHeading`. |
-| `source/model/RESTVesselConnect.mc` | REST-over-HTTP impl. ~780 LOC. Owns baseURL/token/clientId/href, all timers, all HTTP. Auth state machine, data poll, autopilot PUT, access-request POST + polling, `/signalk` discovery probe. Uses TEXT_PLAIN responseType + `Json.parse` to preserve real status codes. |
-| `source/model/BLEVesselConnect.mc` | Stub for a future BLE GATT transport. All methods throw today; documents the seam for whoever wires it up. |
-| `source/model/NetworkErrorPresenter.mc` | Holds the legacy `ErrorView` push/pop API. **Currently unused** — the post-2d UX surfaces errors via the StatusView subtitle instead. Kept on disk in case we re-introduce a full-screen error overlay. |
-| `source/views/VesselDataView.mc` | Main 3-row data dashboard (SOG / AWA+AWS / DBT). Shows `—` placeholders when `getConnectivity() != CONN_CONNECTED`. Select pushes AutopilotView. |
-| `source/views/TempView.mc` | Water-temperature page. Same `—` treatment when not connected. |
-| `source/views/StatusView.mc` | "Config" page in the loop. Title "SignalK", subtitle = current CONN_* label (NO URL / NO HTTPS / NOT REACHABLE / NOT AUTHENTICATED / PENDING / PLUGIN MISSING / CONNECTED). Select/menu opens RequestAccessView only when state is NOT_AUTHENTICATED. |
-| `source/views/AuthConfigView.mc` | Hosts `RequestAccessView` (despite the filename — kept to minimise churn). Pushed on top of the loop when the user opts to start the device-access-request. Shows a "Tap to request" prompt → spinner during POST + polling → auto-pop on approval, toast + pop on denial. |
-| `source/views/AutopilotView.mc` | Autopilot control UI. UP/DOWN/CLOCK/MENU adjust target heading (±1°/±10°); select opens the mode menu. Disabled when not CONNECTED. |
-| `source/views/VesselViewLoopFactory.mc` | The 3-page ViewLoop: VesselData / Temp / Status. `VesselViewLoop.build(initialPage)` is the canonical constructor; called by `VesselConnectApp.getInitialView` and by `RESTVesselConnect.redirectToConfigPage` to re-create the loop landing on the status page. Page-index constants `VIEWLOOP_PAGE_DATA / TEMP / STATUS` live in this file. |
-| `source/views/ErrorView.mc` | Full-screen error overlay class. **Not currently pushed** by anything (NetworkErrorPresenter is a no-op caller) but the file is preserved for potential future use. |
-| `source/views/SignalKGlanceView.mc` | Glance-carousel tile. `(:glance)` annotated; reads last-known state from `Application.Storage` only. Has zero dependency on VesselModel (can't — glance slice is memory-restricted). |
-| `source/util/Utilities.mc` | Pure helpers: unit conversions (kn/nm/rad/deg/K→°C), display formatters (`formatSpeedKnots`, `formatDepthMeters`, …), `normalizeBaseUrl`, `deriveInitialAuthState`, `deriveConnectivity`, `generateUuidV4`, wind-arrow drawer, HTTP/BLE error-code table, `drawStatusScreen` helper. All side-effect-free; all unit-tested. |
+| `source/VesselConnectApp.mc` | App entry. Lazily constructs the global `vessel` in `getInitialView` (NOT `initialize` — that runs in the glance slice too and crashes on `new VesselModel()`). Reads `ConnectionType` from storage and attaches the matching transport via `TransportFactory`. `getGlanceView` is `(:glance)`-annotated and returns the glance tile. |
+| `source/Constants.mc` | Shared constants for both main-app and glance slices: `StorageKeys`, `ConnectionType` (user pick: NONE/REST/BLE), `ApStates`, `AUTH_*` (internal REST auth FSM), `AP_STATE_*`, `CONN_*` (unified connectivity enum), `BLE_*` (internal BLE link state), `BleCharUuids`, `BleCmdAction`. |
+| `source/model/VesselModel.mc` | Transport-agnostic vessel face. Data fields, formatters, glance writer, command surface (`changeHeading`, `setAutopilotState`) that delegates to `connect`. Holds the active `VesselConnect` (REST / BLE / Null). `attachTransport()` swaps it cleanly. |
+| `source/model/VesselConnect.mc` | Abstract base for transports. All methods have safe no-op defaults so views can call any of them without branching on transport flavour. |
+| `source/model/RESTVesselConnect.mc` | REST-over-HTTP impl. Owns baseURL/token/clientId/href, all timers, all HTTP. Auth FSM, data poll, autopilot PUT, access-request POST + polling, `/signalk` discovery probe. `lastNetCode`/`probeOk` live here (REST-only). Maps internal state to `CONN_*` via `Utilities.deriveConnectivity`. |
+| `source/model/BLEVesselConnect.mc` | Thin VesselConnect facade wrapping a BleService. Maps internal `BLE_*` to unified `CONN_*`. Routes start/stop/connect/disconnect/streaming/commands to the underlying service. Receives link-state callbacks via `onLinkConnected/onLinkDisconnected`. |
+| `source/model/BleService.mc` | Owns the BLE peripheral connection lifecycle and the per-view read loop. Constructed by `BLEVesselConnect`; never touched by views directly. Notifies its facade on link transitions. |
+| `source/model/NullVesselConnect.mc` | No-op transport assigned to `vessel.connect` when `ConnectionType == NONE`. Returns `CONN_NONE` so StatusView can detect "user hasn't picked yet" and auto-push the picker. |
+| `source/model/TransportFactory.mc` | Single point of construction. `getStoredType()` / `setStoredType(t)` wraps the `signalk-connection-type` storage key; `build(type, vessel)` returns the matching VesselConnect impl. |
+| `source/model/NetworkErrorPresenter.mc` | Holds the legacy `ErrorView` push/pop API. **Currently unused** — the StatusView subtitle carries error state. Kept on disk in case we re-introduce a full-screen error overlay. |
+| `source/views/VesselDataView.mc` | Main 3-row data dashboard (SOG / AWA+AWS / DBT). Shows `—` placeholders when `vessel.hasDataConnection()` is false. Select pushes AutopilotView. Calls `vessel.beginDataStreaming(NAV)` on show (no-op for REST). |
+| `source/views/TempView.mc` | Water-temperature page. Same `—` treatment. Calls `vessel.beginDataStreaming(ENV)` on show. |
+| `source/views/StatusView.mc` | "Config" page in the loop. Renders `vessel.connect.getDisplayTitle()` + `getStatusLabel()` — single transport, no split layout. Auto-pushes the connection-type picker on first launch (`ConnectionType == NONE`). Select opens the Config menu (state-driven items: Request Access for REST when NOT_AUTH, Connect/Cancel/Disconnect for BLE, Set Connection Type, Debug Probe for REST). |
+| `source/views/ConnectionTypePicker.mc` | Menu2 + delegate for picking REST or BLE. Pushed on first launch (back exits the app per UX requirement) and from the Config menu's "Set Connection Type" item (back pops normally). On selection, calls `TransportFactory.setStoredType` + `vessel.attachTransport`. |
+| `source/views/AuthConfigView.mc` | Hosts `RequestAccessView` (despite the filename). Pushed on top of the loop when the user opts to start the REST device-access-request. Spinner during POST + polling → auto-pop on approval, toast + pop on denial. |
+| `source/views/BleConnectView.mc` | Spinner view shown during BLE pairing. Calls `vessel.connect.startConnect/cancelConnect`. Only ever pushed when the active transport is BLE. |
+| `source/views/NoRestConnectionView.mc` | Full-screen error pushed by AutopilotView when an autopilot command is attempted but the active transport is not in CONN_CONNECTED. Wording is transport-agnostic ("to vessel"). |
+| `source/views/AutopilotView.mc` | Autopilot control UI. UP/DOWN/CLOCK/MENU adjust target heading (±1°/±10°); select opens the mode menu. Gates command keys on `vessel.canSendCommands()` (== CONN_CONNECTED). Pushes `NoRestConnectionView` when blocked. |
+| `source/views/VesselViewLoopFactory.mc` | The 3-page ViewLoop: VesselData / Temp / Status. `VesselViewLoop.build(initialPage)` is the canonical constructor; used by app launch and by `RESTVesselConnect.redirectToConfigPage`/`redirectToDataPage` for ViewLoop redirects. |
+| `source/views/ErrorView.mc` | Full-screen error overlay class. **Not currently pushed** but kept for potential future use. |
+| `source/views/SignalKGlanceView.mc` | Glance-carousel tile. `(:glance)` annotated; reads last-known state from `Application.Storage` only. Branches on `signalk-connection-type`: NONE → "NOT CONFIGURED"; REST → "SignalK Server" + URL; BLE → "BLE" + device name. |
+| `source/util/Utilities.mc` | Pure helpers: unit conversions, display formatters, `normalizeBaseUrl`, `deriveInitialAuthState`, `deriveConnectivity`, `generateUuidV4`, wind-arrow drawer, error-code table. Side-effect-free; unit-tested. |
 | `source/util/UtilitiesTest.mc` | Run-No-Evil tests for `Utilities` (incl. the full `deriveConnectivity` state matrix). Stripped from release builds by `(:test)` annotation. |
 | `source/util/Json.mc` | Recursive-descent JSON parser. Top-level must be an object; supports nested objects, strings (basic escapes), numbers (int/decimal/scientific/negative), `true`/`false`/`null`. No arrays, no `\uXXXX`. Throws `Json.ParseError` on malformed input. |
-| `source/util/JsonTest.mc` | 30 Run-No-Evil tests for `Json`: happy path + escape handling + real signalk payload shapes + 11 malformed-input cases. |
+| `source/util/JsonTest.mc` | 30 Run-No-Evil tests for `Json`. |
 | `resources/strings/strings.xml` | `AppName`. |
 | `resources-icon-{40,60,65}/drawables/` | Per-launcher-slot-size icon variants. |
 | `resources/properties.xml` | Settings UI — `baseurl_prop` only. |
@@ -125,43 +129,77 @@ Files are organised into `source/{model,views,util}/` (the app entry and
 | `monkey.jungle` | Build config. |
 | `.vscode/tasks.json` | Committed. The build/deploy/test tasks above. |
 
-## Architecture — model + transport, view-loop-driven UI
+## Architecture — one transport at a time
 
 One global `vessel` (a `VesselModel`) declared in `VesselConnectApp.mc`.
 Every view reads from it. `VesselModel` is transport-agnostic — the
-actual networking lives on its `connect` (a `VesselConnect` subclass).
-Today that's `RESTVesselConnect`; swap to `BLEVesselConnect` in
-`VesselModel.initialize` to switch transports.
+active transport lives on `vessel.connect` and is exactly ONE of
+`RESTVesselConnect`, `BLEVesselConnect`, or `NullVesselConnect`. The
+user picks REST or BLE on first launch (and can switch later via the
+Config menu's "Set Connection Type"). Both data flow and autopilot
+commands ride that single picked transport — there's no fallback or
+parallel operation.
+
+`TransportFactory` is the single point of construction. It reads
+`signalk-connection-type` from storage (string: `"none"` / `"rest"` /
+`"ble"`) and returns the matching VesselConnect; `setStoredType(t)`
+persists the user's pick. `VesselModel.attachTransport(newConnect)`
+cleanly stops the previous transport and installs the new one. Token
+and BLE_AUTOCONNECT survive the swap so users can switch back later
+without re-authing or re-pairing.
+
+`VesselConnect` is the abstract base. Every method has a safe no-op
+default; subclasses override the ones they care about. This means
+views can call `vessel.connect.requestAccess()` or
+`vessel.connect.startConnect(cb)` unconditionally — irrelevant calls
+silently do nothing on the wrong transport. The Config menu still
+filters items by transport so the user never sees inapplicable
+actions.
 
 The UI is a single `WatchUi.ViewLoop` with three pages: VesselData,
-Temp, Status. The Status page is the always-on connectivity dashboard.
-On any data-poll failure transition (`OK → not OK`), the transport
-calls `redirectToConfigPage()` which constructs a fresh ViewLoop with
-`:page => VIEWLOOP_PAGE_STATUS` and `WatchUi.switchToView`s to it. The
-ViewLoop API has no programmatic `setPage` — recreate-and-switch is the
-only way to land on a non-zero page after init.
+Temp, Status. On a REST data-poll failure transition (`OK → not OK`),
+`RESTVesselConnect.redirectToConfigPage()` constructs a fresh ViewLoop
+with `:page => VIEWLOOP_PAGE_STATUS`. The ViewLoop API has no
+programmatic `setPage` — recreate-and-switch is the only way to land
+on a non-zero page after init.
 
-`RequestAccessView` is pushed on top of the ViewLoop only when the user
-deliberately starts the access-request flow (select on Status when in
-`CONN_NOT_AUTH`). It auto-pops on approval (no ack screen), toasts +
-pops on denial.
+`StatusView` auto-pushes the `ConnectionTypePicker` Menu2 on first
+launch when no transport is picked. Back from the picker in that
+context exits the app — the user MUST pick a transport. Subsequent
+invocations from the Config menu are normal (back pops to the menu).
 
-## Connectivity model
+`RequestAccessView` is pushed on top of the ViewLoop only when the
+user deliberately starts the REST access-request flow. It auto-pops
+on approval (no ack screen), toasts + pops on denial.
 
-`vessel.getConnectivity()` returns the current `CONN_*` state by calling
-the pure `Utilities.deriveConnectivity(baseURL, hasToken, hasHref,
-lastNetCode, probeOk)`. Precedence (top wins):
+## Connectivity model — unified status
 
-1. `CONN_NO_URL` — no `baseurl_prop` configured
-2. `CONN_NO_HTTPS` — last request returned -1001 (Garmin's HTTPS-required policy)
-3. `CONN_PENDING` — no token but access request submitted
-4. `CONN_NOT_AUTH` — no token (and no pending request)
-5. `CONN_CONNECTED` — token + (no poll yet OR last poll 200)
-6. `CONN_NOT_AUTH` — token + last poll 401/403 (token revoked server-side)
-7. `CONN_MISSING_PLUGIN` / `CONN_NOT_REACHABLE` — token + last poll 404/400, disambiguated by `/signalk` discovery probe (probe ok → MISSING_PLUGIN, probe fail → NOT_REACHABLE)
-8. `CONN_NOT_REACHABLE` — token + any other failure (-300 timeout, 5xx, unknown)
+`vessel.getStatusKind()` returns one of the unified `CONN_*` values
+(see `Constants.mc`). Each transport maps its internal state onto the
+unified enum:
 
-Every cell of this table is unit-tested in `UtilitiesTest.mc`.
+| `CONN_*` | REST | BLE | Null |
+| --- | --- | --- | --- |
+| `CONN_NONE` | — | — | always |
+| `CONN_NO_URL` | `baseurl_prop` missing | — | — |
+| `CONN_NO_HTTPS` | last code -1001 | — | — |
+| `CONN_NOT_AUTH` | no token, or 401/403 | — | — |
+| `CONN_PENDING` | access request submitted | — | — |
+| `CONN_NOT_REACHABLE` | timeout, 5xx, unknown | — | — |
+| `CONN_MISSING_PLUGIN` | 404/400 + probe ok | — | — |
+| `CONN_DISCONNECTED` | — | not paired | — |
+| `CONN_CONNECTING` | — | scanning / pairing | — |
+| `CONN_CONNECTED` | token + last poll 200 | GATT link up | — |
+
+REST's mapping is implemented by `Utilities.deriveConnectivity(...)` —
+unit-tested in `UtilitiesTest.mc`. BLE's mapping is the trivial 3:3
+table inside `BLEVesselConnect.getStatusKind()`.
+
+`vessel.connect.getStatusLabel()` returns the subtitle string for the
+StatusView: URL when REST is CONNECTED, device name when BLE is
+CONNECTED, or a state name (`"NOT REACHABLE"`, `"Connecting..."`, …)
+otherwise. `getDisplayTitle()` returns the per-transport title
+(`"SignalK Server"` for REST, `"BLE"` for BLE).
 
 ## Auth state machine (internal — REST-specific, lives on `RESTVesselConnect`)
 
@@ -176,19 +214,25 @@ DENIED         ─tap reset────►            NEEDS_REQUEST (fresh clien
 `authState` is not persisted. On launch, `RESTVesselConnect.configureSignalK`
 re-derives it via `Utilities.deriveInitialAuthState(baseURL, token,
 accessRequestHref)` (pure function, unit-tested). Views should read
-`vessel.getConnectivity()` for user-facing state — the AUTH_* enum is
-internal to the REST flow.
+`vessel.getStatusKind()` for user-facing state — `AUTH_*` is internal
+to the REST flow (only `RequestAccessView` checks it directly).
 
 ### Persisted in `Application.Storage` (keys in `Constants.StorageKeys`)
 
+- `signalk-connection-type` — `"none"` / `"rest"` / `"ble"`. Single
+  source of truth for which transport is active. Read by
+  `TransportFactory.getStoredType()`.
 - `signalk-client-id` — v4 UUID generated once per install; sticks across
-  launches and re-requests against the same server.
-- `signalk-access-href` — polling URL returned by the server on submit
-  (persisted so a mid-pending restart can resume without re-submitting).
-- `signalk-token` — `"Bearer <JWT>"` once approved.
-- `signalk-glance` — combined dict `{sog, aws, ap}` written every ~5 s
-  while connected; read by the glance view. Single key (not three) to
-  cut flash writes 3×.
+  launches and re-requests against the same server. (REST.)
+- `signalk-access-href` — polling URL returned by the server on submit.
+  (REST.)
+- `signalk-token` — `"Bearer <JWT>"` once approved. (REST.)
+- `signalk-ble-autoconnect` — sticky boolean: set on first successful
+  BLE pair, cleared on explicit Disconnect. While set, the app silently
+  rescans for the SignalK service on each launch.
+- `signalk-glance` — combined dict `{connectionType, url, bleDeviceName,
+  sog, aws, ap}` written every ~5 s while connected; read by the glance
+  view. Single key (not multiple) to cut flash writes.
 
 ## HTTP request shape — TEXT_PLAIN, not JSON
 
@@ -222,6 +266,14 @@ error per episode; result resets when data resumes flowing.
 - **Invalid-timer bug fix**: `invalidateTimer(t)` returns `null` and
   callers reassign — Monkey C passes refs by value, so `timer = null`
   inside the function did nothing before.
+- **Transport switch preserves state**: `attachTransport(newConnect)`
+  stops the old transport but does NOT delete REST tokens or
+  `BLE_AUTOCONNECT`. Switching REST → BLE → REST round-trips without
+  re-authing.
+- **First-launch picker enforcement**: back from the picker exits the
+  app rather than dropping the user onto an empty StatusView. The
+  picker is auto-pushed in `StatusView.onShow` whenever
+  `ConnectionType == NONE`.
 
 ## Code style
 
@@ -298,11 +350,10 @@ pick any, skip the rest.
    not just our fork. Blocked on: the raymarine plugin supporting the
    v2 provider interface — no work has started there.
 
-8. **Decide the fate of `NetworkErrorPresenter` + `ErrorView`**. Both
-   are dead code after the 2d UX rework — the StatusView subtitle now
-   carries error state. Either delete both or revive them for a
-   specific subset of cases (e.g. modal-style toasts beyond the
-   `WatchUi.showToast` capabilities).
+8. **Delete `NetworkErrorPresenter` + `ErrorView` + `BleScanner` +
+   `BLEScanView`**. All four are dead code — the StatusView subtitle
+   carries error state, and BLE scanning is now driven by `BleService`.
+   Removing them tightens the source tree.
 
 ## Low priority / nice-to-have
 
@@ -312,18 +363,12 @@ pick any, skip the rest.
    detection. No user demand yet.
 
 10. **Refresh screenshots in `doc/`**. Current `sc1.jpg` / `sc2.jpg` /
-    `sc3.jpg` are from the pre-2026 UI — they show the old
-    username/password data view, not the current RequestAccessView /
-    glance / StatusView flow. Regenerate after a successful sideload on
-    a real fenix 8 / epix Pro.
+    `sc3.jpg` are from the pre-2026 UI. Regenerate after a successful
+    sideload on a real fenix 8 / epix Pro to capture the
+    ConnectionTypePicker / single-method StatusView / glance.
 
 11. **Server-side cleanup for orphaned pending requests**. If the user
     resets during PENDING, the server-side request stays PENDING until
     an admin denies it. No SignalK-spec DELETE endpoint exists (verified
     against 2.x server source). Would need either a client-side
     re-submission of approved state or a change to signalk-server itself.
-
-12. **Wire up `BLEVesselConnect`**. Stub today. Requires designing the
-    BLE GATT service shape on the server side too (signalk-server has
-    no BLE bridge in core; would need a sibling plugin). Big project,
-    no concrete pull yet.

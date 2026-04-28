@@ -36,10 +36,12 @@ using Utilities as Utils;
 class RESTVesselConnect extends VesselConnect {
 
     /*
-     * Main data-poll interval (ms). Lower values feel more live but
-     * hammer the server and drain battery.
+     * Main data-poll interval (ms). 3 polls per second — feels live on
+     * the dashboards. Higher cadence than this hammers the server and
+     * drains battery; the user knowingly traded battery for liveness
+     * here.
      */
-    const updateInterval = 1000;
+    const updateInterval = 333;
 
     /*
      * Access-request poll interval (ms). Much slower — admin has to
@@ -72,6 +74,20 @@ class RESTVesselConnect extends VesselConnect {
     protected var clientId = null;          // v4 UUID, stable across launches
     protected var accessRequestHref = null; // e.g. "/signalk/v1/requests/<id>"
 
+    /*
+     * Most recent HTTP / CIQ code observed from any request to the
+     * underlying server. null = nothing observed yet. Drives the unified
+     * status mapping in getStatusKind().
+     */
+    public var lastNetCode = null;
+
+    /*
+     * Most recent /signalk discovery probe outcome. Only consulted by
+     * deriveConnectivity on ambiguous codes (404/400). null = haven't
+     * probed yet (or last data poll succeeded — see onDataReceive).
+     */
+    public var probeOk = null;
+
     protected var updateTimer;
     protected var retryTimer;
     protected var pollTimer;
@@ -101,9 +117,29 @@ class RESTVesselConnect extends VesselConnect {
     private var lastDataPollOk = true;
 
     /*
-     * Auth state machine — REST-specific. Views read it via
-     * vessel.connect.authState (or via the user-facing
-     * vessel.getConnectivity() which combines this with lastNetCode).
+     * Set true while a one-shot poll triggered by refresh() is in
+     * flight (e.g. on AutopilotView.onShow). Suppresses the page-
+     * redirect side effects of onDataReceive so a refresh on a
+     * specific view doesn't yank the user away from it. Does NOT
+     * suppress rescheduling — the recurring poll should keep going
+     * regardless of one-shot probes.
+     */
+    private var oneShotInFlight = false;
+
+    /*
+     * Master switch on the recurring data poll. Cleared by
+     * pausePolling() (StatusView.onShow); set by resumePolling()
+     * (StatusView.onHide). While false, onDataReceive does NOT
+     * reschedule the next poll, so the cadence decays to zero after
+     * the in-flight response settles.
+     */
+    private var dataPollEnabled = true;
+
+    /*
+     * Auth state machine — REST-internal. Views surface user-facing
+     * state via getStatusKind() / getStatusLabel() rather than
+     * branching on AUTH_*; the only outside reader is RequestAccessView,
+     * which is only ever pushed in REST mode.
      */
     public var authState = AUTH_NEEDS_REQUEST;
 
@@ -161,6 +197,88 @@ class RESTVesselConnect extends VesselConnect {
 
     function changeHeading(degrees) as Void {
         sendAutopilotCommand({ "action" => "changeHeading", "value" => degrees });
+    }
+
+    /*
+     * ============== Unified status surface ==============
+     */
+
+    function getDisplayTitle() as Lang.String {
+        return "SignalK Server";
+    }
+
+    /*
+     * Maps the REST-specific (auth state + last net code + probe) tuple
+     * onto one of the unified CONN_* values. Logic lives in
+     * Utilities.deriveConnectivity for unit-testability.
+     */
+    function getStatusKind() as Lang.Number {
+        return Utils.deriveConnectivity(
+            baseURL,
+            token != null,
+            accessRequestHref != null,
+            lastNetCode,
+            probeOk);
+    }
+
+    /*
+     * Subtitle text for the StatusView. URL when CONNECTED (so the user
+     * can verify the configured target); state name otherwise. Each
+     * possible CONN_* maps to a stable string — colour is the view's
+     * concern.
+     */
+    function getStatusLabel() as Lang.String {
+        var kind = getStatusKind();
+        if (kind == CONN_CONNECTED) {
+            return baseURL != null ? baseURL : "CONNECTED";
+        }
+        if (kind == CONN_NO_URL)         { return "NO URL"; }
+        if (kind == CONN_NO_HTTPS)       { return "NO HTTPS"; }
+        if (kind == CONN_NOT_REACHABLE)  { return "NOT REACHABLE"; }
+        if (kind == CONN_NOT_AUTH)       { return "NOT AUTHENTICATED"; }
+        if (kind == CONN_PENDING)        { return "PENDING"; }
+        if (kind == CONN_MISSING_PLUGIN) { return "PLUGIN MISSING"; }
+        return "UNKNOWN";
+    }
+
+    function supportsRequestAccess() as Lang.Boolean {
+        return true;
+    }
+
+    /*
+     * One-shot poll for status refresh on view entry (StatusView /
+     * AutopilotView). Skips when nothing to ask. Does NOT cancel or
+     * disrupt the recurring poll.
+     */
+    function refresh() as Void {
+        if (baseURL == null || token == null) {
+            return;
+        }
+        oneShotInFlight = true;
+        updateVesselDataFromServer();
+    }
+
+    /*
+     * Pauses the recurring data poll. Used by StatusView so the user
+     * isn't burning battery on data the screen doesn't render. Token
+     * + auth state survive — only the next-tick scheduling stops.
+     */
+    function pausePolling() as Void {
+        logDebug("pausePolling");
+        dataPollEnabled = false;
+        updateTimer = invalidateTimer(updateTimer);
+        retryTimer = invalidateTimer(retryTimer);
+    }
+
+    /*
+     * Re-enables the recurring poll and re-kicks it via start(), which
+     * itself gates on authState/token — resuming when there's nothing
+     * to poll is therefore a no-op.
+     */
+    function resumePolling() as Void {
+        logDebug("resumePolling");
+        dataPollEnabled = true;
+        start();
     }
 
     /*
@@ -538,7 +656,7 @@ class RESTVesselConnect extends VesselConnect {
      * orphaned PENDING request sits on the server until admin denies
      * it.
      */
-    function reset() {
+    function resetAccessRequest() as Void {
         logDebug("reset");
 
         stop();
@@ -605,14 +723,24 @@ class RESTVesselConnect extends VesselConnect {
                 probeOk = null;
                 if (!lastDataPollOk) {
                     // Recovery (or first poll after fresh auth): land
-                    // the user on the data page.
+                    // the user on the data page — but not on a one-shot
+                    // refresh, where the user explicitly opened a
+                    // specific view (autopilot / status) and should
+                    // stay on it.
                     lastDataPollOk = true;
-                    redirectToDataPage();
+                    if (!oneShotInFlight) {
+                        redirectToDataPage();
+                    } else {
+                        WatchUi.requestUpdate();
+                    }
                 } else {
                     WatchUi.requestUpdate();
                 }
-                updateTimer = new Timer.Timer();
-                updateTimer.start(method(:updateVesselDataFromServer), updateInterval, false);
+                if (dataPollEnabled) {
+                    updateTimer = new Timer.Timer();
+                    updateTimer.start(method(:updateVesselDataFromServer), updateInterval, false);
+                }
+                oneShotInFlight = false;
                 return;
             }
             // 200 with unparseable body — fall through to error path
@@ -635,10 +763,15 @@ class RESTVesselConnect extends VesselConnect {
             authState = AUTH_NEEDS_REQUEST;
             if (lastDataPollOk) {
                 lastDataPollOk = false;
-                redirectToConfigPage();
+                if (!oneShotInFlight) {
+                    redirectToConfigPage();
+                } else {
+                    WatchUi.requestUpdate();
+                }
             } else {
                 WatchUi.requestUpdate();
             }
+            oneShotInFlight = false;
             return;
         }
 
@@ -651,14 +784,22 @@ class RESTVesselConnect extends VesselConnect {
 
         // First failure after a healthy run: redirect ViewLoop to the
         // Status page so the user sees the error state without having
-        // to swipe. Subsequent retries don't re-redirect.
+        // to swipe. Subsequent retries don't re-redirect. One-shot
+        // refreshes never redirect (see oneShotInFlight comment above).
         if (lastDataPollOk) {
             lastDataPollOk = false;
-            redirectToConfigPage();
+            if (!oneShotInFlight) {
+                redirectToConfigPage();
+            } else {
+                WatchUi.requestUpdate();
+            }
         } else {
             WatchUi.requestUpdate();
         }
-        startRetryTimer();
+        if (dataPollEnabled) {
+            startRetryTimer();
+        }
+        oneShotInFlight = false;
     }
 
     /*
@@ -720,41 +861,6 @@ class RESTVesselConnect extends VesselConnect {
         System.println("[Probe] code=" + responseCode);
         probeOk = (responseCode == 200);
         WatchUi.requestUpdate();
-    }
-
-    /*
-     * Diagnostic GET to the public SignalK discovery endpoint at a
-     * known-good server. Used from the Config menu to test whether the
-     * device's HTTP stack works at all — independent of our auth
-     * flow, configured baseURL, or vesseldata plugin. Result toasted
-     * to the screen so it's visible without log access.
-     *
-     * Same shape as our other requests (TEXT_PLAIN response type, body
-     * parsed via Json.parse on success) so a crash here points at the
-     * real-device network layer the same way the access POST would.
-     */
-    function debugProbe() as Void {
-        var url = "https://signalk.rpi.cb84.io/signalk";
-        System.println("[DebugProbe] GET " + url);
-        Communications.makeWebRequest(
-            url,
-            null,
-            {
-                :method => Communications.HTTP_REQUEST_METHOD_GET,
-                :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_TEXT_PLAIN
-            },
-            method(:onDebugProbeReceive)
-        );
-    }
-
-    function onDebugProbeReceive(responseCode as Lang.Number, data as Lang.Dictionary or Lang.String or Null) as Void {
-        System.println("[DebugProbe] code=" + responseCode);
-        var label = "Probe: " + responseCode;
-        if (responseCode == 200) {
-            var parsed = tryParseBody(data);
-            label = (parsed != null) ? "Probe: 200 OK" : "Probe: 200 unparseable";
-        }
-        WatchUi.showToast(label, null);
     }
 
     /*

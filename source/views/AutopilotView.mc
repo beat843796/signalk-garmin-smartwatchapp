@@ -43,6 +43,21 @@ class AutopilotView extends WatchUi.View {
         View.initialize();
     }
 
+    /*
+     * Refresh status on entry so canSendCommands() reflects the latest
+     * transport state. For BLE this also subscribes to the AP
+     * characteristic — autopilot state, current/target headings,
+     * rudder angle, trip/log. AWA is NOT in AP, so the wind arrow is
+     * no longer drawn here. Both calls are no-ops for transports that
+     * don't apply.
+     */
+    function onShow() as Void {
+        if (vessel != null) {
+            vessel.refreshStatus();
+            vessel.beginDataStreaming(BleCharUuids.AP);
+        }
+    }
+
     function onUpdate(dc) {
 
         View.onUpdate(dc);
@@ -105,19 +120,19 @@ class AutopilotView extends WatchUi.View {
 
         // Which heading to show depends on the current AP mode.
         switch (vessel.autopilotState) {
-            case "standby":
+            case ApStates.STANDBY:
                 valueToDraw = vessel.getHeadingMagneticDegreeString();
                 labelText = "HDG";
                 break;
-            case "auto":
+            case ApStates.AUTO:
                 valueToDraw = vessel.getTargetHeadingMagneticDegreeString();
                 labelText = "HDG";
                 break;
-            case "wind":
+            case ApStates.WIND:
                 valueToDraw = vessel.getTargetHeadingWindAppearantDegreeString();
                 labelText = "AWA";
                 break;
-            case "route":
+            case ApStates.ROUTE:
                 valueToDraw = "---";
                 labelText = "DTW";
                 break;
@@ -129,7 +144,7 @@ class AutopilotView extends WatchUi.View {
         // Bottom row: state name centred at 3*height/4. Standby is
         // neutral (grey); active modes use red so the running state
         // is visually distinct.
-        var stateColor = vessel.autopilotState.equals("standby")
+        var stateColor = vessel.autopilotState.equals(ApStates.STANDBY)
             ? Graphics.COLOR_LT_GRAY
             : Graphics.COLOR_RED;
         dc.setColor(stateColor, Graphics.COLOR_BLACK);
@@ -159,11 +174,6 @@ class AutopilotView extends WatchUi.View {
         dc.drawLine(0, height / 2 - rudderHeight / 2, width, height / 2 - rudderHeight / 2);
         dc.drawLine(0, height / 2 + rudderHeight / 2, width, height / 2 + rudderHeight / 2);
         dc.drawLine(width / 2, height / 2 - rudderHeight / 2, width / 2, height / 2 + rudderHeight / 2);
-
-        if (vessel.apparentWindAngle != null) {
-            dc.setColor(Graphics.COLOR_ORANGE, Graphics.COLOR_BLACK);
-            Utils.drawWindAngle(dc, vessel.apparentWindAngle, width);
-        }
     }
 
     /*
@@ -281,7 +291,7 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
      */
     function onSelect() as Lang.Boolean {
 
-        if (vessel.getConnectivity() != CONN_CONNECTED) {
+        if (!ensureCommandTransport()) {
             return true;
         }
 
@@ -301,18 +311,18 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
 
         var focus = 0;
         switch (vessel.autopilotState) {
-            case "standby":
+            case ApStates.STANDBY:
                 focus = 0;
                 break;
-            case "auto":
+            case ApStates.AUTO:
                 autoItem.setSubLabel("Active");
                 focus = 1;
                 break;
-            case "wind":
+            case ApStates.WIND:
                 windItem.setSubLabel("Active");
                 focus = 2;
                 break;
-            case "route":
+            case ApStates.ROUTE:
                 trackItem.setSubLabel("Active");
                 focus = 3;
                 break;
@@ -338,7 +348,13 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
      */
     function onKey(keyEvent as WatchUi.KeyEvent) as Lang.Boolean {
 
-        switch (keyEvent.getKey()) {
+        var key = keyEvent.getKey();
+        if (key == KEY_CLOCK || key == KEY_MENU) {
+            if (!ensureCommandTransport()) {
+                return true;
+            }
+        }
+        switch (key) {
             case KEY_CLOCK:
                 applyDelta(-10);
                 break;
@@ -368,10 +384,16 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
     function onKeyPressed(keyEvent as WatchUi.KeyEvent) as Lang.Boolean {
         var key = keyEvent.getKey();
         if (key == KEY_DOWN) {
+            if (!ensureCommandTransport()) {
+                return true;
+            }
             downPressedAt = System.getTimer();
             return true;
         }
         if (key == KEY_UP) {
+            if (!ensureCommandTransport()) {
+                return true;
+            }
             upPressedAt = System.getTimer();
             return true;
         }
@@ -392,7 +414,32 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
             applyDelta(heldMs >= longPressMs ? +10 : +1);
             return true;
         }
+        // Release without a stored press = the press itself was blocked
+        // by the REST guard. Swallow so the default release handler
+        // doesn't re-trigger a delta.
+        if (key == KEY_DOWN || key == KEY_UP) {
+            return true;
+        }
         return BehaviorDelegate.onKeyReleased(keyEvent);
+    }
+
+    /*
+     * Pre-flight guard for any key that initiates an autopilot command.
+     * Returns true when REST is in CONN_CONNECTED so the caller may
+     * proceed; returns false (and pushes NoRestConnectionView) otherwise.
+     * Called from onSelect, onKey (CLOCK/MENU), and onKeyPressed (UP/DOWN).
+     * BLE-only data is read-only by design; commands always need REST.
+     */
+    private function ensureCommandTransport() as Lang.Boolean {
+        if (vessel.canSendCommands()) {
+            return true;
+        }
+        System.println("[AP] command blocked — neither REST nor BLE connected");
+        WatchUi.pushView(
+            new NoRestConnectionView(),
+            new NoRestConnectionViewDelegate(),
+            WatchUi.SLIDE_LEFT);
+        return false;
     }
 
     /*
@@ -439,22 +486,27 @@ class AutopilotMenuDelegate extends WatchUi.Menu2InputDelegate {
 
     function onSelect(item as WatchUi.MenuItem) as Void {
 
-        if (vessel.getConnectivity() != CONN_CONNECTED) {
+        if (!vessel.canSendCommands()) {
+            System.println("[AP] mode change blocked — REST not connected");
+            WatchUi.pushView(
+                new NoRestConnectionView(),
+                new NoRestConnectionViewDelegate(),
+                WatchUi.SLIDE_LEFT);
             return;
         }
 
         switch (item.getId()) {
             case AP_STATE_STANDBY:
-                vessel.setAutopilotState("standby");
+                vessel.setAutopilotState(ApStates.STANDBY);
                 break;
             case AP_STATE_AUTO:
-                vessel.setAutopilotState("auto");
+                vessel.setAutopilotState(ApStates.AUTO);
                 break;
             case AP_STATE_WIND:
-                vessel.setAutopilotState("wind");
+                vessel.setAutopilotState(ApStates.WIND);
                 break;
             case AP_STATE_TRACK:
-                vessel.setAutopilotState("route");
+                vessel.setAutopilotState(ApStates.ROUTE);
                 break;
         }
 

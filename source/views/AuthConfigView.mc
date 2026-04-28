@@ -20,9 +20,7 @@
  */
 
 using Toybox.WatchUi;
-using Toybox.Graphics;
 using Toybox.Lang;
-using Toybox.System;
 using Toybox.Timer;
 
 using Utilities as Utils;
@@ -84,36 +82,11 @@ class RequestAccessView extends WatchUi.View {
 
     /*
      * "Requesting..." screen shown while the access-request POST is
-     * in flight or while polling for admin approval. CIQ doesn't ship
-     * an indeterminate-progress widget, so we roll our own: a 90° arc
-     * rotating around a central point. RESTVesselConnect drives
-     * redraws via its spinner timer.
+     * in flight or while polling for admin approval. Delegates to the
+     * shared spinner helper; RESTVesselConnect drives redraws via its
+     * spinner timer.
      */
     private function drawRequestingOverlay(dc) {
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
-        dc.clear();
-
-        var w = dc.getWidth();
-        var h = dc.getHeight();
-        var cx = w / 2;
-        var cy = h / 2;
-        var r = (h * 0.05).toNumber();
-
-        var degrees = (System.getTimer() / 3) % 360;
-        var start = 360 - degrees;
-        var end = (start - 90 + 360) % 360;
-
-        dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_BLACK);
-        dc.setPenWidth(5);
-        dc.drawArc(cx, cy, r, Graphics.ARC_CLOCKWISE, start, end);
-
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(
-            w / 2,
-            h * 0.65,
-            Graphics.FONT_SYSTEM_TINY,
-            "Pending Approval",
-            (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
-
+        Utils.drawSpinner(dc, "Pending Approval");
     }
 }

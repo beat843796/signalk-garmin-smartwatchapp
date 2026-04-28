@@ -1,60 +1,158 @@
 /*
  * BLEVesselConnect.mc
- * Future BLE GATT implementation of VesselConnect. Stub today —
- * exists so the VesselConnect interface is exercised by more than one
- * concrete subclass, which keeps the seam honest. To activate, swap
- * `connect = new RESTVesselConnect(self)` to
- * `connect = new BLEVesselConnect(self)` in VesselModel.initialize().
+ * VesselConnect wrapper around BleService — the latter owns the GATT
+ * delegate, scan/pair, read/write loop, and characteristic decoding;
+ * this thin facade adapts that surface to the unified VesselConnect
+ * interface that VesselModel and the views speak to.
  *
- * Implementation notes for whoever wires this up:
- *   - BLE has no SignalK-style device-access-request flow. Pairing
- *     happens at the OS level (the user pairs the watch with the
- *     boat's BLE peripheral via Garmin Connect). So there's no
- *     authState machine, no spinner, no access-request POST. The
- *     RequestAccessView wouldn't be reachable from this transport;
- *     StatusView's CONN_NOT_AUTH path would need a different action
- *     (e.g. open a "pair via Garmin Connect" prompt) when this is
- *     active.
- *   - Vessel-data subscription would be a GATT notify on a custom
- *     SignalK-over-BLE characteristic. On each notify, parse and call
- *     vessel.applyVesselDataDict.
- *   - Autopilot commands would be GATT writes to a write
- *     characteristic.
- *   - lastNetCode + probeOk semantics still apply but the codes used
- *     would be BLE-specific (-1xx range from CIQ); deriveConnectivity
- *     in Utilities would need a parallel BLE branch (or the BLE
- *     transport would normalise its codes onto the same vocabulary).
+ * The BleService stays a separate object because Toybox.BluetoothLowEnergy
+ * requires its delegate to extend Ble.BleDelegate, and folding all the
+ * VesselConnect surface plus the CIQ delegate machinery into one class
+ * pulls a lot of unrelated concerns into one file. Keeping them split
+ * also matches CLAUDE.md's "model + transport" architecture pattern.
  *
- * Toybox.BluetoothLowEnergy is the relevant SDK module. See
- * developer.garmin.com for current API.
+ * Status mapping — internal BLE_* → unified CONN_*:
+ *   BLE_DISCONNECTED → CONN_DISCONNECTED
+ *   BLE_CONNECTING   → CONN_CONNECTING
+ *   BLE_CONNECTED    → CONN_CONNECTED
+ *
+ * Glance side-effects: on link transitions, persists a snapshot fragment
+ * with the device name / connection-type marker so the glance can render
+ * the right "BLE / <device>" line without touching the BleService.
  */
 
 using Toybox.Lang;
+using Toybox.Application.Storage;
+using Toybox.System;
+using Toybox.WatchUi;
 
 class BLEVesselConnect extends VesselConnect {
 
+    private var service;
+
     function initialize(vesselRef) {
         VesselConnect.initialize(vesselRef);
-        // TODO: register profile / scan for paired peripheral / etc.
+        service = new BleService(vesselRef, self);
     }
 
+    /*
+     * ============== Lifecycle ==============
+     */
+
+    /*
+     * Kicks the silent autoconnect scan if the user has previously
+     * paired and not subsequently hit Disconnect. No-op otherwise. The
+     * BleConnectView spinner flow uses startConnect() instead.
+     */
     function start() as Void {
-        // TODO: subscribe to vessel-data characteristic via GATT notify.
-        throw new Lang.Exception();
+        service.tryAutoconnect();
     }
 
+    /*
+     * Tears down the BLE link without touching the sticky autoconnect
+     * flag. Called by app-shutdown (onStop) and transport-switch
+     * teardown — both must preserve the flag so re-launch /
+     * switch-back-to-BLE will autoconnect transparently. The
+     * user-initiated opt-out path is `disconnect()` below, which DOES
+     * clear the flag.
+     */
     function stop() as Void {
-        // TODO: unsubscribe + tear down BLE state.
-        throw new Lang.Exception();
+        service.teardownLink();
     }
+
+    /*
+     * BLE link state is push-driven by CIQ (onConnectedStateChanged);
+     * there's nothing to refresh on demand. Provided for interface
+     * symmetry with REST.refresh(); StatusView calls vessel.refresh()
+     * unconditionally.
+     */
+    function refresh() as Void {}
+
+    /*
+     * ============== Status surface ==============
+     */
+
+    function getDisplayTitle() as Lang.String {
+        return "BLE";
+    }
+
+    function getStatusKind() as Lang.Number {
+        var s = service.getState();
+        if (s == BLE_CONNECTED)  { return CONN_CONNECTED; }
+        if (s == BLE_CONNECTING) { return CONN_CONNECTING; }
+        return CONN_DISCONNECTED;
+    }
+
+    function getStatusLabel() as Lang.String {
+        var s = service.getState();
+        if (s == BLE_CONNECTED) {
+            var name = service.getConnectedDeviceName();
+            if (name != null && name.length() > 0) {
+                return name;
+            }
+            return "Connected";
+        }
+        if (s == BLE_CONNECTING) {
+            return "Connecting...";
+        }
+        return "Not Connected";
+    }
+
+    /*
+     * ============== Connect surface ==============
+     */
+
+    function startConnect(onConnectedCb) as Void {
+        service.startConnect(onConnectedCb);
+    }
+
+    function cancelConnect() as Void {
+        service.cancelConnect();
+    }
+
+    function disconnect() as Void {
+        service.disconnect();
+    }
+
+    /*
+     * ============== Streaming surface ==============
+     */
+
+    function beginDataStreaming(charUuidStr as Lang.String) as Void {
+        service.beginDataStreaming(charUuidStr);
+    }
+
+    function endDataStreaming() as Void {
+        service.endDataStreaming();
+    }
+
+    /*
+     * ============== Command surface ==============
+     */
 
     function setAutopilotState(state) as Void {
-        // TODO: GATT write to autopilot-state characteristic.
-        throw new Lang.Exception();
+        service.sendAutopilotSetState(state);
     }
 
     function changeHeading(degrees) as Void {
-        // TODO: GATT write to heading-change characteristic.
-        throw new Lang.Exception();
+        service.sendAutopilotChangeHeading(degrees);
+    }
+
+    /*
+     * ============== Link observer hooks ==============
+     * Called by BleService on state transitions. Keeps the side effects
+     * (status redraw, glance snapshot fragment) here so BleService stays
+     * a pure GATT/scan owner.
+     */
+
+    function onLinkConnected() as Void {
+        if (vessel != null) {
+            vessel.persistGlanceSnapshot();
+        }
+        WatchUi.requestUpdate();
+    }
+
+    function onLinkDisconnected() as Void {
+        WatchUi.requestUpdate();
     }
 }

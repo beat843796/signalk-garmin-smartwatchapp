@@ -29,6 +29,18 @@ class VesselDataView extends WatchUi.View {
         View.initialize();
     }
 
+    /*
+     * Subscribe to the NAV characteristic when this view becomes
+     * visible. NAV carries SOG, AWA, AWS, depth — the fields rendered
+     * here. Other characteristics are not read while this view is up.
+     * No-op for non-BLE transports.
+     */
+    function onShow() as Void {
+        if (vessel != null) {
+            vessel.beginDataStreaming(BleCharUuids.NAV);
+        }
+    }
+
     function onUpdate(dc) {
         View.onUpdate(dc);
 
@@ -61,9 +73,10 @@ class VesselDataView extends WatchUi.View {
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_BLACK);
         dc.drawArc(width/2, height/2, (width/2), Graphics.ARC_COUNTER_CLOCKWISE, 90, 135);
 
-        // While not connected, show "—" placeholders instead of stale
-        // numbers so the user isn't misled by frozen values.
-        var connected = (vessel.getConnectivity() == CONN_CONNECTED);
+        // While neither transport (REST nor BLE) is delivering data,
+        // show "—" placeholders so the user isn't misled by frozen
+        // values from a previous session.
+        var connected = vessel.hasDataConnection();
         var sog = connected ? vessel.getSpeedOverGroundKnotsString() : "—";
         var dbt = connected ? vessel.getDepthBelowTranscuderMeterString() : "—";
         var awa = connected ? vessel.getAppearantWindAngleDegreeString() : "—";
@@ -127,7 +140,11 @@ class VesselDataViewDelegate extends WatchUi.BehaviorDelegate {
     }
 
     function onSelect() as Lang.Boolean {
-        if (vessel.getConnectivity() != CONN_CONNECTED) {
+        // Allow opening AutopilotView whenever either transport is
+        // delivering data so the user can read the current state. The
+        // view itself gates command-sending on REST connectivity (UP /
+        // DOWN / SELECT push NoRestConnectionView when REST is down).
+        if (!vessel.hasDataConnection()) {
             return true;
         }
         WatchUi.pushView(new AutopilotView(), new AutopilotDelegate(), WatchUi.SLIDE_RIGHT);

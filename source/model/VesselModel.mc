@@ -2,19 +2,17 @@
  * VesselModel.mc
  * Transport-agnostic representation of the vessel: data fields,
  * formatters, and the autopilot command surface that views interact
- * with. All network ops are delegated to a VesselConnect (REST today,
- * BLE tomorrow). One instance lives at `VesselConnectApp.vessel` and
- * is read by every view.
+ * with. All network ops are delegated to a VesselConnect — exactly
+ * one transport at a time. Constructed at app start with a Null
+ * transport; the picker (or the launch-time TransportFactory call)
+ * swaps in the user-selected impl via attachTransport.
  *
- * VesselModel is the only thing views touch. Even though current views
- * still reference `vessel.connect.*` for some auth-flow specifics, the
- * data + commands surface (changeHeading, setAutopilotState, the data
- * fields, the formatters) is transport-agnostic on purpose so a future
- * BLE backend can drop in without touching any view.
+ * VesselModel is the only thing views touch.
  */
 
 using Toybox.System;
 using Toybox.Application.Storage;
+using Toybox.Application.Properties;
 using Toybox.Lang;
 using Toybox.WatchUi;
 
@@ -24,10 +22,13 @@ class VesselModel {
 
     /*
      * ============== Vessel data fields ==============
-     * Populated by VesselConnect via applyVesselDataDict(). Units
-     * follow the SignalK spec (SI everywhere) — formatters convert.
+     * Populated by the active VesselConnect via applyVesselDataDict()
+     * (REST, full poll) or applyNavData/applyEnvData/applyApData (BLE,
+     * per-characteristic). Units follow the SignalK spec (SI
+     * everywhere) — formatters convert.
      */
     public var speedOverGround;              // meter/second
+    public var speedThroughWater;            // meter/second
     public var apparentWindSpeed;            // meter/second
     public var trueWindSpeed;                // meter/second
     public var depthBelowTranscuder;         // meter
@@ -45,8 +46,12 @@ class VesselModel {
     public var autopilotState = "---";
 
     /*
-     * The transport. Constructed in initialize as RESTVesselConnect;
-     * future swap-in for BLE happens here.
+     * The active transport. Constructed in initialize as a
+     * NullVesselConnect; replaced by attachTransport once the user's
+     * picked type is known. View code calls connect.* directly for
+     * transport-specific operations (startConnect for BLE, requestAccess
+     * for REST), trusting the no-op defaults on VesselConnect to keep
+     * unrelated calls safe.
      */
     public var connect;
 
@@ -59,34 +64,102 @@ class VesselModel {
     private const glanceSnapshotEveryNTicks = 5;
 
     function initialize() {
-        connect = new RESTVesselConnect(self);
+        connect = new NullVesselConnect(self);
     }
 
     /*
-     * Re-reads persisted config (base URL etc.) and recomputes auth
-     * state. Called from VesselConnectApp on app start and on settings
-     * change.
+     * ============== Transport lifecycle ==============
+     */
+
+    /*
+     * Replaces the current transport (REST, BLE, or Null) with a new
+     * one constructed via TransportFactory. Cleanly stops the old one
+     * before installing the new — but does NOT delete persisted state
+     * (REST token, BLE_AUTOCONNECT) so the user can switch back later
+     * without re-authing / re-pairing.
+     */
+    function attachTransport(newConnect) as Void {
+        if (connect != null) {
+            connect.stop();
+        }
+        connect = newConnect;
+        // Reset stale data fields so values from the previous transport
+        // don't bleed through while the new one is still warming up.
+        resetVesselData();
+        Storage.deleteValue(StorageKeys.GLANCE_SNAPSHOT);
+    }
+
+    /*
+     * Re-reads persisted REST config (base URL etc.) on settings
+     * changes. No-op for non-REST transports.
      */
     function configureSignalK() {
-        connect.configureSignalK();
+        if (connect instanceof RESTVesselConnect) {
+            connect.configureSignalK();
+        }
     }
 
     /*
      * ============== Connectivity (user-facing state) ==============
      */
 
+    function getStatusKind() as Lang.Number {
+        return connect.getStatusKind();
+    }
+
     /*
-     * Returns the current CONN_* state for view rendering. Combines
-     * URL/auth state with the transport's most recent network outcome
-     * and (if relevant) the discovery probe result.
+     * "Data is reaching us" — true iff the active transport is in
+     * CONN_CONNECTED. Used by the dashboards to decide between live
+     * values and "—" placeholders.
      */
-    function getConnectivity() {
-        return Utils.deriveConnectivity(
-            connect.getBaseURL(),
-            connect.hasToken(),
-            connect.hasHref(),
-            connect.lastNetCode,
-            connect.probeOk);
+    function hasDataConnection() as Lang.Boolean {
+        return connect.getStatusKind() == CONN_CONNECTED;
+    }
+
+    /*
+     * "Commands will work" — same condition as hasDataConnection() in
+     * the one-transport-at-a-time model: if we're getting data, we can
+     * also send commands; if we aren't, we can't. Kept as a separate
+     * method so AutopilotView's gate stays semantically clear.
+     */
+    function canSendCommands() as Lang.Boolean {
+        return connect.getStatusKind() == CONN_CONNECTED;
+    }
+
+    /*
+     * One-shot status refresh used by AutopilotView.onShow. Delegated
+     * to the transport — REST fires a single data poll; BLE is a no-op
+     * (state is push-driven).
+     */
+    function refreshStatus() as Void {
+        connect.refresh();
+    }
+
+    /*
+     * Pause / resume the recurring data flow. StatusView calls these
+     * in onShow/onHide so the connection-management screen doesn't
+     * burn radio time on data it doesn't render.
+     */
+    function pausePolling() as Void {
+        connect.pausePolling();
+    }
+
+    function resumePolling() as Void {
+        connect.resumePolling();
+    }
+
+    /*
+     * ============== Streaming control ==============
+     * Only meaningful for BLE; REST polls every tick regardless. Views
+     * call these in onShow/onHide unconditionally.
+     */
+
+    function beginDataStreaming(charUuidStr as Lang.String) as Void {
+        connect.beginDataStreaming(charUuidStr);
+    }
+
+    function endDataStreaming() as Void {
+        connect.endDataStreaming();
     }
 
     /*
@@ -102,7 +175,7 @@ class VesselModel {
     }
 
     /*
-     * ============== Auth flow surface ==============
+     * ============== Auth flow surface (REST passthrough) ==============
      */
 
     function requestAccess() {
@@ -110,7 +183,7 @@ class VesselModel {
     }
 
     function resetAccessRequest() {
-        connect.reset();
+        connect.resetAccessRequest();
     }
 
     function startUpdatingData() {
@@ -122,7 +195,10 @@ class VesselModel {
     }
 
     function getBaseURL() {
-        return connect.getBaseURL();
+        if (connect instanceof RESTVesselConnect) {
+            return connect.getBaseURL();
+        }
+        return null;
     }
 
     function isSpinnerVisible() as Lang.Boolean {
@@ -137,13 +213,8 @@ class VesselModel {
         return connect.getDeviceDescription();
     }
 
-    /*
-     * Auth state (REST-specific). Views still branch on AUTH_* in the
-     * current UX; the Step 2d UI rework will replace these checks with
-     * getConnectivity().
-     */
     function getAuthState() {
-        return connect.authState;
+        return connect.getAuthState();
     }
 
     /*
@@ -161,7 +232,9 @@ class VesselModel {
     function applyVesselDataDict(data as Lang.Dictionary) as Void {
         try {
             depthBelowTranscuder = data["depthBelowTransducer"];
+            speedThroughWater = data["speedThroughWater"];
             apparentWindSpeed = data["windSpeedApparent"];
+            trueWindSpeed = data["windSpeedTrue"];
             waterTemperature = data["waterTemperature"];
             speedOverGround = data["speedOverGround"];
             courseOverGround = data["courseOverGroundTrue"];
@@ -183,11 +256,49 @@ class VesselModel {
             resetVesselData();
         }
 
-        /*
-         * Throttled: write a glance snapshot every ~5 ticks (~5 s at
-         * the default 1 s data poll) so the glance tile can show
-         * last-known SOG/AWS/AP without running its own poll.
-         */
+        bumpGlanceSnapshotCounter();
+    }
+
+    /*
+     * BLE-style partial apply — touches only the fields whose keys
+     * are present in `data`. Used by BleService when a per-characteristic
+     * read returns; each characteristic carries a subset of fields, and
+     * we must NOT clobber unrelated fields (e.g. an AP read shouldn't
+     * null out apparent-wind values managed by the NAV characteristic).
+     */
+    function applyNavData(data as Lang.Dictionary) as Void {
+        if (data.hasKey("speedOverGround"))      { speedOverGround = data["speedOverGround"]; }
+        if (data.hasKey("speedThroughWater"))    { speedThroughWater = data["speedThroughWater"]; }
+        if (data.hasKey("depthBelowTransducer")) { depthBelowTranscuder = data["depthBelowTransducer"]; }
+        if (data.hasKey("windAngleApparent"))    { apparentWindAngle = data["windAngleApparent"]; }
+        if (data.hasKey("windSpeedApparent"))    { apparentWindSpeed = data["windSpeedApparent"]; }
+        if (data.hasKey("windSpeedTrue"))        { trueWindSpeed = data["windSpeedTrue"]; }
+        bumpGlanceSnapshotCounter();
+    }
+
+    function applyEnvData(data as Lang.Dictionary) as Void {
+        if (data.hasKey("waterTemperature")) { waterTemperature = data["waterTemperature"]; }
+        // No glance bump — water temp isn't on the glance tile.
+    }
+
+    function applyApData(data as Lang.Dictionary) as Void {
+        if (data.hasKey("autopilotState"))                   { autopilotState = data["autopilotState"]; }
+        if (data.hasKey("courseOverGroundTrue"))             { courseOverGround = data["courseOverGroundTrue"]; }
+        if (data.hasKey("headingMagnetic"))                  { headingMagnetic = data["headingMagnetic"]; }
+        if (data.hasKey("autopilotTargetHeadingMagnetic"))   { targetHeadingMagnetic = data["autopilotTargetHeadingMagnetic"]; }
+        if (data.hasKey("autopilotTargetHeadingTrue"))       { targetHeadingTrue = data["autopilotTargetHeadingTrue"]; }
+        if (data.hasKey("autopilotTargetWindAngleApparent")) { targetHeadingWindAppearant = data["autopilotTargetWindAngleApparent"]; }
+        if (data.hasKey("rudderAngle"))                      { rudderAngle = data["rudderAngle"]; }
+        if (data.hasKey("tripTotal"))                        { tripTotal = data["tripTotal"]; }
+        bumpGlanceSnapshotCounter();
+    }
+
+    /*
+     * Throttled glance-snapshot write: every ~N applies, persist a
+     * compact snapshot so the glance tile can show last-known
+     * SOG/AWS/AP without running its own poll.
+     */
+    private function bumpGlanceSnapshotCounter() as Void {
         glanceSnapshotCounter++;
         if (glanceSnapshotCounter >= glanceSnapshotEveryNTicks) {
             glanceSnapshotCounter = 0;
@@ -197,6 +308,7 @@ class VesselModel {
 
     function resetVesselData() {
         speedOverGround = null;
+        speedThroughWater = null;
         apparentWindSpeed = null;
         trueWindSpeed = null;
         depthBelowTranscuder = null;
@@ -300,30 +412,33 @@ class VesselModel {
      * ============== Helpers ==============
      */
 
+    /*
+     * Persists a compact glance snapshot covering the picked
+     * connection-type plus the values the glance tile renders. Single
+     * key (rather than three) cuts flash writes; the glance reads them
+     * all at once.
+     *
+     * `connectionType` lets the glance branch on REST/BLE/NONE without
+     * loading VesselModel (forbidden in the glance compile slice).
+     * `url` and `bleDeviceName` give the glance the right second-line
+     * label for each transport.
+     */
     function persistGlanceSnapshot() {
+        var bleName = null;
+        if (connect instanceof BLEVesselConnect && connect.getStatusKind() == CONN_CONNECTED) {
+            bleName = connect.getStatusLabel();
+        }
+        var url = null;
+        if (connect instanceof RESTVesselConnect) {
+            url = Properties.getValue("baseurl_prop");
+        }
         Storage.setValue(StorageKeys.GLANCE_SNAPSHOT, {
+            "connectionType" => TransportFactory.getStoredType(),
+            "url" => url,
+            "bleDeviceName" => bleName,
             "sog" => (speedOverGround != null)   ? Utils.meterPerSecondToKnots(speedOverGround)   : null,
             "aws" => (apparentWindSpeed != null) ? Utils.meterPerSecondToKnots(apparentWindSpeed) : null,
             "ap"  => getNameForActiveState()
         });
-    }
-
-    /*
-     * ============== Boat type ==============
-     * Persisted choice between sailboat (default) and motor. Read on
-     * every getBoatType call (cheap — Application.Storage is in-memory
-     * after first read). Will eventually drive which fields appear on
-     * VesselDataView.
-     */
-    function getBoatType() as Lang.String {
-        var stored = Storage.getValue(StorageKeys.BOAT_TYPE);
-        if (stored == null) {
-            return BoatType.SAIL;
-        }
-        return stored;
-    }
-
-    function setBoatType(type as Lang.String) as Void {
-        Storage.setValue(StorageKeys.BOAT_TYPE, type);
     }
 }

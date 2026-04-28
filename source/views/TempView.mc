@@ -15,6 +15,17 @@ class TempView extends WatchUi.View {
         View.initialize();
     }
 
+    /*
+     * Subscribe to the ENV characteristic when this view becomes
+     * visible — it's the only field carried by ENV. No-op for non-BLE
+     * transports.
+     */
+    function onShow() as Void {
+        if (vessel != null) {
+            vessel.beginDataStreaming(BleCharUuids.ENV);
+        }
+    }
+
     function onUpdate(dc) {
         View.onUpdate(dc);
 
@@ -26,7 +37,7 @@ class TempView extends WatchUi.View {
         var cx = w / 2;
         var cy = h / 2;
 
-        var temp = (vessel.getConnectivity() == CONN_CONNECTED)
+        var temp = vessel.hasDataConnection()
             ? vessel.getWaterTemperatureString()
             : "—";
 
@@ -64,7 +75,7 @@ class TempViewDelegate extends WatchUi.BehaviorDelegate {
     }
 
     function onSelect() as Lang.Boolean {
-        if (vessel.getConnectivity() != CONN_CONNECTED) {
+        if (!vessel.hasDataConnection()) {
             return true;
         }
         WatchUi.pushView(new AutopilotView(), new AutopilotDelegate(), WatchUi.SLIDE_RIGHT);

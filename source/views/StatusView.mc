@@ -1,15 +1,25 @@
 /*
  * StatusView.mc
- * The "config" page in the ViewLoop. Always-on dashboard for the
- * SignalK connection state — title is "SignalK", subtitle is the
- * current CONN_* state's user-facing label. Server URL footer.
+ * The "config" page in the ViewLoop. Reflects exactly the picked
+ * transport — REST or BLE, never both. The label/colour combination
+ * comes straight off the active VesselConnect:
  *
- * Select / menu opens a Menu2 ("Config") with:
- *   - "SignalK / Request Access"  (only when CONN_NOT_AUTH; opens the
- *                                  device-access-request flow)
- *   - "BLE / Search devices"      (stub — logs only for now)
- *   - "Boat Type / Sailboat|Motor" (toggles + persists; later affects
- *                                  which fields VesselDataView shows)
+ *   title    = vessel.connect.getDisplayTitle()  ("SignalK Server" / "BLE")
+ *   subtitle = vessel.connect.getStatusLabel()   (URL / device name / state)
+ *
+ * Subtitle colour is derived from getStatusKind():
+ *   CONNECTED     → green
+ *   CONNECTING    → white
+ *   PENDING       → blue
+ *   anything else → red
+ *
+ * On first launch (ConnectionType == NONE) onShow auto-pushes the
+ * connection-type picker so the user can't reach an empty StatusView.
+ *
+ * Select / menu opens the Config menu with state-driven items:
+ *   - SignalK / Request Access      (REST + CONN_NOT_AUTH)
+ *   - BLE / Connect | Cancel | Disconnect (BLE, label depends on state)
+ *   - Change Connection Type        (always)
  */
 
 using Toybox.WatchUi;
@@ -19,89 +29,106 @@ using Toybox.System;
 
 class StatusView extends WatchUi.View {
 
+    /*
+     * Set true when onShow has already auto-pushed the first-launch
+     * picker so we don't push it again on every redraw / re-entry.
+     */
+    private var pickerPushed = false;
+
     function initialize() {
         View.initialize();
     }
 
-    function onUpdate(dc) {
-        View.onUpdate(dc);
-
-        var conn = vessel.getConnectivity();
-        var label = "SignalK";
-        var subtitle;
-        var color;
-
-        if (conn == CONN_CONNECTED) {
-            subtitle = "CONNECTED";
-            color = Graphics.COLOR_GREEN;
-        } else if (conn == CONN_NO_URL) {
-            subtitle = "NO URL";
-            color = Graphics.COLOR_LT_GRAY;
-        } else if (conn == CONN_NO_HTTPS) {
-            subtitle = "NO HTTPS";
-            color = Graphics.COLOR_RED;
-        } else if (conn == CONN_NOT_REACHABLE) {
-            subtitle = "NOT REACHABLE";
-            color = Graphics.COLOR_RED;
-        } else if (conn == CONN_NOT_AUTH) {
-            subtitle = "NOT AUTHENTICATED";
-            color = Graphics.COLOR_RED;
-        } else if (conn == CONN_PENDING) {
-            subtitle = "PENDING";
-            color = Graphics.COLOR_BLUE;
-        } else if (conn == CONN_MISSING_PLUGIN) {
-            subtitle = "PLUGIN MISSING";
-            color = Graphics.COLOR_RED;
-        } else {
-            subtitle = "UNKNOWN";
-            color = Graphics.COLOR_LT_GRAY;
+    /*
+     * Stop both transports' data flow while the user is on the
+     * connection-management screen — there's nothing rendered here
+     * that needs live data, and continuing to poll burns the radio
+     * for no reason. The displayed status label uses the last-known
+     * state from the transport. Also auto-opens the connection-type
+     * picker on first launch.
+     */
+    function onShow() as Void {
+        if (vessel == null) {
+            return;
         }
+        vessel.pausePolling();
+        vessel.endDataStreaming();
 
-        drawStatusScreen(dc, label, color, subtitle);
-        drawServerUrlFooter(dc, vessel.getBaseURL());
+        if (!pickerPushed
+                && TransportFactory.getStoredType().equals(ConnectionType.NONE)) {
+            pickerPushed = true;
+            ConnectionTypePicker.push(true);
+        }
     }
 
     /*
-     * Title in the upper third (coloured per state), body in the
-     * lower half (white). Black bg, sized proportionally so the
-     * layout looks right across 240-454 px round watches.
+     * Resume the recurring data flow when the user navigates away
+     * (swipe to data view, push Config menu, push picker, ...). The
+     * data views call beginDataStreaming themselves on their own
+     * onShow, so BLE picks up where it left off; REST's recurring
+     * poll re-arms via vessel.resumePolling().
      */
-    private function drawStatusScreen(dc, title, titleColor, body) {
+    function onHide() as Void {
+        if (vessel != null) {
+            vessel.resumePolling();
+        }
+    }
+
+    function onUpdate(dc) {
+        View.onUpdate(dc);
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
         dc.clear();
 
         var w = dc.getWidth();
         var h = dc.getHeight();
 
-        dc.setColor(titleColor, Graphics.COLOR_BLACK);
-        dc.drawText(
-            w / 2,
-            h * 0.2,
-            Graphics.FONT_SYSTEM_MEDIUM,
-            title,
-            (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
+        var kind = vessel.getStatusKind();
+        if (kind == CONN_NONE) {
+            // Picker is pushed on top — render nothing meaningful here;
+            // the picker covers the screen anyway.
+            return;
+        }
+
+        var title = vessel.connect.getDisplayTitle();
+        var subtitle = vessel.connect.getStatusLabel();
+        var subtitleColor = colorForStatus(kind);
+
+        // Long URLs need a smaller font to fit the round display; the
+        // rest of the labels are short enough for FONT_SYSTEM_TINY.
+        var subtitleFont = (kind == CONN_CONNECTED && subtitle.length() > 16)
+            ? Graphics.FONT_SYSTEM_XTINY
+            : Graphics.FONT_SYSTEM_TINY;
 
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
             w / 2,
-            h * 0.35,
+            h * 0.40,
             Graphics.FONT_SYSTEM_TINY,
-            body,
+            title,
+            (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
+
+        dc.setColor(subtitleColor, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(
+            w / 2,
+            h * 0.58,
+            subtitleFont,
+            subtitle,
             (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
     }
 
-    // Small grey URL line near the bottom. Null-safe.
-    private function drawServerUrlFooter(dc, url) {
-        if (url == null) {
-            return;
-        }
-        dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(
-            dc.getWidth() / 2,
-            dc.getHeight() / 2 - 20,
-            Graphics.FONT_SYSTEM_XTINY,
-            url,
-            Graphics.TEXT_JUSTIFY_CENTER);
+    /*
+     * Maps the unified CONN_* status onto the subtitle colour. Green
+     * for healthy, blue for in-progress, red for everything else (errors
+     * + idle states); gray for the "not configured" cases that aren't
+     * really errors.
+     */
+    private function colorForStatus(kind as Lang.Number) as Lang.Number {
+        if (kind == CONN_CONNECTED)    { return Graphics.COLOR_GREEN; }
+        if (kind == CONN_CONNECTING)   { return Graphics.COLOR_WHITE; }
+        if (kind == CONN_PENDING)      { return Graphics.COLOR_BLUE; }
+        if (kind == CONN_NO_URL)       { return Graphics.COLOR_LT_GRAY; }
+        if (kind == CONN_DISCONNECTED) { return Graphics.COLOR_RED; }
+        return Graphics.COLOR_RED;
     }
 }
 
@@ -111,10 +138,6 @@ class StatusViewDelegate extends WatchUi.BehaviorDelegate {
         BehaviorDelegate.initialize();
     }
 
-    /*
-     * Both select and menu open the Config menu — same effect either
-     * way so the user doesn't have to remember which button.
-     */
     function onSelect() as Lang.Boolean {
         return openConfigMenu();
     }
@@ -123,30 +146,54 @@ class StatusViewDelegate extends WatchUi.BehaviorDelegate {
         return openConfigMenu();
     }
 
+    /*
+     * Builds and pushes the Config menu. Items are filtered by the
+     * active transport and its current state so the user only sees
+     * actionable options.
+     */
     private function openConfigMenu() as Lang.Boolean {
-        var menu = new WatchUi.Menu2({:title => "Config"});
+        // Don't allow opening the config menu before the user has
+        // picked a connection type — the picker has the floor.
+        if (TransportFactory.getStoredType().equals(ConnectionType.NONE)) {
+            ConnectionTypePicker.push(true);
+            return true;
+        }
 
-        // Item 1: Request Access — only when actionable.
-        if (vessel.getConnectivity() == CONN_NOT_AUTH) {
+        var menu = new WatchUi.Menu2({:title => "Config"});
+        var connect = vessel.connect;
+
+        // REST: "Request Access" only when actionable.
+        if (connect instanceof RESTVesselConnect
+                && vessel.getStatusKind() == CONN_NOT_AUTH) {
             menu.addItem(new WatchUi.MenuItem(
                 "SignalK", "Request Access", :requestAccess, null));
         }
 
-        // Item 2: BLE — stub for now.
-        menu.addItem(new WatchUi.MenuItem(
-            "BLE", "Search devices", :bleSearch, null));
+        // BLE: state-driven item label. CONNECTING shows "Cancel" so
+        // the user can stop a silent autoconnect scan; the action is
+        // the same disconnect handler, which clears the sticky flag.
+        if (connect instanceof BLEVesselConnect) {
+            var kind = vessel.getStatusKind();
+            if (kind == CONN_CONNECTED) {
+                menu.addItem(new WatchUi.MenuItem(
+                    "BLE", "Disconnect", :bleDisconnect, null));
+            } else if (kind == CONN_CONNECTING) {
+                menu.addItem(new WatchUi.MenuItem(
+                    "BLE", "Cancel", :bleDisconnect, null));
+            } else {
+                menu.addItem(new WatchUi.MenuItem(
+                    "BLE", "Connect", :bleConnect, null));
+            }
+        }
 
-        // Item 3: Boat Type — toggle Sailboat / Motor in place.
+        // Menu only opens when a type is already set (the NONE case is
+        // intercepted above and routes to the picker), so the label is
+        // always "Change..." here, never "Set...".
         menu.addItem(new WatchUi.MenuItem(
-            "Boat Type",
-            ConfigMenu.labelForBoatType(vessel.getBoatType()),
-            :boatType,
-            null));
+            "Change Connection Type", null, :setConnectionType, null));
 
-        // Item 4: Debug — fires a known-good GET to test the HTTP
-        // stack independent of the auth flow. Result toasted.
         menu.addItem(new WatchUi.MenuItem(
-            "Debug", "Probe SignalK", :debugProbe, null));
+            "Help", null, :help, null));
 
         WatchUi.pushView(menu, new ConfigMenuDelegate(), WatchUi.SLIDE_UP);
         return true;
@@ -169,8 +216,8 @@ class ConfigMenuDelegate extends WatchUi.Menu2InputDelegate {
             // Pop the menu first so the request-access view doesn't
             // stack on top of it.
             WatchUi.popView(WatchUi.SLIDE_DOWN);
-            // If we're recovering from DENIED, the server has the
-            // clientId burned — wipe it so a fresh one is generated
+            // Recovering from DENIED: the server has the clientId
+            // burned — wipe local state so a fresh one is generated
             // on the upcoming requestAccess() call.
             if (vessel.getAuthState() == AUTH_DENIED) {
                 vessel.resetAccessRequest();
@@ -183,38 +230,36 @@ class ConfigMenuDelegate extends WatchUi.Menu2InputDelegate {
                 new RequestAccessView(),
                 new WatchUi.BehaviorDelegate(),
                 WatchUi.SLIDE_LEFT);
-        } else if (id == :bleSearch) {
-            // Stub — will hook into BLEVesselConnect when that's wired
-            // up. Logging only for now so we can see it on the simulator.
-            System.println("[Config] BLE search devices — not implemented");
-        } else if (id == :boatType) {
-            var current = vessel.getBoatType();
-            var next = current.equals(BoatType.SAIL) ? BoatType.MOTOR : BoatType.SAIL;
-            vessel.setBoatType(next);
-            item.setSubLabel(ConfigMenu.labelForBoatType(next));
-        } else if (id == :debugProbe) {
-            // Pop the menu first so the toast lands over StatusView,
-            // not over the menu (toasts can be obscured by Menu2).
+        } else if (id == :bleConnect) {
+            // Pop the menu first so the spinner view replaces it cleanly.
             WatchUi.popView(WatchUi.SLIDE_DOWN);
-            vessel.connect.debugProbe();
+            WatchUi.pushView(
+                new BleConnectView(),
+                new BleConnectViewDelegate(),
+                WatchUi.SLIDE_LEFT);
+        } else if (id == :bleDisconnect) {
+            System.println("[BLE] menu disconnect");
+            vessel.connect.disconnect();
+            WatchUi.popView(WatchUi.SLIDE_DOWN);
+        } else if (id == :setConnectionType) {
+            // Pop the Config menu first so the picker sits directly on
+            // top of StatusView. After picking, the picker pops itself
+            // and the user lands back on StatusView immediately —
+            // without an extra back-press through a stale Config menu.
+            WatchUi.popView(WatchUi.SLIDE_DOWN);
+            ConnectionTypePicker.push(false);
+        } else if (id == :help) {
+            // Push HelpView ON TOP of the Config menu so back from
+            // HelpView returns to the menu (per UX spec). The Config
+            // menu is preserved underneath.
+            WatchUi.pushView(
+                new HelpView(),
+                new HelpViewDelegate(),
+                WatchUi.SLIDE_LEFT);
         }
     }
 
     function onBack() as Void {
         WatchUi.popView(WatchUi.SLIDE_DOWN);
-    }
-}
-
-/*
- * Small helpers for the Config menu — kept here (close to the menu
- * code) rather than in Utilities since they're not pure unit-conversion
- * primitives.
- */
-module ConfigMenu {
-    function labelForBoatType(type as Lang.String) as Lang.String {
-        if (type.equals(BoatType.MOTOR)) {
-            return "Motor";
-        }
-        return "Sailboat";
     }
 }
