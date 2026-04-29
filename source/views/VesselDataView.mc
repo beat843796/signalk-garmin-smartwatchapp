@@ -64,8 +64,10 @@ class VesselDataView extends WatchUi.View {
         dc.drawLine(0, blockHeight * 2, width, blockHeight * 2);
         dc.drawLine(width/2, blockHeight, width/2, blockHeight * 2);
 
-        // Port / starboard coloured arc segments around the outer edge.
-        // Slightly thicker than before so they read better on AMOLED.
+        /*
+         * Port / starboard coloured arc segments around the outer edge.
+         * Slightly thicker than before so they read better on AMOLED.
+         */
         var arcLineWidth = 20;
         dc.setPenWidth(arcLineWidth);
         dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_BLACK);
@@ -73,18 +75,22 @@ class VesselDataView extends WatchUi.View {
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_BLACK);
         dc.drawArc(width/2, height/2, (width/2), Graphics.ARC_COUNTER_CLOCKWISE, 90, 135);
 
-        // While neither transport (REST nor BLE) is delivering data,
-        // show "—" placeholders so the user isn't misled by frozen
-        // values from a previous session.
+        /*
+         * While neither transport (REST nor BLE) is delivering data,
+         * show "—" placeholders so the user isn't misled by frozen
+         * values from a previous session.
+         */
         var connected = vessel.hasDataConnection();
         var sog = connected ? vessel.getSpeedOverGroundKnotsString() : "—";
         var dbt = connected ? vessel.getDepthBelowTranscuderMeterString() : "—";
         var awa = connected ? vessel.getAppearantWindAngleDegreeString() : "—";
         var aws = connected ? vessel.getApparentWindSpeedKnotsString() : "—";
 
-        // Three rows of equal height. Top row = SOG, middle row split
-        // into AWA | AWS, bottom row = DBT. drawCell centres the value
-        // in the cell with the title floating just above.
+        /*
+         * Three rows of equal height. Top row = SOG, middle row split
+         * into AWA | AWS, bottom row = DBT. drawCell centres the value
+         * in the cell with the title floating just above.
+         */
         drawCell(dc, 0,         0,                width,         blockHeight, "SOG", sog);
         drawCell(dc, 0,         blockHeight,      width / 2,     blockHeight, "AWA", awa);
         drawCell(dc, width / 2, blockHeight,      width / 2,     blockHeight, "AWS", aws);
@@ -140,10 +146,12 @@ class VesselDataViewDelegate extends WatchUi.BehaviorDelegate {
     }
 
     function onSelect() as Lang.Boolean {
-        // Allow opening AutopilotView whenever either transport is
-        // delivering data so the user can read the current state. The
-        // view itself gates command-sending on REST connectivity (UP /
-        // DOWN / SELECT push NoRestConnectionView when REST is down).
+        /*
+         * Allow opening AutopilotView whenever data is flowing so the
+         * user can see current state. Command-sending is gated inside
+         * AutopilotView itself — keys play a failure-vibration pattern
+         * when canSendCommands() is false.
+         */
         if (!vessel.hasDataConnection()) {
             return true;
         }

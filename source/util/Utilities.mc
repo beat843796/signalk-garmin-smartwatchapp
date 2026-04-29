@@ -16,17 +16,11 @@ module Utilities {
 
     // Exact m/s → knots factor: 1 m/s = 3600/1852 kn = 1.943844 kn.
     const FACTOR_MS_TO_KNOTS = 1.943844d;
-    // Depth readings above this threshold are rendered as "---" (sentinel
-    // for invalid / no reading). Matches the historical VesselModel rule.
-    const MAX_VALID_DEPTH_M = 500.0d;
-
     /*
-     * Synthetic error code for "data plugin not installed on the SignalK
-     * server". Outside the HTTP and Communications.* ranges to avoid any
-     * collision; mapped to "MISSING\nPLUGIN" in errorMessages so ErrorView
-     * renders it without any per-code branching.
+     * Depth readings above this threshold are rendered as "---" (sentinel
+     * for invalid / no reading). Matches the historical VesselModel rule.
      */
-    const ERR_MISSING_PLUGIN = -2000;
+    const MAX_VALID_DEPTH_M = 500.0d;
 
     function meterPerSecondToKnots(metersPerSecond) {
         return metersPerSecond * FACTOR_MS_TO_KNOTS;
@@ -288,102 +282,6 @@ module Utilities {
             Graphics.FONT_SYSTEM_TINY,
             label,
             (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
-    }
-
-    /*
-     * Maps Connect IQ Communications response codes (both positive HTTP and
-     * negative Communications.* constants) to short multi-line labels the
-     * views can render directly. Keyed by code for O(1) lookup in
-     * errorMessage() and to keep the type checker happy.
-     */
-    var errorMessages as Toybox.Lang.Dictionary<Toybox.Lang.Number, Toybox.Lang.String> = {
-         0   => "UNKNOWN ERROR",
-        -1   => "BLE ERROR",
-        -2   => "BLE HOST\nTIMEOUT",
-        -3   => "BLE SERVER\nTIMEOUT",
-        -4   => "BLE NO DATA",
-        -5   => "BLE REQUEST\nCANCELLED",
-        -101 => "BLE QUEUE\nFULL",
-        -102 => "BLE REQUEST\nTOO LARGE",
-        -103 => "BLE UNKNOWN\nSEND ERROR",
-        -104 => "PHONE CONNECTION\nUNAVAILABLE",
-        -200 => "INVALID HTTP\nHEADER FIELDS\nIN REQUEST",
-        -201 => "INVALID HTTP\nBODY IN REQUEST",
-        -202 => "INVALID HTTP\nMETHOD IN REQUEST",
-        /*
-         * Timeout, malformed-response, unparseable-body, oversized-body all
-         * mean "we got nothing useful from the server" — collapse to one
-         * user-friendly label. Raw codes still appear in System.println logs.
-         */
-        -300 => "Server not\nfound",
-        -400 => "Server not\nfound",
-        -401 => "Server not\nfound",
-        -402 => "Server not\nfound",
-        -403 => "NETWORK RESPONSE\nOUT OF MEMORY",
-        -1001 => "HTTPS\nREQUIRED",
-        -1002 => "UNSUPPORTED\nCONTENT TYPE",
-
-         100 => "Continue",
-         101 => "Switching Protocol",
-         200 => "OK",
-         201 => "Created",
-         202 => "Accepted",
-         203 => "Non-Authoritative\nInformation",
-         204 => "No Content",
-         205 => "Reset Content",
-         206 => "Partial Content",
-         300 => "Multiple Choices",
-         301 => "Moved Permanently",
-         302 => "Found",
-         303 => "See Other",
-         304 => "Not Modified",
-         307 => "Temporary\nRedirect",
-         308 => "Permanent\nRedirect",
-         400 => "Bad Request",
-         401 => "Unauthorized",
-         403 => "Forbidden",
-         404 => "Server not\nfound",
-         405 => "Method\nNot Allowed",
-         406 => "Not Acceptable",
-         407 => "Proxy Authentication\nRequired",
-         408 => "Request Timeout",
-         409 => "Conflict",
-         410 => "Gone",
-         411 => "Length Required",
-         412 => "Precondition\nFailed",
-         413 => "Payload\nToo Large",
-         414 => "URI Too Long",
-         415 => "Unsupported\nMedia Type",
-         416 => "Range Not\nSatisfiable",
-         417 => "Expectation Failed",
-         426 => "Upgrade\nRequired",
-         428 => "Precondition\nRequired",
-         429 => "Too Many\nRequests",
-         431 => "Request Header\nFields Too Large",
-         451 => "Unavailable For\nLegal Reasons",
-         500 => "Internal\nServer Error",
-         501 => "Not Implemented",
-         502 => "Bad Gateway",
-         503 => "SignalK Service\nUnavailable",
-         504 => "Gateway Timeout",
-         505 => "HTTP Version\nNot Supported",
-         511 => "Network\nAuthentication Required",
-
-         // Synthetic — see ERR_MISSING_PLUGIN above.
-        -2000 => "MISSING\nPLUGIN"
-    };
-
-    /*
-     * Returns a short label for a Communications response code, or the raw
-     * code itself when unmapped (so unknown errors still surface a number
-     * the developer can look up).
-     */
-    function errorMessage(code as Toybox.Lang.Number) {
-        var mapped = errorMessages[code];
-        if (mapped != null) {
-            return mapped;
-        }
-        return code;
     }
 
 }

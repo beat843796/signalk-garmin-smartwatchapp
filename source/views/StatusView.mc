@@ -84,8 +84,10 @@ class StatusView extends WatchUi.View {
 
         var kind = vessel.getStatusKind();
         if (kind == CONN_NONE) {
-            // Picker is pushed on top — render nothing meaningful here;
-            // the picker covers the screen anyway.
+            /*
+             * Picker is pushed on top — render nothing meaningful here;
+             * the picker covers the screen anyway.
+             */
             return;
         }
 
@@ -93,8 +95,10 @@ class StatusView extends WatchUi.View {
         var subtitle = vessel.connect.getStatusLabel();
         var subtitleColor = colorForStatus(kind);
 
-        // Long URLs need a smaller font to fit the round display; the
-        // rest of the labels are short enough for FONT_SYSTEM_TINY.
+        /*
+         * Long URLs need a smaller font to fit the round display; the
+         * rest of the labels are short enough for FONT_SYSTEM_TINY.
+         */
         var subtitleFont = (kind == CONN_CONNECTED && subtitle.length() > 16)
             ? Graphics.FONT_SYSTEM_XTINY
             : Graphics.FONT_SYSTEM_TINY;
@@ -152,8 +156,10 @@ class StatusViewDelegate extends WatchUi.BehaviorDelegate {
      * actionable options.
      */
     private function openConfigMenu() as Lang.Boolean {
-        // Don't allow opening the config menu before the user has
-        // picked a connection type — the picker has the floor.
+        /*
+         * Don't allow opening the config menu before the user has
+         * picked a connection type — the picker has the floor.
+         */
         if (TransportFactory.getStoredType().equals(ConnectionType.NONE)) {
             ConnectionTypePicker.push(true);
             return true;
@@ -169,10 +175,12 @@ class StatusViewDelegate extends WatchUi.BehaviorDelegate {
                 "SignalK", "Request Access", :requestAccess, null));
         }
 
-        // BLE: state-driven item label. CONNECTING shows "Cancel" so
-        // the user can stop a silent autoconnect scan; the action is
-        // the same disconnect handler, which clears the sticky flag.
-        if (connect instanceof BLEVesselConnect) {
+        /*
+         * BLE: state-driven item label. CONNECTING shows "Cancel" so
+         * the user can stop a silent autoconnect scan; the action is
+         * the same disconnect handler, which clears the sticky flag.
+         */
+        if (connect instanceof BleVesselConnect) {
             var kind = vessel.getStatusKind();
             if (kind == CONN_CONNECTED) {
                 menu.addItem(new WatchUi.MenuItem(
@@ -186,9 +194,11 @@ class StatusViewDelegate extends WatchUi.BehaviorDelegate {
             }
         }
 
-        // Menu only opens when a type is already set (the NONE case is
-        // intercepted above and routes to the picker), so the label is
-        // always "Change..." here, never "Set...".
+        /*
+         * Menu only opens when a type is already set (the NONE case is
+         * intercepted above and routes to the picker), so the label is
+         * always "Change..." here, never "Set...".
+         */
         menu.addItem(new WatchUi.MenuItem(
             "Change Connection Type", null, :setConnectionType, null));
 
@@ -213,18 +223,24 @@ class ConfigMenuDelegate extends WatchUi.Menu2InputDelegate {
     function onSelect(item as WatchUi.MenuItem) as Void {
         var id = item.getId();
         if (id == :requestAccess) {
-            // Pop the menu first so the request-access view doesn't
-            // stack on top of it.
+            /*
+             * Pop the menu first so the request-access view doesn't
+             * stack on top of it.
+             */
             WatchUi.popView(WatchUi.SLIDE_DOWN);
-            // Recovering from DENIED: the server has the clientId
-            // burned — wipe local state so a fresh one is generated
-            // on the upcoming requestAccess() call.
+            /*
+             * Recovering from DENIED: the server has the clientId
+             * burned — wipe local state so a fresh one is generated
+             * on the upcoming requestAccess() call.
+             */
             if (vessel.getAuthState() == AUTH_DENIED) {
                 vessel.resetAccessRequest();
             }
-            // Fire the request *before* pushing the view so the view
-            // opens with the spinner already in flight (no flash of
-            // a "tap to start" prompt).
+            /*
+             * Fire the request *before* pushing the view so the view
+             * opens with the spinner already in flight (no flash of
+             * a "tap to start" prompt).
+             */
             vessel.requestAccess();
             WatchUi.pushView(
                 new RequestAccessView(),
@@ -242,16 +258,20 @@ class ConfigMenuDelegate extends WatchUi.Menu2InputDelegate {
             vessel.connect.disconnect();
             WatchUi.popView(WatchUi.SLIDE_DOWN);
         } else if (id == :setConnectionType) {
-            // Pop the Config menu first so the picker sits directly on
-            // top of StatusView. After picking, the picker pops itself
-            // and the user lands back on StatusView immediately —
-            // without an extra back-press through a stale Config menu.
+            /*
+             * Pop the Config menu first so the picker sits directly on
+             * top of StatusView. After picking, the picker pops itself
+             * and the user lands back on StatusView immediately —
+             * without an extra back-press through a stale Config menu.
+             */
             WatchUi.popView(WatchUi.SLIDE_DOWN);
             ConnectionTypePicker.push(false);
         } else if (id == :help) {
-            // Push HelpView ON TOP of the Config menu so back from
-            // HelpView returns to the menu (per UX spec). The Config
-            // menu is preserved underneath.
+            /*
+             * Push HelpView ON TOP of the Config menu so back from
+             * HelpView returns to the menu (per UX spec). The Config
+             * menu is preserved underneath.
+             */
             WatchUi.pushView(
                 new HelpView(),
                 new HelpViewDelegate(),

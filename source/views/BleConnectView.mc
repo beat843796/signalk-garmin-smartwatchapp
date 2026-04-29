@@ -34,7 +34,7 @@ class BleConnectView extends WatchUi.View {
     /*
      * Defer the post-success view transition through a one-shot timer
      * to keep WatchUi calls out of the onUpdate / BLE-callback stack
-     * — same reason AuthConfigView defers its terminal pop. On
+     * — same reason RequestAccessView defers its terminal pop. On
      * success, instead of popping back to StatusView, we switchToView
      * straight to the data dashboard so a successful pair lands the
      * user where they want to be.
@@ -49,10 +49,12 @@ class BleConnectView extends WatchUi.View {
 
     function onShow() {
         System.println("[BLE] BleConnectView onShow");
-        // Only ever pushed in BLE mode (Config menu gates inclusion of
-        // the "Connect" item on transport type), so vessel.connect is a
-        // BLEVesselConnect — startConnect is a no-op default for other
-        // transports anyway.
+        /*
+         * Only ever pushed in BLE mode (Config menu gates inclusion of
+         * the "Connect" item on transport type), so vessel.connect is a
+         * BleVesselConnect — startConnect is a no-op default for other
+         * transports anyway.
+         */
         vessel.connect.startConnect(method(:onConnected));
         redrawTimer = new Timer.Timer();
         redrawTimer.start(method(:onRedrawTick), 150, true);

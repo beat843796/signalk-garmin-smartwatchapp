@@ -72,12 +72,14 @@ class ConnectionTypePickerDelegate extends WatchUi.Menu2InputDelegate {
             TransportFactory.setStoredType(newType);
             vessel.attachTransport(TransportFactory.build(newType, vessel));
 
-            // Switching TO BLE with a previously-paired device: route
-            // through the foreground spinner so the user sees the
-            // connect attempt and lands on the data view on success
-            // (BleConnectView.onConnected switchToViews to it). This
-            // matches the experience of clicking Connect from the
-            // Config menu when on BLE.
+            /*
+             * Switching TO BLE with a previously-paired device: route
+             * through the foreground spinner so the user sees the
+             * connect attempt and lands on the data view on success
+             * (BleConnectView.onConnected switchToViews to it). This
+             * matches the experience of clicking Connect from the
+             * Config menu when on BLE.
+             */
             if (newType.equals(ConnectionType.BLE)
                     && Storage.getValue(StorageKeys.BLE_AUTOCONNECT) == true) {
                 WatchUi.popView(WatchUi.SLIDE_DOWN);
@@ -90,13 +92,15 @@ class ConnectionTypePickerDelegate extends WatchUi.Menu2InputDelegate {
 
             vessel.startUpdatingData();
 
-            // Switching TO REST with valid URL + token: land directly
-            // on the data view. getStatusKind == CONN_CONNECTED at this
-            // moment means baseURL is set and a token is persisted; the
-            // data view shows last-known fields (currently "—" after
-            // resetVesselData) until the first poll lands. If the
-            // token turns out to be stale, the standard 401/403
-            // redirect bounces the user to Status.
+            /*
+             * Switching TO REST with valid URL + token: land directly
+             * on the data view. getStatusKind == CONN_CONNECTED at this
+             * moment means baseURL is set and a token is persisted; the
+             * data view shows last-known fields (currently "—" after
+             * resetVesselData) until the first poll lands. If the
+             * token turns out to be stale, the standard 401/403
+             * redirect bounces the user to Status.
+             */
             if (newType.equals(ConnectionType.REST)
                     && vessel.getStatusKind() == CONN_CONNECTED) {
                 WatchUi.popView(WatchUi.SLIDE_DOWN);
@@ -106,9 +110,11 @@ class ConnectionTypePickerDelegate extends WatchUi.Menu2InputDelegate {
             }
         }
 
-        // Same type re-picked, or new type isn't yet usable (no token
-        // / no saved pairing) — pop back to whatever was below the
-        // picker (StatusView, or the Config menu).
+        /*
+         * Same type re-picked, or new type isn't yet usable (no token
+         * / no saved pairing) — pop back to whatever was below the
+         * picker (StatusView, or the Config menu).
+         */
         WatchUi.popView(WatchUi.SLIDE_DOWN);
         WatchUi.requestUpdate();
     }

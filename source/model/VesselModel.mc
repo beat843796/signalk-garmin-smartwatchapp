@@ -47,7 +47,7 @@ class VesselModel {
 
     /*
      * The active transport. Constructed in initialize as a
-     * NullVesselConnect; replaced by attachTransport once the user's
+     * NoneVesselConnect; replaced by attachTransport once the user's
      * picked type is known. View code calls connect.* directly for
      * transport-specific operations (startConnect for BLE, requestAccess
      * for REST), trusting the no-op defaults on VesselConnect to keep
@@ -64,7 +64,7 @@ class VesselModel {
     private const glanceSnapshotEveryNTicks = 5;
 
     function initialize() {
-        connect = new NullVesselConnect(self);
+        connect = new NoneVesselConnect(self);
     }
 
     /*
@@ -83,8 +83,10 @@ class VesselModel {
             connect.stop();
         }
         connect = newConnect;
-        // Reset stale data fields so values from the previous transport
-        // don't bleed through while the new one is still warming up.
+        /*
+         * Reset stale data fields so values from the previous transport
+         * don't bleed through while the new one is still warming up.
+         */
         resetVesselData();
         Storage.deleteValue(StorageKeys.GLANCE_SNAPSHOT);
     }
@@ -425,7 +427,7 @@ class VesselModel {
      */
     function persistGlanceSnapshot() {
         var bleName = null;
-        if (connect instanceof BLEVesselConnect && connect.getStatusKind() == CONN_CONNECTED) {
+        if (connect instanceof BleVesselConnect && connect.getStatusKind() == CONN_CONNECTED) {
             bleName = connect.getStatusLabel();
         }
         var url = null;

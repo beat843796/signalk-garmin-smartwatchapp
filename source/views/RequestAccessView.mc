@@ -1,10 +1,10 @@
 /*
- * AuthConfigView.mc
- * Hosts the RequestAccessView — pushed on top of StatusView when the
- * user picks "Request Access" from the Config menu. The caller is
- * responsible for firing `vessel.requestAccess()` before push, so this
- * view always opens straight into the spinner; there's no
- * intermediate "tap to start" prompt anymore.
+ * RequestAccessView.mc
+ * Pushed on top of StatusView when the user picks "Request Access"
+ * from the Config menu. The caller is responsible for firing
+ * `vessel.requestAccess()` before push, so this view always opens
+ * straight into the spinner; there's no intermediate "tap to start"
+ * prompt anymore.
  *
  * Lifecycle:
  *   - opens with the rotating spinner; spans the access-request POST
@@ -42,8 +42,10 @@ class RequestAccessView extends WatchUi.View {
     }
 
     function onHide() {
-        // If the user backs out manually, cancel any pending pop so
-        // the timer can't fire against a now-destroyed view.
+        /*
+         * If the user backs out manually, cancel any pending pop so
+         * the timer can't fire against a now-destroyed view.
+         */
         if (popTimer != null) {
             popTimer.stop();
             popTimer = null;
@@ -60,18 +62,22 @@ class RequestAccessView extends WatchUi.View {
             return;
         }
 
-        // Terminal state — auth flow is over. The APPROVED / DENIED
-        // toast is fired from RESTVesselConnect.finalize* so it shows
-        // even when the user backed out of this view before the auth
-        // flow finished. Schedule the pop on the next event-loop tick
-        // (popView from inside onUpdate is fragile on real devices).
+        /*
+         * Terminal state — auth flow is over. The APPROVED / DENIED
+         * toast is fired from RESTVesselConnect.finalize* so it shows
+         * even when the user backed out of this view before the auth
+         * flow finished. Schedule the pop on the next event-loop tick
+         * (popView from inside onUpdate is fragile on real devices).
+         */
         if (!popScheduled) {
             popScheduled = true;
             popTimer = new Timer.Timer();
             popTimer.start(method(:doPop), 50, false);
         }
-        // Keep showing the spinner for the brief deferred-pop window
-        // so the screen doesn't flicker to blank.
+        /*
+         * Keep showing the spinner for the brief deferred-pop window
+         * so the screen doesn't flicker to blank.
+         */
         drawRequestingOverlay(dc);
     }
 

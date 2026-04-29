@@ -26,15 +26,6 @@ plugin endpoint is admin-only).
 
 Minimum API level: **5.2.0**.
 
-### Screenshots
-
-> Screenshots below are from the legacy UI and will be refreshed after a
-> release on the new devices.
-
-![Image 1](https://github.com/beat843796/signalk-garmin-smartwatchapp/raw/master/doc/sc1.jpg)
-![Image 2](https://github.com/beat843796/signalk-garmin-smartwatchapp/raw/master/doc/sc2.jpg)
-![Image 3](https://github.com/beat843796/signalk-garmin-smartwatchapp/raw/master/doc/sc3.jpg)
-
 ### First run
 
 1. Install the app on the watch and launch it.

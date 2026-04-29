@@ -100,51 +100,6 @@ function test_kelvinToCelsius_boilingPoint(logger) {
     return almostEqual(actual, 100.0d, 1.0e-12d);
 }
 
-(:test)
-function test_errorMessage_http404_isSignalKServerNotFound(logger) {
-    var msg = Utils.errorMessage(404);
-    logger.debug("404 -> " + msg);
-    return msg.equals("Server not\nfound");
-}
-
-(:test)
-function test_errorMessage_http200_isOK(logger) {
-    return Utils.errorMessage(200).equals("OK");
-}
-
-(:test)
-function test_errorMessage_http503_isSignalKServiceUnavailable(logger) {
-    return Utils.errorMessage(503).equals("SignalK Service\nUnavailable");
-}
-
-(:test)
-function test_errorMessage_bleMinus1_isBleError(logger) {
-    return Utils.errorMessage(-1).equals("BLE ERROR");
-}
-
-(:test)
-function test_errorMessage_bleMinus104_isPhoneConnectionUnavailable(logger) {
-    return Utils.errorMessage(-104).equals("PHONE CONNECTION\nUNAVAILABLE");
-}
-
-(:test)
-function test_errorMessage_networkTimeout(logger) {
-    return Utils.errorMessage(-300).equals("Server not\nfound");
-}
-
-(:test)
-function test_errorMessage_unmappedCode_returnsCodeItself(logger) {
-    /*
-     * Characterisation: when code is not in the table, errorMessage returns
-     * the code itself unchanged. Pins the existing behaviour so future
-     * refactors (e.g. returning null or "UNKNOWN") fail loudly.
-     */
-    var actual = Utils.errorMessage(99999);
-    logger.debug("99999 -> " + actual);
-    return actual == 99999;
-}
-
-
 /*
  * ================== UUID v4 format ==================
  * Catches regressions where the version / variant bit-forcing or the
@@ -326,8 +281,10 @@ function test_deriveConn_emptyUrl_isNoUrl(logger) {
 
 (:test)
 function test_deriveConn_minus1001_isNoHttps(logger) {
-    // -1001 from any request → HTTPS-required policy hit. Wins over
-    // every other state except NO_URL.
+    /*
+     * -1001 from any request → HTTPS-required policy hit. Wins over
+     * every other state except NO_URL.
+     */
     return Utils.deriveConnectivity("http://x", false, false, -1001, null) == CONN_NO_HTTPS;
 }
 
@@ -359,8 +316,10 @@ function test_deriveConn_url_token_poll200_isConnected(logger) {
 
 (:test)
 function test_deriveConn_url_token_poll401_isNotAuth(logger) {
-    // Token revoked / expired — even though hasToken is still true at
-    // the storage layer, the server says no.
+    /*
+     * Token revoked / expired — even though hasToken is still true at
+     * the storage layer, the server says no.
+     */
     return Utils.deriveConnectivity("http://x", true, false, 401, null) == CONN_NOT_AUTH;
 }
 
@@ -388,15 +347,19 @@ function test_deriveConn_url_token_poll404_probeOk_isMissingPlugin(logger) {
 
 (:test)
 function test_deriveConn_url_token_poll404_probeFail_isNotReachable(logger) {
-    // The 404 actually came from somewhere that isn't the SignalK server
-    // (captive portal, wrong port, etc).
+    /*
+     * The 404 actually came from somewhere that isn't the SignalK server
+     * (captive portal, wrong port, etc).
+     */
     return Utils.deriveConnectivity("http://x", true, false, 404, false) == CONN_NOT_REACHABLE;
 }
 
 (:test)
 function test_deriveConn_url_token_poll404_probeNull_isMissingPlugin(logger) {
-    // No probe yet — assume MISSING_PLUGIN as the more common case;
-    // the probe (if it later runs) can demote to NOT_REACHABLE.
+    /*
+     * No probe yet — assume MISSING_PLUGIN as the more common case;
+     * the probe (if it later runs) can demote to NOT_REACHABLE.
+     */
     return Utils.deriveConnectivity("http://x", true, false, 404, null) == CONN_MISSING_PLUGIN;
 }
 
@@ -418,7 +381,9 @@ function test_deriveConn_url_token_pollUnknown_isNotReachable(logger) {
 
 (:test)
 function test_deriveConn_noHttpsTakesPrecedenceOverPending(logger) {
-    // If somehow we have a pending href but the URL is bad, the actionable
-    // state is NO_HTTPS — fixing the URL is the only way out.
+    /*
+     * If somehow we have a pending href but the URL is bad, the actionable
+     * state is NO_HTTPS — fixing the URL is the only way out.
+     */
     return Utils.deriveConnectivity("http://x", false, true, -1001, null) == CONN_NO_HTTPS;
 }

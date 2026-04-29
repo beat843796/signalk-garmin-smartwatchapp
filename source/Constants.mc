@@ -100,7 +100,7 @@ enum {
  * value alone.
  *
  * Mapping summary:
- *   NONE              — no transport picked yet (NullVesselConnect)
+ *   NONE              — no transport picked yet (NoneVesselConnect)
  *   DISCONNECTED      — transport idle / not paired / no token
  *   CONNECTING        — transport is mid-setup (BLE scanning/pairing or
  *                       REST access request submitted, awaiting approval)
@@ -130,8 +130,8 @@ enum {
 
 /*
  * Internal BLE link state used by BleService. Not surfaced to views —
- * BLEVesselConnect maps these onto the unified CONN_* values via
- * getStatusKind(). Kept here because BleService and BLEVesselConnect
+ * BleVesselConnect maps these onto the unified CONN_* values via
+ * getStatusKind(). Kept here because BleService and BleVesselConnect
  * live in different files and share the enum.
  */
 enum {

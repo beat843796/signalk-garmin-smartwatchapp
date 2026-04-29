@@ -41,9 +41,11 @@ class TempView extends WatchUi.View {
             ? vessel.getWaterTemperatureString()
             : "—";
 
-        // Title sits above the value with a real gap derived from font
-        // metrics — the previous fixed -50 offset got intersected by
-        // the LARGE font's ascender on this device.
+        /*
+         * Title sits above the value with a real gap derived from font
+         * metrics — the previous fixed -50 offset got intersected by
+         * the LARGE font's ascender on this device.
+         */
         var valueFont = Graphics.FONT_SYSTEM_LARGE;
         var titleFont = Graphics.FONT_SYSTEM_XTINY;
         var valueH = dc.getFontHeight(valueFont);

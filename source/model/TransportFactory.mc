@@ -54,8 +54,8 @@ module TransportFactory {
             return new RESTVesselConnect(vesselRef);
         }
         if (type.equals(ConnectionType.BLE)) {
-            return new BLEVesselConnect(vesselRef);
+            return new BleVesselConnect(vesselRef);
         }
-        return new NullVesselConnect(vesselRef);
+        return new NoneVesselConnect(vesselRef);
     }
 }

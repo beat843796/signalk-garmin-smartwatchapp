@@ -34,8 +34,10 @@ class HelpView extends WatchUi.View {
         var qrW = qr.getWidth();
         var qrH = qr.getHeight();
 
-        // Centre the QR on the screen. Scanners read the bitmap as-is
-        // — no scaling, the source PNG already includes a quiet zone.
+        /*
+         * Centre the QR on the screen. Scanners read the bitmap as-is
+         * — no scaling, the source PNG already includes a quiet zone.
+         */
         dc.drawBitmap((w - qrW) / 2, (h - qrH) / 2, qr);
     }
 }

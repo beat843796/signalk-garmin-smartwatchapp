@@ -104,9 +104,11 @@ module BleVesselDataDecoder {
         }
         var dict = {};
 
-        // AP state byte. Code 0 = unknown → leave key absent so the
-        // partial-apply method doesn't clobber the existing state. Codes
-        // outside the mapped range are also treated as unknown.
+        /*
+         * AP state byte. Code 0 = unknown → leave key absent so the
+         * partial-apply method doesn't clobber the existing state. Codes
+         * outside the mapped range are also treated as unknown.
+         */
         var apCode = buf[0] & 0xFF;
         if (apCode > 0 && apCode < AP_STATE_NAMES.size()) {
             var apName = AP_STATE_NAMES[apCode];
@@ -126,8 +128,10 @@ module BleVesselDataDecoder {
         var log  = readU32(buf, 16);
         dict["trip"]      = trip;
         dict["log"]       = log;
-        // VesselModel reads "tripTotal" — alias log → tripTotal so
-        // existing formatters keep working without any extra wiring.
+        /*
+         * VesselModel reads "tripTotal" — alias log → tripTotal so
+         * existing formatters keep working without any extra wiring.
+         */
         dict["tripTotal"] = log;
 
         return dict;

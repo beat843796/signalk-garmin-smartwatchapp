@@ -410,8 +410,10 @@ class RESTVesselConnect extends VesselConnect {
     }
 
     function onSpinnerTick() as Void {
-        // Spinner runs through the whole auth flow: in-flight POST AND
-        // the polling phase (PENDING). Stops only at terminal state.
+        /*
+         * Spinner runs through the whole auth flow: in-flight POST AND
+         * the polling phase (PENDING). Stops only at terminal state.
+         */
         if (accessRequestInFlight || authState == AUTH_PENDING) {
             WatchUi.requestUpdate();
         } else {
@@ -502,8 +504,10 @@ class RESTVesselConnect extends VesselConnect {
 
     function enterPendingState() as Void {
         authState = AUTH_PENDING;
-        // Spinner spans the polling phase too. Make sure it's running
-        // even if the POST returned faster than spinnerShowAfterMs.
+        /*
+         * Spinner spans the polling phase too. Make sure it's running
+         * even if the POST returned faster than spinnerShowAfterMs.
+         */
         if (!spinnerVisible) {
             spinnerVisible = true;
             startSpinnerTimer();
@@ -575,8 +579,10 @@ class RESTVesselConnect extends VesselConnect {
         System.println("[Auth]   state=" + state);
 
         if (state != null && state.equals("PENDING")) {
-            // Skip requestUpdate when nothing has changed — saves a UI
-            // wake every 3s while we wait for admin approval.
+            /*
+             * Skip requestUpdate when nothing has changed — saves a UI
+             * wake every 3s while we wait for admin approval.
+             */
             if (lastAuthStateObserved != AUTH_PENDING) {
                 lastAuthStateObserved = AUTH_PENDING;
                 WatchUi.requestUpdate();
@@ -618,18 +624,24 @@ class RESTVesselConnect extends VesselConnect {
         Storage.deleteValue(StorageKeys.ACCESS_HREF);
         accessRequestHref = null;
         authState = AUTH_CONNECTED;
-        // Reset lastNetCode so the StatusView shows CONNECTED rather
-        // than whatever the previous poll attempt landed on.
+        /*
+         * Reset lastNetCode so the StatusView shows CONNECTED rather
+         * than whatever the previous poll attempt landed on.
+         */
         lastNetCode = null;
         probeOk = null;
-        // Pretend the previous poll failed so the first 200 from the
-        // post-approval data poll triggers the redirect to the data
-        // page (instead of leaving the user on Status after auto-pop).
+        /*
+         * Pretend the previous poll failed so the first 200 from the
+         * post-approval data poll triggers the redirect to the data
+         * page (instead of leaving the user on Status after auto-pop).
+         */
         lastDataPollOk = false;
         System.println("[Auth] ** APPROVED ** — starting data poll");
-        // Fire the toast from here (not from the request-access view)
-        // so it shows even if the user backed out of the spinner
-        // before the poll completed.
+        /*
+         * Fire the toast from here (not from the request-access view)
+         * so it shows even if the user backed out of the spinner
+         * before the poll completed.
+         */
         WatchUi.showToast("APPROVED", null);
         updateVesselDataFromServer();
         WatchUi.requestUpdate();
@@ -641,9 +653,11 @@ class RESTVesselConnect extends VesselConnect {
         accessRequestHref = null;
         authState = AUTH_DENIED;
         System.println("[Auth] ** DENIED ** — user must reset to try again");
-        // Fire the toast from here so it shows even if the user
-        // backed out of the spinner. The request-access view (if
-        // still on top) auto-pops on the next onUpdate.
+        /*
+         * Fire the toast from here so it shows even if the user
+         * backed out of the spinner. The request-access view (if
+         * still on top) auto-pops on the next onUpdate.
+         */
         WatchUi.showToast("DENIED", null);
         WatchUi.requestUpdate();
     }
@@ -707,8 +721,10 @@ class RESTVesselConnect extends VesselConnect {
 
     function onDataReceive(responseCode as Lang.Number, data as Lang.Dictionary or Lang.String or Null) as Void {
 
-        // -1003 = REQUEST_CANCELLED (e.g. we stopped polling before the
-        // response came back). No-op.
+        /*
+         * -1003 = REQUEST_CANCELLED (e.g. we stopped polling before the
+         * response came back). No-op.
+         */
         if (responseCode == -1003) {
             return;
         }
@@ -722,11 +738,13 @@ class RESTVesselConnect extends VesselConnect {
                 // probe outcome no longer relevant once data flows again
                 probeOk = null;
                 if (!lastDataPollOk) {
-                    // Recovery (or first poll after fresh auth): land
-                    // the user on the data page — but not on a one-shot
-                    // refresh, where the user explicitly opened a
-                    // specific view (autopilot / status) and should
-                    // stay on it.
+                    /*
+                     * Recovery (or first poll after fresh auth): land
+                     * the user on the data page — but not on a one-shot
+                     * refresh, where the user explicitly opened a
+                     * specific view (autopilot / status) and should
+                     * stay on it.
+                     */
                     lastDataPollOk = true;
                     if (!oneShotInFlight) {
                         redirectToDataPage();
@@ -743,19 +761,23 @@ class RESTVesselConnect extends VesselConnect {
                 oneShotInFlight = false;
                 return;
             }
-            // 200 with unparseable body — fall through to error path
-            // with a synthesised -400 so the UI shows something useful.
+            /*
+             * 200 with unparseable body — fall through to error path
+             * with a synthesised -400 so the UI shows something useful.
+             */
             lastNetCode = -400;
             responseCode = -400;
         }
 
         logDebug("Data response code: " + responseCode);
 
-        // 401 / 403: token is dead server-side. Wipe it from storage
-        // and stop polling — start() returns early when authState is
-        // NEEDS_REQUEST, so the retry timer would just spin without
-        // hitting the network. The user re-auths via Status → Request
-        // Access; finalizeApproval kicks the data poll back off.
+        /*
+         * 401 / 403: token is dead server-side. Wipe it from storage
+         * and stop polling — start() returns early when authState is
+         * NEEDS_REQUEST, so the retry timer would just spin without
+         * hitting the network. The user re-auths via Status → Request
+         * Access; finalizeApproval kicks the data poll back off.
+         */
         if (responseCode == 401 || responseCode == 403) {
             System.println("[Data] auth dead — wiping token");
             Storage.deleteValue(StorageKeys.TOKEN);
@@ -775,17 +797,21 @@ class RESTVesselConnect extends VesselConnect {
             return;
         }
 
-        // Ambiguous codes (404, 400) need the discovery probe to
-        // distinguish "server is up but plugin route missing" from
-        // "server is down". Only fire once per error episode.
+        /*
+         * Ambiguous codes (404, 400) need the discovery probe to
+         * distinguish "server is up but plugin route missing" from
+         * "server is down". Only fire once per error episode.
+         */
         if ((responseCode == 404 || responseCode == 400) && probeOk == null) {
             fireDiscoveryProbe();
         }
 
-        // First failure after a healthy run: redirect ViewLoop to the
-        // Status page so the user sees the error state without having
-        // to swipe. Subsequent retries don't re-redirect. One-shot
-        // refreshes never redirect (see oneShotInFlight comment above).
+        /*
+         * First failure after a healthy run: redirect ViewLoop to the
+         * Status page so the user sees the error state without having
+         * to swipe. Subsequent retries don't re-redirect. One-shot
+         * refreshes never redirect (see oneShotInFlight comment above).
+         */
         if (lastDataPollOk) {
             lastDataPollOk = false;
             if (!oneShotInFlight) {
@@ -895,15 +921,19 @@ class RESTVesselConnect extends VesselConnect {
         lastNetCode = responseCode;
 
         if (responseCode == 200) {
-            // Tactile confirmation that the autopilot accepted the
-            // command. Single short pulse; distinct from the longer
-            // double-pulse on failure below.
+            /*
+             * Tactile confirmation that the autopilot accepted the
+             * command. Single short pulse; distinct from the longer
+             * double-pulse on failure below.
+             */
             if (Attention has :vibrate) {
                 Attention.vibrate([new Attention.VibeProfile(50, 75)]);
             }
         } else {
-            // Failure: longer double-pulse so the difference between
-            // success and failure is unambiguous through gloves.
+            /*
+             * Failure: longer double-pulse so the difference between
+             * success and failure is unambiguous through gloves.
+             */
             if (Attention has :vibrate) {
                 Attention.vibrate([
                     new Attention.VibeProfile(75, 100),

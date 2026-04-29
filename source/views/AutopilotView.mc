@@ -141,9 +141,11 @@ class AutopilotView extends WatchUi.View {
         // Top row: heading display centred at height/4.
         drawHeadingCell(dc, width / 2, height / 4, labelText, valueToDraw);
 
-        // Bottom row: state name centred at 3*height/4. Standby is
-        // neutral (grey); active modes use red so the running state
-        // is visually distinct.
+        /*
+         * Bottom row: state name centred at 3*height/4. Standby is
+         * neutral (grey); active modes use red so the running state
+         * is visually distinct.
+         */
         var stateColor = vessel.autopilotState.equals(ApStates.STANDBY)
             ? Graphics.COLOR_LT_GRAY
             : Graphics.COLOR_RED;
@@ -155,8 +157,10 @@ class AutopilotView extends WatchUi.View {
             stateName,
             (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
 
-        // Rudder bar straddles the row boundary. Skip when no rudder
-        // reading is available.
+        /*
+         * Rudder bar straddles the row boundary. Skip when no rudder
+         * reading is available.
+         */
         if (vessel.rudderAngle != null) {
             drawRudderAngle(dc, Utils.radiansToDegrees(vessel.rudderAngle));
         }
@@ -414,9 +418,11 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
             applyDelta(heldMs >= longPressMs ? +10 : +1);
             return true;
         }
-        // Release without a stored press = the press itself was blocked
-        // by the REST guard. Swallow so the default release handler
-        // doesn't re-trigger a delta.
+        /*
+         * Release without a stored press = the press itself was blocked
+         * by the canSendCommands guard. Swallow so the default release
+         * handler doesn't re-trigger a delta.
+         */
         if (key == KEY_DOWN || key == KEY_UP) {
             return true;
         }
@@ -425,21 +431,34 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
 
     /*
      * Pre-flight guard for any key that initiates an autopilot command.
-     * Returns true when REST is in CONN_CONNECTED so the caller may
-     * proceed; returns false (and pushes NoRestConnectionView) otherwise.
-     * Called from onSelect, onKey (CLOCK/MENU), and onKeyPressed (UP/DOWN).
-     * BLE-only data is read-only by design; commands always need REST.
+     * Returns true when the active transport is in CONN_CONNECTED so
+     * the caller may proceed; otherwise plays the failure-vibration
+     * pattern and returns false. Called from onSelect, onKey
+     * (CLOCK/MENU), and onKeyPressed (UP/DOWN).
      */
     private function ensureCommandTransport() as Lang.Boolean {
         if (vessel.canSendCommands()) {
             return true;
         }
-        System.println("[AP] command blocked — neither REST nor BLE connected");
-        WatchUi.pushView(
-            new NoRestConnectionView(),
-            new NoRestConnectionViewDelegate(),
-            WatchUi.SLIDE_LEFT);
+        System.println("[AP] command blocked — not connected");
+        vibrateCommandFailure();
         return false;
+    }
+
+    /*
+     * Failure-vibration pattern: matches the one fired from
+     * RESTVesselConnect.onAutopilotReceive on a non-200, so users
+     * feel the same "command rejected" signal whether the rejection
+     * happens client-side (transport down) or server-side.
+     */
+    private function vibrateCommandFailure() as Void {
+        if (Attention has :vibrate) {
+            Attention.vibrate([
+                new Attention.VibeProfile(75, 100),
+                new Attention.VibeProfile(0, 100),
+                new Attention.VibeProfile(75, 100)
+            ]);
+        }
     }
 
     /*
@@ -487,11 +506,16 @@ class AutopilotMenuDelegate extends WatchUi.Menu2InputDelegate {
     function onSelect(item as WatchUi.MenuItem) as Void {
 
         if (!vessel.canSendCommands()) {
-            System.println("[AP] mode change blocked — REST not connected");
-            WatchUi.pushView(
-                new NoRestConnectionView(),
-                new NoRestConnectionViewDelegate(),
-                WatchUi.SLIDE_LEFT);
+            System.println("[AP] mode change blocked — not connected");
+            if (Attention has :vibrate) {
+                Attention.vibrate([
+                    new Attention.VibeProfile(75, 100),
+                    new Attention.VibeProfile(0, 100),
+                    new Attention.VibeProfile(75, 100)
+                ]);
+            }
+            vessel.startUpdatingData();
+            WatchUi.popView(WatchUi.SLIDE_DOWN);
             return;
         }
 

@@ -1,5 +1,5 @@
 /*
- * BLEVesselConnect.mc
+ * BleVesselConnect.mc
  * VesselConnect wrapper around BleService — the latter owns the GATT
  * delegate, scan/pair, read/write loop, and characteristic decoding;
  * this thin facade adapts that surface to the unified VesselConnect
@@ -26,7 +26,7 @@ using Toybox.Application.Storage;
 using Toybox.System;
 using Toybox.WatchUi;
 
-class BLEVesselConnect extends VesselConnect {
+class BleVesselConnect extends VesselConnect {
 
     private var service;
 

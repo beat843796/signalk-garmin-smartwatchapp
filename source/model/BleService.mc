@@ -1,7 +1,7 @@
 /*
  * BleService.mc
  * Owns the BLE peripheral connection lifecycle and the per-view
- * read loop. Wrapped by BLEVesselConnect (the VesselConnect facade);
+ * read loop. Wrapped by BleVesselConnect (the VesselConnect facade);
  * views never touch BleService directly — they go through
  * vessel.connect.{startConnect,cancelConnect,disconnect,...}.
  *
@@ -56,9 +56,11 @@ using Toybox.WatchUi;
 
 class BleService extends Ble.BleDelegate {
 
-    // SignalK Vessel Data service / characteristics — see plugin's
-    // ble.js. Char UUID strings live in BleCharUuids (Constants.mc) so
-    // views can pass them to beginDataStreaming.
+    /*
+     * SignalK Vessel Data service / characteristics — see plugin's
+     * ble.js. Char UUID strings live in BleCharUuids (Constants.mc) so
+     * views can pass them to beginDataStreaming.
+     */
 
     /*
      * VesselModel reference for data write-back (applyNavData /
@@ -69,7 +71,7 @@ class BleService extends Ble.BleDelegate {
     private var vessel = null;
 
     /*
-     * Link-state observer — typically the BLEVesselConnect facade.
+     * Link-state observer — typically the BleVesselConnect facade.
      * Notified on CONNECTED / DISCONNECTED transitions so the facade
      * can do facade-y things (status redraw, glance snapshot fragment)
      * without coupling BleService to view-layer concerns.
@@ -81,12 +83,14 @@ class BleService extends Ble.BleDelegate {
 
     private var state = BLE_DISCONNECTED;
 
-    // Set to the advertised name on successful pair when CIQ surfaces
-    // it. May remain null when neither the ScanResult nor the post-pair
-    // device.getName() exposes a name (CIQ on this platform parks the
-    // local name in SCAN_RSP rather than ADV — see file header). Views
-    // render "Connected" / "Not Connected" when null rather than
-    // pretending a name we don't actually have.
+    /*
+     * Set to the advertised name on successful pair when CIQ surfaces
+     * it. May remain null when neither the ScanResult nor the post-pair
+     * device.getName() exposes a name (CIQ on this platform parks the
+     * local name in SCAN_RSP rather than ADV — see file header). Views
+     * render "Connected" / "Not Connected" when null rather than
+     * pretending a name we don't actually have.
+     */
     private var connectedDeviceName = null;
 
     // Ble.Device handle once CONNECTION_STATE_CONNECTED arrives.
@@ -122,15 +126,19 @@ class BleService extends Ble.BleDelegate {
     private var streamingCharUuidStr = null;
     private var streamingCharUuid = null;
 
-    // True between requestRead() and the matching onCharacteristicRead;
-    // gates the next requestRead so we never have two reads outstanding.
+    /*
+     * True between requestRead() and the matching onCharacteristicRead;
+     * gates the next requestRead so we never have two reads outstanding.
+     */
     private var readInFlight = false;
 
-    // True between requestWrite() on the CMD char and the matching
-    // onCharacteristicWrite. CIQ serializes the BLE radio — issuing a
-    // write while a read is in flight (or vice versa) throws
-    // "Operation already in Progress". The read loop and writeCmd
-    // both check this so they never trip over each other.
+    /*
+     * True between requestWrite() on the CMD char and the matching
+     * onCharacteristicWrite. CIQ serializes the BLE radio — issuing a
+     * write while a read is in flight (or vice versa) throws
+     * "Operation already in Progress". The read loop and writeCmd
+     * both check this so they never trip over each other.
+     */
     private var writeInFlight = false;
 
     /*
@@ -148,19 +156,23 @@ class BleService extends Ble.BleDelegate {
 
     private var readRecoveryTimer = null;
 
-    // Pre-built Uuid objects for the service + four characteristics.
-    // Set in initialize() so the read loop and dispatch don't allocate
-    // a Uuid on every read response or read iteration. CMD is
-    // write-only — it isn't part of the read loop, but we keep its
-    // Uuid handy for sendAutopilotCommand.
+    /*
+     * Pre-built Uuid objects for the service + four characteristics.
+     * Set in initialize() so the read loop and dispatch don't allocate
+     * a Uuid on every read response or read iteration. CMD is
+     * write-only — it isn't part of the read loop, but we keep its
+     * Uuid handy for sendAutopilotCommand.
+     */
     private var serviceUuid = null;
     private var navCharUuid = null;
     private var envCharUuid = null;
     private var apCharUuid  = null;
     private var cmdCharUuid = null;
 
-    // Diagnostic counters for the [BLE] logs — confirm that the read
-    // pipeline is actually delivering, not just that the link is up.
+    /*
+     * Diagnostic counters for the [BLE] logs — confirm that the read
+     * pipeline is actually delivering, not just that the link is up.
+     */
     private var readCount = 0;
     private var lastReadLogAt = 0;
 
@@ -486,14 +498,16 @@ class BleService extends Ble.BleDelegate {
             return;
         }
         try {
-            // CIQ's registerProfile schema requires `:descriptors` to
-            // be present (omitting the key crashes the runtime during
-            // onProfileRegister dispatch). We pass an empty Uuid
-            // array because we never touch any descriptors — reads
-            // don't need them, writes don't need them, and we don't
-            // subscribe via CCCD. Skipping the descriptor walk after
-            // CONNECTED also shaves a few ATT round-trips off
-            // GATT-discovery time before the first read can fire.
+            /*
+             * CIQ's registerProfile schema requires `:descriptors` to
+             * be present (omitting the key crashes the runtime during
+             * onProfileRegister dispatch). We pass an empty Uuid
+             * array because we never touch any descriptors — reads
+             * don't need them, writes don't need them, and we don't
+             * subscribe via CCCD. Skipping the descriptor walk after
+             * CONNECTED also shaves a few ATT round-trips off
+             * GATT-discovery time before the first read can fire.
+             */
             var noDescriptors = new [0];
             var profile = {
                 :uuid => serviceUuid,
@@ -508,8 +522,10 @@ class BleService extends Ble.BleDelegate {
             profileRegistered = true;
             System.println("[BLE] profile registered (NAV/ENV/AP/CMD)");
         } catch (e) {
-            // Already-registered errors aren't fatal — pairing can still
-            // happen, we just won't get characteristic discovery.
+            /*
+             * Already-registered errors aren't fatal — pairing can still
+             * happen, we just won't get characteristic discovery.
+             */
             System.println("[BLE] registerProfile failed: " + e.getErrorMessage());
         }
     }
@@ -555,8 +571,10 @@ class BleService extends Ble.BleDelegate {
             return;
         }
         if (pairInFlight) {
-            // pairDevice() is mid-handshake — restarting the scan
-            // would hammer the radio and slow the pair down.
+            /*
+             * pairDevice() is mid-handshake — restarting the scan
+             * would hammer the radio and slow the pair down.
+             */
             return;
         }
         if (pairedDevice == null) {
@@ -583,9 +601,11 @@ class BleService extends Ble.BleDelegate {
                     try {
                         Ble.pairDevice(raw);
                         pairInFlight = true;
-                        // Only assign when CIQ actually gave us a name.
-                        // Otherwise leave null and try device.getName()
-                        // post-pair in onConnectedStateChanged.
+                        /*
+                         * Only assign when CIQ actually gave us a name.
+                         * Otherwise leave null and try device.getName()
+                         * post-pair in onConnectedStateChanged.
+                         */
                         if (advertisedName != null && advertisedName.length() > 0) {
                             connectedDeviceName = advertisedName;
                         }
@@ -651,28 +671,36 @@ class BleService extends Ble.BleDelegate {
                     // Some CIQ versions throw if the name is not yet cached.
                 }
             }
-            // If still null, leave it that way — the UI renders
-            // "Connected" rather than fabricating a name.
+            /*
+             * If still null, leave it that way — the UI renders
+             * "Connected" rather than fabricating a name.
+             */
             state = BLE_CONNECTED;
             pairInFlight = false;
             stopRetryTimer();
             stopScan();
-            // Sticky autoconnect: now that we've paired at least
-            // once, future app launches will auto-scan for this
-            // service without the spinner. Cleared by disconnect().
+            /*
+             * Sticky autoconnect: now that we've paired at least
+             * once, future app launches will auto-scan for this
+             * service without the spinner. Cleared by disconnect().
+             */
             Storage.setValue(StorageKeys.BLE_AUTOCONNECT, true);
             System.println("[BLE] connected to '" + connectedDeviceName + "'");
 
-            // Notify the facade so it can redraw status views and
-            // persist a glance snapshot fragment.
+            /*
+             * Notify the facade so it can redraw status views and
+             * persist a glance snapshot fragment.
+             */
             if (linkObserver != null) {
                 linkObserver.onLinkConnected();
             }
 
-            // Start the read loop only if a data view has asked for
-            // streaming. If we just landed back on StatusView after
-            // the connect spinner pop, streamingCharUuid is null and
-            // we simply hold the GATT link idle.
+            /*
+             * Start the read loop only if a data view has asked for
+             * streaming. If we just landed back on StatusView after
+             * the connect spinner pop, streamingCharUuid is null and
+             * we simply hold the GATT link idle.
+             */
             if (streamingCharUuid != null) {
                 fireRead();
             }
@@ -782,8 +810,10 @@ class BleService extends Ble.BleDelegate {
             ch.requestRead();
             readInFlight = true;
         } catch (e) {
-            // Most commonly Ble.BLE_QUEUE_FULL when the radio is busy.
-            // Don't crash the loop — schedule a retry tick.
+            /*
+             * Most commonly Ble.BLE_QUEUE_FULL when the radio is busy.
+             * Don't crash the loop — schedule a retry tick.
+             */
             System.println("[BLE] requestRead threw: " + e.getErrorMessage());
             readInFlight = false;
             scheduleReadRetry();
@@ -847,12 +877,14 @@ class BleService extends Ble.BleDelegate {
             WatchUi.requestUpdate();
         }
 
-        // If a CMD piled up while this read was in flight, dispatch
-        // it now and let the read loop resume from
-        // onCharacteristicWrite. Otherwise self-pace: fire the next
-        // read immediately. If streamingCharUuid changed since this
-        // read was issued (e.g. user swiped to another data view),
-        // the next read automatically targets the new char.
+        /*
+         * If a CMD piled up while this read was in flight, dispatch
+         * it now and let the read loop resume from
+         * onCharacteristicWrite. Otherwise self-pace: fire the next
+         * read immediately. If streamingCharUuid changed since this
+         * read was issued (e.g. user swiped to another data view),
+         * the next read automatically targets the new char.
+         */
         if (drainPendingCmd()) {
             return;
         }

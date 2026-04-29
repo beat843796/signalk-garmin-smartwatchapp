@@ -84,11 +84,13 @@ class VesselConnectApp extends Application.AppBase {
         vessel.attachTransport(TransportFactory.build(type, vessel));
         vessel.startUpdatingData();
 
-        // Once the user has picked a transport, default to the data
-        // dashboard — even if the link isn't up yet (data view shows
-        // "—" placeholders until data flows). Only the never-picked
-        // case lands on Status so the auto-pushed picker is the user's
-        // very first interaction.
+        /*
+         * Once the user has picked a transport, default to the data
+         * dashboard — even if the link isn't up yet (data view shows
+         * "—" placeholders until data flows). Only the never-picked
+         * case lands on Status so the auto-pushed picker is the user's
+         * very first interaction.
+         */
         var initialPage = type.equals(ConnectionType.NONE)
             ? VIEWLOOP_PAGE_STATUS
             : VIEWLOOP_PAGE_DATA;

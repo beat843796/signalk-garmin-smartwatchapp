@@ -91,7 +91,7 @@ class VesselConnect {
     /*
      * Sets the autopilot to one of the AP_STATE_* modes via the
      * transport-specific protocol. No-op default for transports that
-     * cannot send commands (e.g. NullVesselConnect).
+     * cannot send commands (e.g. NoneVesselConnect).
      */
     function setAutopilotState(state) as Void {}
 

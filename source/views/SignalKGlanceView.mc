@@ -35,9 +35,11 @@ class SignalKGlanceView extends WatchUi.GlanceView {
 
         var type = readConnectionType();
 
-        // NOT CONFIGURED: render a single line vertically centred —
-        // there's nothing else useful to display until the user
-        // launches the app and picks a transport.
+        /*
+         * NOT CONFIGURED: render a single line vertically centred —
+         * there's nothing else useful to display until the user
+         * launches the app and picks a transport.
+         */
         if (type == null || type.equals("none")) {
             dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_BLACK);
             dc.drawText(

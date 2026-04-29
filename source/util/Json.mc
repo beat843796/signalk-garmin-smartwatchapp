@@ -219,8 +219,10 @@ module Json {
                     isFloat = true;
                     pos += 1;
                 } else if (c == '+' || c == '-') {
-                    // exponent sign — only valid right after e/E. Don't
-                    // bother validating here; toFloat() will reject if so.
+                    /*
+                     * exponent sign — only valid right after e/E. Don't
+                     * bother validating here; toFloat() will reject if so.
+                     */
                     pos += 1;
                 } else {
                     break;
