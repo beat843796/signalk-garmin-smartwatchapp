@@ -14,3 +14,4 @@
 - [] Security to BLE
 - [] BLE signal strength on status view is BLE is active
 - [] Localization
+- [] Combine autopilot and minimumvesseldata into one garmin-companion plugin

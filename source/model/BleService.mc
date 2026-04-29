@@ -39,9 +39,12 @@
  *   the data: NAV updates fast, ENV slowly, AP changes when the user
  *   is on the autopilot screen.
  *
- * Retry is a 1-second tick: while CONNECTING and not yet paired, restart
- * the scan. Cancelled by cancelConnect() (back from the spinner view) or
- * by reaching the CONNECTED state.
+ * Scan keepalive — purely event-driven via onScanStateChange. The
+ * scan duty cycle is owned by CIQ; we just declare the intent to be
+ * scanning via wantToScan. If CIQ ever reports the scanner dropped
+ * to OFF while we still want it (state==CONNECTING), we re-arm it.
+ * No fixed-period timer — periodically restarting an already-running
+ * scan only burns scan-window time on the radio.
  *
  * Singleton ownership of Ble.setDelegate(self) — only one BLE delegate
  * can be active in CIQ at any time.
@@ -78,7 +81,6 @@ class BleService extends Ble.BleDelegate {
      */
     private var linkObserver = null;
 
-    private const RETRY_INTERVAL_MS = 500;
     private const READ_RECOVERY_INTERVAL_MS = 500;
 
     private var state = BLE_DISCONNECTED;
@@ -99,18 +101,15 @@ class BleService extends Ble.BleDelegate {
     // One-shot success callback registered by the spinner view.
     private var onConnectedCallback = null;
 
-    private var retryTimer = null;
     private var profileRegistered = false;
 
     /*
-     * True between Ble.pairDevice() and the matching
-     * onConnectedStateChanged(CONNECTED) — the BLE pairing handshake
-     * is in flight. Used to freeze the retry-driven re-scan during
-     * that window: restarting the scan while a pair is in progress
-     * fights with the pairing on the BLE radio and adds seconds to
-     * the time-to-connected.
+     * True between startScan() and stopScan() — i.e. while we want
+     * the CIQ scanner to be running. Read by onScanStateChange to
+     * tell a deliberate stop (we set this false right before calling
+     * setScanState(OFF)) from a CIQ-side stop we should recover from.
      */
-    private var pairInFlight = false;
+    private var wantToScan = false;
 
     /*
      * View-driven streaming target. Set by beginDataStreaming(uuidStr)
@@ -223,7 +222,6 @@ class BleService extends Ble.BleDelegate {
         state = BLE_CONNECTING;
         System.println("[BLE] startConnect — scanning for SignalK service UUID");
         startScan();
-        startRetryTimer();
     }
 
     /*
@@ -254,7 +252,6 @@ class BleService extends Ble.BleDelegate {
 
     function cancelConnect() as Void {
         System.println("[BLE] cancelConnect");
-        stopRetryTimer();
         stopScan();
         if (pairedDevice != null) {
             try {
@@ -266,7 +263,6 @@ class BleService extends Ble.BleDelegate {
         pairedDevice = null;
         connectedDeviceName = null;
         onConnectedCallback = null;
-        pairInFlight = false;
         if (state != BLE_CONNECTED) {
             state = BLE_DISCONNECTED;
         }
@@ -450,7 +446,6 @@ class BleService extends Ble.BleDelegate {
     function teardownLink() as Void {
         System.println("[BLE] teardownLink");
         var wasConnected = (state == BLE_CONNECTED);
-        stopRetryTimer();
         stopReadRecoveryTimer();
         stopScan();
         if (pairedDevice != null) {
@@ -463,7 +458,6 @@ class BleService extends Ble.BleDelegate {
         pairedDevice = null;
         connectedDeviceName = null;
         onConnectedCallback = null;
-        pairInFlight = false;
         readInFlight = false;
         writeInFlight = false;
         pendingCmdPayload = null;
@@ -531,6 +525,7 @@ class BleService extends Ble.BleDelegate {
     }
 
     private function startScan() as Void {
+        wantToScan = true;
         try {
             Ble.setScanState(Ble.SCAN_STATE_SCANNING);
         } catch (e) {
@@ -539,48 +534,11 @@ class BleService extends Ble.BleDelegate {
     }
 
     private function stopScan() as Void {
+        wantToScan = false;
         try {
             Ble.setScanState(Ble.SCAN_STATE_OFF);
         } catch (e) {
             // Scan may already be off; not actionable.
-        }
-    }
-
-    private function startRetryTimer() as Void {
-        stopRetryTimer();
-        retryTimer = new Timer.Timer();
-        retryTimer.start(method(:onRetryTick), RETRY_INTERVAL_MS, true);
-    }
-
-    private function stopRetryTimer() as Void {
-        if (retryTimer != null) {
-            retryTimer.stop();
-            retryTimer = null;
-        }
-    }
-
-    /*
-     * Called every RETRY_INTERVAL_MS while CONNECTING. If we haven't
-     * paired yet, kick the scanner — sometimes CIQ silently stops
-     * scanning after a long idle, and the cheapest recovery is to flip
-     * it OFF and back ON.
-     */
-    function onRetryTick() as Void {
-        if (state != BLE_CONNECTING) {
-            stopRetryTimer();
-            return;
-        }
-        if (pairInFlight) {
-            /*
-             * pairDevice() is mid-handshake — restarting the scan
-             * would hammer the radio and slow the pair down.
-             */
-            return;
-        }
-        if (pairedDevice == null) {
-            System.println("[BLE] retry tick — restarting scan");
-            stopScan();
-            startScan();
         }
     }
 
@@ -600,7 +558,6 @@ class BleService extends Ble.BleDelegate {
                     stopScan();
                     try {
                         Ble.pairDevice(raw);
-                        pairInFlight = true;
                         /*
                          * Only assign when CIQ actually gave us a name.
                          * Otherwise leave null and try device.getName()
@@ -611,7 +568,14 @@ class BleService extends Ble.BleDelegate {
                         }
                     } catch (e) {
                         System.println("[BLE] pairDevice failed: " + e.getErrorMessage());
-                        // Drop back into scan on the next retry tick.
+                        /*
+                         * Pair throw never reaches onConnectedStateChanged,
+                         * so the DISCONNECTED scan-resume path won't
+                         * fire — kick the scanner back on here.
+                         */
+                        if (state == BLE_CONNECTING) {
+                            startScan();
+                        }
                     }
                     return;
                 }
@@ -676,8 +640,6 @@ class BleService extends Ble.BleDelegate {
              * "Connected" rather than fabricating a name.
              */
             state = BLE_CONNECTED;
-            pairInFlight = false;
-            stopRetryTimer();
             stopScan();
             /*
              * Sticky autoconnect: now that we've paired at least
@@ -716,9 +678,9 @@ class BleService extends Ble.BleDelegate {
             }
         } else if (ciqState == Ble.CONNECTION_STATE_DISCONNECTED) {
             var wasConnected = (state == BLE_CONNECTED);
+            var wasConnecting = (state == BLE_CONNECTING);
             pairedDevice = null;
             connectedDeviceName = null;
-            pairInFlight = false;
             readInFlight = false;
             writeInFlight = false;
             pendingCmdPayload = null;
@@ -731,6 +693,14 @@ class BleService extends Ble.BleDelegate {
                     linkObserver.onLinkDisconnected();
                 }
                 WatchUi.requestUpdate();
+            } else if (wasConnecting) {
+                /*
+                 * Pair attempt never reached CONNECTED — keep state at
+                 * BLE_CONNECTING and resume scanning so the next advert
+                 * gives us another shot.
+                 */
+                System.println("[BLE] pair attempt failed — resuming scan");
+                startScan();
             }
         }
     }
@@ -748,8 +718,23 @@ class BleService extends Ble.BleDelegate {
         }
     }
 
+    /*
+     * Scan-state keepalive. CIQ owns when scan windows actually run;
+     * occasionally it drops the scanner back to OFF on its own (long
+     * idle, internal radio scheduling). If that happens while we still
+     * want to be scanning (state==CONNECTING and stopScan() wasn't
+     * called), re-arm it. Deliberate stops (scan→pair, connect, cancel,
+     * teardown) all clear wantToScan first, so this branch leaves
+     * those alone.
+     */
     function onScanStateChange(scanState as Ble.ScanState, status as Ble.Status) as Void {
         System.println("[BLE] scanState=" + scanState + " status=" + status);
+        if (scanState == Ble.SCAN_STATE_OFF
+                && wantToScan
+                && state == BLE_CONNECTING) {
+            System.println("[BLE] scan dropped while we still want it — re-arming");
+            startScan();
+        }
     }
 
     /*
