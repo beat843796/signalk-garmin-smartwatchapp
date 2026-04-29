@@ -33,11 +33,14 @@ module ConnectionTypePicker {
      *           pick; back pops normally.
      */
     function push(firstLaunch as Lang.Boolean) as Void {
-        var menu = new WatchUi.Menu2({:title => "Connection"});
+        var menu = new WatchUi.Menu2({:title => Rez.Strings.MenuConnection});
+        var current = TransportFactory.getStoredType();
+        var restSubtitle = current.equals(ConnectionType.REST) ? Rez.Strings.LabelActive : null;
+        var bleSubtitle = current.equals(ConnectionType.BLE) ? Rez.Strings.LabelActive : null;
         menu.addItem(new WatchUi.MenuItem(
-            "SignalK HTTPs", null, :pickRest, null));
+            Rez.Strings.TitleSignalKServer, restSubtitle, :pickRest, null));
         menu.addItem(new WatchUi.MenuItem(
-            "Bluetooth", null, :pickBle, null));
+            Rez.Strings.TitleBle, bleSubtitle, :pickBle, null));
         WatchUi.pushView(
             menu,
             new ConnectionTypePickerDelegate(firstLaunch),

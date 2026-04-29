@@ -9,3 +9,8 @@
 - [] signalk crashes sometimes. im sure its one of the plugins lets check
 - [] shouldnt the access request for rest be made automatically??
 - [] should the BLE connection after selection shouldnt start automatically?
+- [] ble throttled rertry, max count
+- [] control audio
+- [] Security to BLE
+- [] BLE signal strength on status view is BLE is active
+- [] Localization

@@ -91,10 +91,14 @@ class VesselDataView extends WatchUi.View {
          * into AWA | AWS, bottom row = DBT. drawCell centres the value
          * in the cell with the title floating just above.
          */
-        drawCell(dc, 0,         0,                width,         blockHeight, "SOG", sog);
-        drawCell(dc, 0,         blockHeight,      width / 2,     blockHeight, "AWA", awa);
-        drawCell(dc, width / 2, blockHeight,      width / 2,     blockHeight, "AWS", aws);
-        drawCell(dc, 0,         blockHeight * 2,  width,         blockHeight, "DBT", dbt);
+        var labelSog = WatchUi.loadResource(Rez.Strings.LabelSog) as Lang.String;
+        var labelAwa = WatchUi.loadResource(Rez.Strings.LabelAwa) as Lang.String;
+        var labelAws = WatchUi.loadResource(Rez.Strings.LabelAws) as Lang.String;
+        var labelDbt = WatchUi.loadResource(Rez.Strings.LabelDbt) as Lang.String;
+        drawCell(dc, 0,         0,                width,         blockHeight, labelSog, sog);
+        drawCell(dc, 0,         blockHeight,      width / 2,     blockHeight, labelAwa, awa);
+        drawCell(dc, width / 2, blockHeight,      width / 2,     blockHeight, labelAws, aws);
+        drawCell(dc, 0,         blockHeight * 2,  width,         blockHeight, labelDbt, dbt);
 
         if (connected && vessel.apparentWindAngle != null) {
             Utils.drawWindAngle(dc, vessel.apparentWindAngle, width);

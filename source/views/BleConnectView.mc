@@ -44,7 +44,7 @@ class BleConnectView extends WatchUi.View {
 
     function initialize() {
         View.initialize();
-        label = "Connecting SignalK";
+        label = WatchUi.loadResource(Rez.Strings.SpinnerConnecting) as Lang.String;
     }
 
     function onShow() {
@@ -89,7 +89,7 @@ class BleConnectView extends WatchUi.View {
      */
     function onConnected() as Void {
         System.println("[BLE] BleConnectView onConnected");
-        WatchUi.showToast("Connected", null);
+        WatchUi.showToast(Rez.Strings.ToastConnected, null);
         if (!popScheduled) {
             popScheduled = true;
             popTimer = new Timer.Timer();

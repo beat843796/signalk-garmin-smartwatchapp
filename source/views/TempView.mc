@@ -57,7 +57,7 @@ class TempView extends WatchUi.View {
             cx,
             cy - valueH / 2 - titleH / 2 - gap,
             titleFont,
-            "WATER TEMP",
+            WatchUi.loadResource(Rez.Strings.LabelWaterTemp) as Lang.String,
             (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
 
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);

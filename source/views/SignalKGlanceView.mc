@@ -46,7 +46,7 @@ class SignalKGlanceView extends WatchUi.GlanceView {
                 5,
                 h * 0.5,
                 Graphics.FONT_SYSTEM_TINY,
-                "NOT CONFIGURED",
+                WatchUi.loadResource(Rez.Strings.GlanceNotConfigured) as Lang.String,
                 Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
             return;
         }
@@ -54,10 +54,10 @@ class SignalKGlanceView extends WatchUi.GlanceView {
         var titleText;
         var subtitleText;
         if (type.equals("rest")) {
-            titleText = "SignalK Server";
+            titleText = WatchUi.loadResource(Rez.Strings.TitleSignalKServer) as Lang.String;
             subtitleText = readRestUrl();
         } else if (type.equals("ble")) {
-            titleText = "BLE";
+            titleText = WatchUi.loadResource(Rez.Strings.TitleBle) as Lang.String;
             subtitleText = readBleDeviceName();
         } else {
             titleText = type;
@@ -105,7 +105,7 @@ class SignalKGlanceView extends WatchUi.GlanceView {
             }
             return rawUrl;
         }
-        return "Missing URL";
+        return WatchUi.loadResource(Rez.Strings.GlanceMissingUrl) as Lang.String;
     }
 
     /*
@@ -121,6 +121,6 @@ class SignalKGlanceView extends WatchUi.GlanceView {
                 return name;
             }
         }
-        return "Not Connected";
+        return WatchUi.loadResource(Rez.Strings.BleStatusNotConnected) as Lang.String;
     }
 }

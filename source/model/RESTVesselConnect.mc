@@ -204,7 +204,7 @@ class RESTVesselConnect extends VesselConnect {
      */
 
     function getDisplayTitle() as Lang.String {
-        return "SignalK Server";
+        return WatchUi.loadResource(Rez.Strings.TitleSignalKServer) as Lang.String;
     }
 
     /*
@@ -230,15 +230,19 @@ class RESTVesselConnect extends VesselConnect {
     function getStatusLabel() as Lang.String {
         var kind = getStatusKind();
         if (kind == CONN_CONNECTED) {
-            return baseURL != null ? baseURL : "CONNECTED";
+            return baseURL != null
+                ? baseURL
+                : WatchUi.loadResource(Rez.Strings.StatusConnected) as Lang.String;
         }
-        if (kind == CONN_NO_URL)         { return "NO URL"; }
-        if (kind == CONN_NO_HTTPS)       { return "NO HTTPS"; }
-        if (kind == CONN_NOT_REACHABLE)  { return "NOT REACHABLE"; }
-        if (kind == CONN_NOT_AUTH)       { return "NOT AUTHENTICATED"; }
-        if (kind == CONN_PENDING)        { return "PENDING"; }
-        if (kind == CONN_MISSING_PLUGIN) { return "PLUGIN MISSING"; }
-        return "UNKNOWN";
+        var id;
+        if (kind == CONN_NO_URL)              { id = Rez.Strings.StatusNoUrl; }
+        else if (kind == CONN_NO_HTTPS)       { id = Rez.Strings.StatusNoHttps; }
+        else if (kind == CONN_NOT_REACHABLE)  { id = Rez.Strings.StatusNotReachable; }
+        else if (kind == CONN_NOT_AUTH)       { id = Rez.Strings.StatusNotAuth; }
+        else if (kind == CONN_PENDING)        { id = Rez.Strings.StatusPending; }
+        else if (kind == CONN_MISSING_PLUGIN) { id = Rez.Strings.StatusPluginMissing; }
+        else                                  { id = Rez.Strings.StatusUnknown; }
+        return WatchUi.loadResource(id) as Lang.String;
     }
 
     function supportsRequestAccess() as Lang.Boolean {
@@ -642,7 +646,7 @@ class RESTVesselConnect extends VesselConnect {
          * so it shows even if the user backed out of the spinner
          * before the poll completed.
          */
-        WatchUi.showToast("APPROVED", null);
+        WatchUi.showToast(Rez.Strings.ToastApproved, null);
         updateVesselDataFromServer();
         WatchUi.requestUpdate();
     }
@@ -658,7 +662,7 @@ class RESTVesselConnect extends VesselConnect {
          * backed out of the spinner. The request-access view (if
          * still on top) auto-pops on the next onUpdate.
          */
-        WatchUi.showToast("DENIED", null);
+        WatchUi.showToast(Rez.Strings.ToastDenied, null);
         WatchUi.requestUpdate();
     }
 

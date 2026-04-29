@@ -165,14 +165,14 @@ class StatusViewDelegate extends WatchUi.BehaviorDelegate {
             return true;
         }
 
-        var menu = new WatchUi.Menu2({:title => "Config"});
+        var menu = new WatchUi.Menu2({:title => Rez.Strings.MenuConfig});
         var connect = vessel.connect;
 
         // REST: "Request Access" only when actionable.
         if (connect instanceof RESTVesselConnect
                 && vessel.getStatusKind() == CONN_NOT_AUTH) {
             menu.addItem(new WatchUi.MenuItem(
-                "SignalK", "Request Access", :requestAccess, null));
+                Rez.Strings.MenuItemSignalK, Rez.Strings.MenuActionRequestAccess, :requestAccess, null));
         }
 
         /*
@@ -184,13 +184,13 @@ class StatusViewDelegate extends WatchUi.BehaviorDelegate {
             var kind = vessel.getStatusKind();
             if (kind == CONN_CONNECTED) {
                 menu.addItem(new WatchUi.MenuItem(
-                    "BLE", "Disconnect", :bleDisconnect, null));
+                    Rez.Strings.TitleBle, Rez.Strings.MenuActionDisconnect, :bleDisconnect, null));
             } else if (kind == CONN_CONNECTING) {
                 menu.addItem(new WatchUi.MenuItem(
-                    "BLE", "Cancel", :bleDisconnect, null));
+                    Rez.Strings.TitleBle, Rez.Strings.MenuActionCancel, :bleDisconnect, null));
             } else {
                 menu.addItem(new WatchUi.MenuItem(
-                    "BLE", "Connect", :bleConnect, null));
+                    Rez.Strings.TitleBle, Rez.Strings.MenuActionConnect, :bleConnect, null));
             }
         }
 
@@ -200,10 +200,10 @@ class StatusViewDelegate extends WatchUi.BehaviorDelegate {
          * always "Change..." here, never "Set...".
          */
         menu.addItem(new WatchUi.MenuItem(
-            "Change Connection Type", null, :setConnectionType, null));
+            Rez.Strings.MenuItemChangeConnectionType, null, :setConnectionType, null));
 
         menu.addItem(new WatchUi.MenuItem(
-            "Help", null, :help, null));
+            Rez.Strings.MenuItemHelp, null, :help, null));
 
         WatchUi.pushView(menu, new ConfigMenuDelegate(), WatchUi.SLIDE_UP);
         return true;

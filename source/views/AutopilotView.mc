@@ -92,7 +92,7 @@ class AutopilotView extends WatchUi.View {
             width / 2,
             height / 4,
             labelFont,
-            "Change\nHeading",
+            WatchUi.loadResource(Rez.Strings.LabelChangeHeading) as Lang.String,
             (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
 
         dc.drawText(
@@ -117,24 +117,27 @@ class AutopilotView extends WatchUi.View {
         var valueToDraw = "---";
         var labelText = "";
         var stateName = vessel.getNameForActiveState();
+        var labelHdg = WatchUi.loadResource(Rez.Strings.LabelHdg) as Lang.String;
+        var labelAwa = WatchUi.loadResource(Rez.Strings.LabelAwa) as Lang.String;
+        var labelDtw = WatchUi.loadResource(Rez.Strings.LabelDtw) as Lang.String;
 
         // Which heading to show depends on the current AP mode.
         switch (vessel.autopilotState) {
             case ApStates.STANDBY:
                 valueToDraw = vessel.getHeadingMagneticDegreeString();
-                labelText = "HDG";
+                labelText = labelHdg;
                 break;
             case ApStates.AUTO:
                 valueToDraw = vessel.getTargetHeadingMagneticDegreeString();
-                labelText = "HDG";
+                labelText = labelHdg;
                 break;
             case ApStates.WIND:
                 valueToDraw = vessel.getTargetHeadingWindAppearantDegreeString();
-                labelText = "AWA";
+                labelText = labelAwa;
                 break;
             case ApStates.ROUTE:
                 valueToDraw = "---";
-                labelText = "DTW";
+                labelText = labelDtw;
                 break;
         }
 
@@ -308,10 +311,10 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
             return false;
         }
 
-        var standbyItem = new WatchUi.MenuItem("Standby", null, AP_STATE_STANDBY, null);
-        var autoItem = new WatchUi.MenuItem("Auto", null, AP_STATE_AUTO, null);
-        var windItem = new WatchUi.MenuItem("Wind", null, AP_STATE_WIND, null);
-        var trackItem = new WatchUi.MenuItem("Track", null, AP_STATE_TRACK, null);
+        var standbyItem = new WatchUi.MenuItem(Rez.Strings.ApModeStandby, null, AP_STATE_STANDBY, null);
+        var autoItem = new WatchUi.MenuItem(Rez.Strings.ApModeAuto, null, AP_STATE_AUTO, null);
+        var windItem = new WatchUi.MenuItem(Rez.Strings.ApModeWind, null, AP_STATE_WIND, null);
+        var trackItem = new WatchUi.MenuItem(Rez.Strings.ApModeTrack, null, AP_STATE_TRACK, null);
 
         var focus = 0;
         switch (vessel.autopilotState) {
@@ -319,20 +322,20 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
                 focus = 0;
                 break;
             case ApStates.AUTO:
-                autoItem.setSubLabel("Active");
+                autoItem.setSubLabel(Rez.Strings.LabelActive);
                 focus = 1;
                 break;
             case ApStates.WIND:
-                windItem.setSubLabel("Active");
+                windItem.setSubLabel(Rez.Strings.LabelActive);
                 focus = 2;
                 break;
             case ApStates.ROUTE:
-                trackItem.setSubLabel("Active");
+                trackItem.setSubLabel(Rez.Strings.LabelActive);
                 focus = 3;
                 break;
         }
 
-        var menu = new WatchUi.Menu2({:title=>"SET MODE", :focus=>focus});
+        var menu = new WatchUi.Menu2({:title=>Rez.Strings.MenuSetMode, :focus=>focus});
         menu.addItem(standbyItem);
         menu.addItem(autoItem);
         menu.addItem(windItem);

@@ -15,6 +15,16 @@ relies on two server-side plugins:
 
 the plugins are installed on the rpi for testing in the ~./signalk folder using `npm install <githubrepo>`
 
+on the same level as the garmin watch porject you find the sibling projects that are either the plugins or are there fro data sim or testing
+
+- `signalk-autopilot-deltasim` - optional plugin generating some autopilot deltas for testing the autopilot view
+- `signalk-ble-test` - a script testing the signalk-minimalvesseldata-plugin BLE function
+- `signalk-data-simulator` - optional plugin for simulating high frequency data
+- `signalk-minimalvesseldata-plugin` - the plugin needed for interacting with the watch via REST and BLE
+- `signalk-raymarine-autopilot` - plugin needed so the autopilor in the boat is connected
+
+Only when explicitly ask you can modify code in those sibling projects. Sometimes its even needed to modify code as those are companion projects to the watch app.
+
 **Authentication:** the app uses SignalK's *device access request* flow.
 No credentials ever typed on the watch. On first launch the app POSTs a
 one-time request to `/signalk/v1/access/requests`; an admin approves it
@@ -89,3 +99,5 @@ legacy widget carousel. The app appears in the glance carousel via
 ## General Rules
 
 - Do not update any md files yourself unless i ask for it explicitly. Also do not update the TODO.md
+- User Facing strings always must go to resources/strings/strings.xml so localization is supported. 
+- create logs for all relevant state changes and business logic functions se we have an easy time debugging

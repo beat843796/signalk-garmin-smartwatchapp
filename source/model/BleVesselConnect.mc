@@ -73,7 +73,7 @@ class BleVesselConnect extends VesselConnect {
      */
 
     function getDisplayTitle() as Lang.String {
-        return "BLE";
+        return WatchUi.loadResource(Rez.Strings.TitleBle) as Lang.String;
     }
 
     function getStatusKind() as Lang.Number {
@@ -90,12 +90,12 @@ class BleVesselConnect extends VesselConnect {
             if (name != null && name.length() > 0) {
                 return name;
             }
-            return "Connected";
+            return WatchUi.loadResource(Rez.Strings.BleStatusConnected) as Lang.String;
         }
         if (s == BLE_CONNECTING) {
-            return "Connecting...";
+            return WatchUi.loadResource(Rez.Strings.BleStatusConnecting) as Lang.String;
         }
-        return "Not Connected";
+        return WatchUi.loadResource(Rez.Strings.BleStatusNotConnected) as Lang.String;
     }
 
     /*

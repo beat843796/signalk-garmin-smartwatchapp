@@ -93,6 +93,6 @@ class RequestAccessView extends WatchUi.View {
      * spinner timer.
      */
     private function drawRequestingOverlay(dc) {
-        Utils.drawSpinner(dc, "Pending Approval");
+        Utils.drawSpinner(dc, WatchUi.loadResource(Rez.Strings.SpinnerPendingApproval) as Lang.String);
     }
 }
