@@ -58,7 +58,7 @@ class BleVesselConnect extends VesselConnect {
      * clear the flag.
      */
     function stop() as Void {
-        System.println("[BLE] stop (transport-switch / app shutdown)");
+        System.println("[BLE] stop — tearing down GATT link");
         service.teardownLink();
     }
 

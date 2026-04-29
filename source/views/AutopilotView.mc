@@ -273,8 +273,11 @@ class AutopilotView extends WatchUi.View {
 /*
  * Input delegate for the autopilot screen. Maps keys to heading adjustments
  * (up/down/clock/menu) and opens the mode-select Menu2 on the select key.
- * Stops the 100 ms data poll while a menu or edit is open so inbound updates
- * don't overwrite the user's in-progress changes.
+ * Pauses the data flow while a menu or edit is open so inbound updates
+ * don't overwrite the user's in-progress changes — pause/resume, NOT
+ * stop/start, so BLE keeps the GATT link up (otherwise the user's
+ * in-edit command would arrive at a torn-down transport and bounce
+ * off the canSendCommands() gate).
  */
 class AutopilotDelegate extends WatchUi.BehaviorDelegate {
 
@@ -307,7 +310,7 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
             changeHeading = 0;
             changeHeadingMode = false;
             WatchUi.requestUpdate();
-            vessel.startUpdatingData();
+            vessel.resumePolling();
             return false;
         }
 
@@ -342,7 +345,7 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
         // trackItem intentionally omitted — route mode isn't wired up end-to-end.
 
         WatchUi.pushView(menu, new AutopilotMenuDelegate(), WatchUi.SLIDE_UP);
-        vessel.stopUpdatingData();
+        vessel.pausePolling();
         return true;
     }
 
@@ -369,7 +372,7 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
                 applyDelta(+10);
                 break;
             case KEY_ESC:
-                vessel.startUpdatingData();
+                vessel.resumePolling();
                 if (changeHeadingMode) {
                     changeHeadingMode = false;
                     WatchUi.requestUpdate();
@@ -482,7 +485,7 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
      * data poll so incoming server updates don't stomp on the user's edit.
      */
     function updateHeading(value) {
-        vessel.stopUpdatingData();
+        vessel.pausePolling();
         changeHeadingMode = true;
         changeHeading = changeHeading + value;
         if (changeHeading > 180) {
@@ -517,7 +520,7 @@ class AutopilotMenuDelegate extends WatchUi.Menu2InputDelegate {
                     new Attention.VibeProfile(75, 100)
                 ]);
             }
-            vessel.startUpdatingData();
+            vessel.resumePolling();
             WatchUi.popView(WatchUi.SLIDE_DOWN);
             return;
         }
@@ -537,12 +540,12 @@ class AutopilotMenuDelegate extends WatchUi.Menu2InputDelegate {
                 break;
         }
 
-        vessel.startUpdatingData();
+        vessel.resumePolling();
         WatchUi.popView(WatchUi.SLIDE_DOWN);
     }
 
     function onBack() as Void {
-        vessel.startUpdatingData();
+        vessel.resumePolling();
         WatchUi.popView(WatchUi.SLIDE_DOWN);
     }
 }
