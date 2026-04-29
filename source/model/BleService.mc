@@ -746,6 +746,21 @@ class BleService extends Ble.BleDelegate {
             System.println("[BLE] CMD write ACKed");
         } else {
             System.println("[BLE] CMD write failed status=" + status);
+            /*
+             * STATUS_GATT_INSUFFICIENT_AUTHENTICATION_FAIL is what CIQ
+             * surfaces when the peripheral returns ATT 0x05. The
+             * minimalvesseldata plugin uses 0x05 for the
+             * bleAllowAutopilotCommands=off gate (CIQ collapses the
+             * semantically tighter 0x08 onto a generic STATUS_WRITE_FAIL
+             * — see plugin's ble.js for the rationale). So a status of
+             * 18 here means "plugin policy rejected this write," not
+             * "you need to bond." Surface that as a clear toast so the
+             * user knows it's a server-side policy thing rather than a
+             * link / payload problem.
+             */
+            if (status == Ble.STATUS_GATT_INSUFFICIENT_AUTHENTICATION_FAIL) {
+                WatchUi.showToast(Rez.Strings.ToastNotAllowed, null);
+            }
         }
         if (drainPendingCmd()) {
             return;

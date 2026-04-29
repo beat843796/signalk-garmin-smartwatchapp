@@ -167,3 +167,4 @@ module BleCmdAction {
     const ADVANCE_WAYPOINT = 0x03; // payload: (none)
     const SILENCE_ALARM    = 0x04; // payload: u8 alarmId, u8 groupId
 }
+

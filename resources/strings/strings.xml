@@ -67,4 +67,7 @@
     <string id="SpinnerPendingApproval">Pending Approval</string>
     <string id="ToastApproved">APPROVED</string>
     <string id="ToastDenied">DENIED</string>
+
+    <!-- Autopilot command rejection toasts -->
+    <string id="ToastNotAllowed">NOT ALLOWED</string>
 </strings>
