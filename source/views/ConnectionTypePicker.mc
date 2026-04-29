@@ -20,7 +20,6 @@
 using Toybox.WatchUi;
 using Toybox.Lang;
 using Toybox.System;
-using Toybox.Application.Storage;
 
 module ConnectionTypePicker {
 
@@ -76,15 +75,16 @@ class ConnectionTypePickerDelegate extends WatchUi.Menu2InputDelegate {
             vessel.attachTransport(TransportFactory.build(newType, vessel));
 
             /*
-             * Switching TO BLE with a previously-paired device: route
-             * through the foreground spinner so the user sees the
-             * connect attempt and lands on the data view on success
-             * (BleConnectView.onConnected switchToViews to it). This
-             * matches the experience of clicking Connect from the
-             * Config menu when on BLE.
+             * Switching TO BLE: always route through the foreground
+             * spinner so the user sees the connect attempt and lands
+             * on the data view on success (BleConnectView.onConnected
+             * switchToViews to it). Dropping back to a "BLE Not
+             * Connected" StatusView would force the user to open the
+             * Config menu and tap Connect anyway — pointless extra
+             * step. Works for both previously-paired devices (scan
+             * finds them quickly) and first-time pairings.
              */
-            if (newType.equals(ConnectionType.BLE)
-                    && Storage.getValue(StorageKeys.BLE_AUTOCONNECT) == true) {
+            if (newType.equals(ConnectionType.BLE)) {
                 WatchUi.popView(WatchUi.SLIDE_DOWN);
                 WatchUi.pushView(
                     new BleConnectView(),

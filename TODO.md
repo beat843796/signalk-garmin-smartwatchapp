@@ -8,10 +8,8 @@
 - [] fetch navionics map tiles and server through plugin as image load
 - [] signalk crashes sometimes. im sure its one of the plugins lets check
 - [] shouldnt the access request for rest be made automatically??
-- [] should the BLE connection after selection shouldnt start automatically?
-- [] ble throttled rertry, max count
+- [X] should the BLE connection after selection shouldnt start automatically?
 - [] control audio
 - [] Security to BLE
-- [] BLE signal strength on status view is BLE is active
 - [] Localization
 - [] Combine autopilot and minimumvesseldata into one garmin-companion plugin
