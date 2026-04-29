@@ -5,8 +5,8 @@
          BleVesselConnect.getDisplayTitle, ConnectionTypePicker, and
          SignalKGlanceView. Keep wording in sync — these surface in multiple
          places and must match. -->
-    <string id="TitleSignalKServer">SignalK Server</string>
-    <string id="TitleBle">BLE</string>
+    <string id="TitleSignalKHttps">SignalK HTTPs</string>
+    <string id="TitleSignalKBle">SignalK BLE</string>
 
     <!-- Connection-type picker -->
     <string id="MenuConnection">Connection</string>
@@ -37,10 +37,6 @@
     <string id="BleStatusConnected">Connected</string>
     <string id="BleStatusConnecting">Connecting...</string>
     <string id="BleStatusNotConnected">Not Connected</string>
-
-    <!-- Glance tile -->
-    <string id="GlanceNotConfigured">NOT CONFIGURED</string>
-    <string id="GlanceMissingUrl">Missing URL</string>
 
     <!-- VesselDataView cell labels -->
     <string id="LabelSog">SOG</string>

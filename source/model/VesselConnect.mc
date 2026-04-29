@@ -32,8 +32,7 @@ class VesselConnect {
 
     /*
      * Reference back to the VesselModel so the transport can call
-     * applyVesselDataDict / applyNavData / applyApData / applyEnvData
-     * and persistGlanceSnapshot.
+     * applyVesselDataDict / applyNavData / applyApData / applyEnvData.
      */
     protected var vessel;
 

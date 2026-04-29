@@ -4,21 +4,24 @@
  * driven by the persisted ConnectionType:
  *
  *   NONE  →  "NOT CONFIGURED" (gray)
- *   REST  →  "SignalK Server" + the configured baseurl_prop
- *   BLE   →  "BLE" + the last-known BLE device name (from the
- *            glance snapshot dict written by VesselModel)
+ *   REST  →  "SignalK HTTPs" + last-known autopilot mode
+ *   BLE   →  "SignalK BLE"  + last-known autopilot mode
  *
  * The (:glance) annotation restricts this class to the glance compile
  * slice — no VesselModel, no BluetoothLowEnergy. Inputs come from
- * Application.Storage (snapshot dict) and Application.Properties
- * (baseurl_prop).
+ * Application.Storage (snapshot dict written by VesselModel).
+ *
+ * Strings are inlined here rather than loaded from Rez.Strings — the
+ * resource table for the glance slice on SDK 9.1 / fenix8-class devices
+ * crashes with "Illegal Access (Out of Bounds): Could not access symbol
+ * 'Rez'" on every Rez.Strings.* lookup. The glance only renders English
+ * literals, so this trades localization on the tile for a working tile.
  */
 
 using Toybox.WatchUi;
 using Toybox.Graphics;
 using Toybox.Lang;
 using Toybox.Application.Storage;
-using Toybox.Application.Properties;
 
 (:glance)
 class SignalKGlanceView extends WatchUi.GlanceView {
@@ -35,33 +38,24 @@ class SignalKGlanceView extends WatchUi.GlanceView {
 
         var type = readConnectionType();
 
-        /*
-         * NOT CONFIGURED: render a single line vertically centred —
-         * there's nothing else useful to display until the user
-         * launches the app and picks a transport.
-         */
-        if (type == null || type.equals("none")) {
+        if (type == null || type.equals(ConnectionType.NONE)) {
             dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_BLACK);
             dc.drawText(
                 5,
                 h * 0.5,
                 Graphics.FONT_SYSTEM_TINY,
-                WatchUi.loadResource(Rez.Strings.GlanceNotConfigured) as Lang.String,
+                "NOT CONFIGURED",
                 Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
             return;
         }
 
         var titleText;
-        var subtitleText;
-        if (type.equals("rest")) {
-            titleText = WatchUi.loadResource(Rez.Strings.TitleSignalKServer) as Lang.String;
-            subtitleText = readRestUrl();
-        } else if (type.equals("ble")) {
-            titleText = WatchUi.loadResource(Rez.Strings.TitleBle) as Lang.String;
-            subtitleText = readBleDeviceName();
+        if (type.equals(ConnectionType.REST)) {
+            titleText = "SignalK HTTPs";
+        } else if (type.equals(ConnectionType.BLE)) {
+            titleText = "SignalK BLE";
         } else {
             titleText = type;
-            subtitleText = "";
         }
 
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
@@ -76,7 +70,7 @@ class SignalKGlanceView extends WatchUi.GlanceView {
             5,
             h * 0.55,
             Graphics.FONT_SYSTEM_XTINY,
-            subtitleText,
+            readAutopilotMode(),
             Graphics.TEXT_JUSTIFY_LEFT);
     }
 
@@ -94,33 +88,21 @@ class SignalKGlanceView extends WatchUi.GlanceView {
     }
 
     /*
-     * Subtitle for REST mode — the configured baseurl_prop, trimmed
-     * of any trailing slash so the line stays tidy.
+     * Subtitle: name of the last-known autopilot mode. The snapshot
+     * stores the raw signalk state name (lowercase); we map it to the
+     * same wording used by the autopilot mode-select menu in main app.
      */
-    private function readRestUrl() as Lang.String {
-        var rawUrl = Properties.getValue("baseurl_prop");
-        if (rawUrl != null && rawUrl instanceof Lang.String && rawUrl.length() > 0) {
-            if (rawUrl.substring(rawUrl.length() - 1, rawUrl.length()).equals("/")) {
-                return rawUrl.substring(0, rawUrl.length() - 1);
-            }
-            return rawUrl;
-        }
-        return WatchUi.loadResource(Rez.Strings.GlanceMissingUrl) as Lang.String;
-    }
-
-    /*
-     * Subtitle for BLE mode — the last-known device name from the
-     * glance snapshot. Falls back to "Not Connected" if the snapshot
-     * doesn't carry one (i.e. we've never paired in this install).
-     */
-    private function readBleDeviceName() as Lang.String {
+    private function readAutopilotMode() as Lang.String {
         var snapshot = Storage.getValue(StorageKeys.GLANCE_SNAPSHOT);
         if (snapshot instanceof Lang.Dictionary) {
-            var name = snapshot["bleDeviceName"];
-            if (name instanceof Lang.String && name.length() > 0) {
-                return name;
+            var ap = snapshot["ap"];
+            if (ap instanceof Lang.String) {
+                if (ap.equals(ApStates.STANDBY)) { return "Standby"; }
+                if (ap.equals(ApStates.AUTO))    { return "Auto"; }
+                if (ap.equals(ApStates.WIND))    { return "Wind"; }
+                if (ap.equals(ApStates.ROUTE))   { return "Track"; }
             }
         }
-        return WatchUi.loadResource(Rez.Strings.BleStatusNotConnected) as Lang.String;
+        return "—";
     }
 }

@@ -58,6 +58,19 @@ class AutopilotView extends WatchUi.View {
         }
     }
 
+    /*
+     * Persist the last-known autopilot state to the glance snapshot once
+     * on the way out — the only time the AP state is written outside
+     * the connection-type picker. onHide also fires when a child menu
+     * is pushed on top (mode select / heading change), which writes the
+     * same value again; harmless and keeps the code path dead simple.
+     */
+    function onHide() as Void {
+        if (vessel != null) {
+            vessel.persistGlanceSnapshot();
+        }
+    }
+
     function onUpdate(dc) {
 
         View.onUpdate(dc);

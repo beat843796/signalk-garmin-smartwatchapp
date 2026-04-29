@@ -100,4 +100,5 @@ legacy widget carousel. The app appears in the glance carousel via
 
 - Do not update any md files yourself unless i ask for it explicitly. Also do not update the TODO.md
 - User Facing strings always must go to resources/strings/strings.xml so localization is supported. 
-- create logs for all relevant state changes and business logic functions se we have an easy time debugging
+- create logs for all relevant state changes and business logic functions triggered by user input so we have an easy time debugging. espacially to trace errors in BLE and REST stack
+- whenever you have made changes to thay minimalvesseldata or to one of the autopilot/raymarine plugins you have to push the changes to git, ssh into the rpi, got to ~/.signalk and npm install <gitreporef> all changes plugins and then restart the server

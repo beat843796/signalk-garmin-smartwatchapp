@@ -37,9 +37,9 @@ module ConnectionTypePicker {
         var restSubtitle = current.equals(ConnectionType.REST) ? Rez.Strings.LabelActive : null;
         var bleSubtitle = current.equals(ConnectionType.BLE) ? Rez.Strings.LabelActive : null;
         menu.addItem(new WatchUi.MenuItem(
-            Rez.Strings.TitleSignalKServer, restSubtitle, :pickRest, null));
+            Rez.Strings.TitleSignalKHttps, restSubtitle, :pickRest, null));
         menu.addItem(new WatchUi.MenuItem(
-            Rez.Strings.TitleBle, bleSubtitle, :pickBle, null));
+            Rez.Strings.TitleSignalKBle, bleSubtitle, :pickBle, null));
         WatchUi.pushView(
             menu,
             new ConnectionTypePickerDelegate(firstLaunch),
@@ -73,6 +73,7 @@ class ConnectionTypePickerDelegate extends WatchUi.Menu2InputDelegate {
         if (!current.equals(newType)) {
             TransportFactory.setStoredType(newType);
             vessel.attachTransport(TransportFactory.build(newType, vessel));
+            vessel.persistGlanceSnapshot();
 
             /*
              * Switching TO BLE: always route through the foreground

@@ -4,7 +4,7 @@
  * transport — REST or BLE, never both. The label/colour combination
  * comes straight off the active VesselConnect:
  *
- *   title    = vessel.connect.getDisplayTitle()  ("SignalK Server" / "BLE")
+ *   title    = vessel.connect.getDisplayTitle()  ("SignalK HTTPs" / "SignalK BLE")
  *   subtitle = vessel.connect.getStatusLabel()   (URL / device name / state)
  *
  * Subtitle colour is derived from getStatusKind():
@@ -184,13 +184,13 @@ class StatusViewDelegate extends WatchUi.BehaviorDelegate {
             var kind = vessel.getStatusKind();
             if (kind == CONN_CONNECTED) {
                 menu.addItem(new WatchUi.MenuItem(
-                    Rez.Strings.TitleBle, Rez.Strings.MenuActionDisconnect, :bleDisconnect, null));
+                    Rez.Strings.TitleSignalKBle, Rez.Strings.MenuActionDisconnect, :bleDisconnect, null));
             } else if (kind == CONN_CONNECTING) {
                 menu.addItem(new WatchUi.MenuItem(
-                    Rez.Strings.TitleBle, Rez.Strings.MenuActionCancel, :bleDisconnect, null));
+                    Rez.Strings.TitleSignalKBle, Rez.Strings.MenuActionCancel, :bleDisconnect, null));
             } else {
                 menu.addItem(new WatchUi.MenuItem(
-                    Rez.Strings.TitleBle, Rez.Strings.MenuActionConnect, :bleConnect, null));
+                    Rez.Strings.TitleSignalKBle, Rez.Strings.MenuActionConnect, :bleConnect, null));
             }
         }
 

@@ -225,7 +225,7 @@ class RESTVesselConnect extends VesselConnect {
      */
 
     function getDisplayTitle() as Lang.String {
-        return WatchUi.loadResource(Rez.Strings.TitleSignalKServer) as Lang.String;
+        return WatchUi.loadResource(Rez.Strings.TitleSignalKHttps) as Lang.String;
     }
 
     /*
@@ -706,7 +706,6 @@ class RESTVesselConnect extends VesselConnect {
         Storage.deleteValue(StorageKeys.TOKEN);
         Storage.deleteValue(StorageKeys.CLIENT_ID);
         Storage.deleteValue(StorageKeys.ACCESS_HREF);
-        Storage.deleteValue(StorageKeys.GLANCE_SNAPSHOT);
 
         token = null;
         clientId = null;

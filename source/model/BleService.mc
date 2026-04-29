@@ -472,14 +472,13 @@ class BleService extends Ble.BleDelegate {
     /*
      * User-initiated opt-out — Config menu's Disconnect item. Clears
      * the sticky autoconnect flag so the next app launch does NOT
-     * silently rescan, drops the persisted glance snapshot so the
-     * glance tile reflects the disconnected state instead of the last
-     * paired device's name, then tears down the link.
+     * silently rescan, then tears down the link. The glance snapshot
+     * is left alone — it's only rewritten on connection-type change
+     * or when leaving AutopilotView.
      */
     function disconnect() as Void {
         System.println("[BLE] disconnect (user opt-out)");
         Storage.deleteValue(StorageKeys.BLE_AUTOCONNECT);
-        Storage.deleteValue(StorageKeys.GLANCE_SNAPSHOT);
         teardownLink();
     }
 

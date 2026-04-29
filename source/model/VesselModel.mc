@@ -12,7 +12,6 @@
 
 using Toybox.System;
 using Toybox.Application.Storage;
-using Toybox.Application.Properties;
 using Toybox.Lang;
 using Toybox.WatchUi;
 
@@ -55,14 +54,6 @@ class VesselModel {
      */
     public var connect;
 
-    /*
-     * Counter for throttled glance-snapshot writes. Driven by the
-     * transport calling persistGlanceSnapshotIfDue() after each
-     * successful data apply.
-     */
-    private var glanceSnapshotCounter = 0;
-    private const glanceSnapshotEveryNTicks = 5;
-
     function initialize() {
         connect = new NoneVesselConnect(self);
     }
@@ -89,9 +80,11 @@ class VesselModel {
         /*
          * Reset stale data fields so values from the previous transport
          * don't bleed through while the new one is still warming up.
+         * The glance snapshot is rewritten by the picker right after
+         * this call (the only place a transport switch originates), so
+         * it isn't touched here.
          */
         resetVesselData();
-        Storage.deleteValue(StorageKeys.GLANCE_SNAPSHOT);
     }
 
     /*
@@ -276,8 +269,6 @@ class VesselModel {
             ex.printStackTrace();
             resetVesselData();
         }
-
-        bumpGlanceSnapshotCounter();
     }
 
     /*
@@ -294,12 +285,10 @@ class VesselModel {
         if (data.hasKey("windAngleApparent"))    { apparentWindAngle = data["windAngleApparent"]; }
         if (data.hasKey("windSpeedApparent"))    { apparentWindSpeed = data["windSpeedApparent"]; }
         if (data.hasKey("windSpeedTrue"))        { trueWindSpeed = data["windSpeedTrue"]; }
-        bumpGlanceSnapshotCounter();
     }
 
     function applyEnvData(data as Lang.Dictionary) as Void {
         if (data.hasKey("waterTemperature")) { waterTemperature = data["waterTemperature"]; }
-        // No glance bump — water temp isn't on the glance tile.
     }
 
     function applyApData(data as Lang.Dictionary) as Void {
@@ -311,20 +300,6 @@ class VesselModel {
         if (data.hasKey("autopilotTargetWindAngleApparent")) { targetHeadingWindAppearant = data["autopilotTargetWindAngleApparent"]; }
         if (data.hasKey("rudderAngle"))                      { rudderAngle = data["rudderAngle"]; }
         if (data.hasKey("tripTotal"))                        { tripTotal = data["tripTotal"]; }
-        bumpGlanceSnapshotCounter();
-    }
-
-    /*
-     * Throttled glance-snapshot write: every ~N applies, persist a
-     * compact snapshot so the glance tile can show last-known
-     * SOG/AWS/AP without running its own poll.
-     */
-    private function bumpGlanceSnapshotCounter() as Void {
-        glanceSnapshotCounter++;
-        if (glanceSnapshotCounter >= glanceSnapshotEveryNTicks) {
-            glanceSnapshotCounter = 0;
-            persistGlanceSnapshot();
-        }
     }
 
     function resetVesselData() {
@@ -434,32 +409,20 @@ class VesselModel {
      */
 
     /*
-     * Persists a compact glance snapshot covering the picked
-     * connection-type plus the values the glance tile renders. Single
-     * key (rather than three) cuts flash writes; the glance reads them
-     * all at once.
+     * Persists a compact glance snapshot — just the last-known
+     * autopilot state, stored as the raw signalk lowercase name so
+     * the glance can map it to a localized ApMode* string. The glance
+     * reads CONNECTION_TYPE separately, so the snapshot doesn't need
+     * to carry it.
      *
-     * `connectionType` lets the glance branch on REST/BLE/NONE without
-     * loading VesselModel (forbidden in the glance compile slice).
-     * `url` and `bleDeviceName` give the glance the right second-line
-     * label for each transport.
+     * Called only at two moments — after the user picks a new
+     * connection type (ConnectionTypePicker) and once on AutopilotView
+     * exit. No write happens during data polling.
      */
     function persistGlanceSnapshot() {
-        var bleName = null;
-        if (connect instanceof BleVesselConnect && connect.getStatusKind() == CONN_CONNECTED) {
-            bleName = connect.getStatusLabel();
-        }
-        var url = null;
-        if (connect instanceof RESTVesselConnect) {
-            url = Properties.getValue("baseurl_prop");
-        }
         Storage.setValue(StorageKeys.GLANCE_SNAPSHOT, {
-            "connectionType" => TransportFactory.getStoredType(),
-            "url" => url,
-            "bleDeviceName" => bleName,
-            "sog" => (speedOverGround != null)   ? Utils.meterPerSecondToKnots(speedOverGround)   : null,
-            "aws" => (apparentWindSpeed != null) ? Utils.meterPerSecondToKnots(apparentWindSpeed) : null,
-            "ap"  => getNameForActiveState()
+            "ap" => autopilotState
         });
+        System.println("[GLANCE] updated ap='" + autopilotState + "'");
     }
 }

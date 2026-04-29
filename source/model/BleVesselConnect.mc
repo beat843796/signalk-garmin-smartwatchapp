@@ -75,7 +75,7 @@ class BleVesselConnect extends VesselConnect {
      */
 
     function getDisplayTitle() as Lang.String {
-        return WatchUi.loadResource(Rez.Strings.TitleBle) as Lang.String;
+        return WatchUi.loadResource(Rez.Strings.TitleSignalKBle) as Lang.String;
     }
 
     function getStatusKind() as Lang.Number {
@@ -144,16 +144,12 @@ class BleVesselConnect extends VesselConnect {
 
     /*
      * ============== Link observer hooks ==============
-     * Called by BleService on state transitions. Keeps the side effects
-     * (status redraw, glance snapshot fragment) here so BleService stays
-     * a pure GATT/scan owner.
+     * Called by BleService on state transitions. Keeps the view-redraw
+     * side effects here so BleService stays a pure GATT/scan owner.
      */
 
     function onLinkConnected() as Void {
-        System.println("[BLE] onLinkConnected (facade) — persisting glance snapshot");
-        if (vessel != null) {
-            vessel.persistGlanceSnapshot();
-        }
+        System.println("[BLE] onLinkConnected (facade)");
         WatchUi.requestUpdate();
     }
 
