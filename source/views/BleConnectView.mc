@@ -99,6 +99,16 @@ class BleConnectView extends WatchUi.View {
 
     function doNavigateToData() as Void {
         popTimer = null;
+        /*
+         * BleConnectView is pushed on top of the existing ViewLoop
+         * (StatusView page). switchToView replaces only the *current*
+         * view, so without popping ourselves first, the original
+         * ViewLoop stays parked underneath the new one — the user then
+         * has to press back twice to exit, with the first back-press
+         * surfacing the stale StatusView animating in. Pop ourselves
+         * first so switchToView replaces the underlying ViewLoop.
+         */
+        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
         var pair = VesselViewLoop.build(VIEWLOOP_PAGE_DATA);
         WatchUi.switchToView(pair[0], pair[1], WatchUi.SLIDE_RIGHT);
     }

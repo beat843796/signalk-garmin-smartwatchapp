@@ -58,6 +58,23 @@ class StatusView extends WatchUi.View {
                 && TransportFactory.getStoredType().equals(ConnectionType.NONE)) {
             pickerPushed = true;
             ConnectionTypePicker.push(true);
+            return;
+        }
+
+        /*
+         * Hide the BLE "Connecting..." state from StatusView entirely:
+         * if we land here while a BLE connect attempt is in flight, push
+         * the spinner view immediately. BleConnectView handles the
+         * success transition straight to the data dashboard, so the user
+         * never sees this screen advertise "Connecting".
+         */
+        if (vessel.connect instanceof BleVesselConnect
+                && vessel.getStatusKind() == CONN_CONNECTING) {
+            Log.d("[BLE] StatusView auto-push BleConnectView (CONN_CONNECTING)");
+            WatchUi.pushView(
+                new BleConnectView(),
+                new BleConnectViewDelegate(),
+                WatchUi.SLIDE_LEFT);
         }
     }
 
@@ -103,20 +120,50 @@ class StatusView extends WatchUi.View {
             ? Graphics.FONT_SYSTEM_XTINY
             : Graphics.FONT_SYSTEM_TINY;
 
+        /*
+         * Launcher icon centered in the top third. Rez.Drawables.LauncherIcon
+         * resolves to the device-bucketed asset via monkey.jungle's
+         * resourcePath overrides (40 / 60 / 65 px), so it's appropriately
+         * small on every screen size without us picking pixel sizes.
+         */
+        var icon = WatchUi.loadResource(Rez.Drawables.LauncherIcon);
+        if (icon != null) {
+            var iconX = (w - icon.getWidth()) / 2;
+            var iconY = (h / 5) - (icon.getHeight() / 2);
+            dc.drawBitmap(iconX, iconY, icon);
+        }
+
+        /*
+         * Title + subtitle slid down from their original 0.40 / 0.58
+         * positions to make room for the icon in the top third.
+         */
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
             w / 2,
-            h * 0.40,
-            Graphics.FONT_SYSTEM_TINY,
+            h * 0.5,
+            Graphics.FONT_SYSTEM_SMALL,
             title,
             (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
 
         dc.setColor(subtitleColor, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
             w / 2,
-            h * 0.58,
+            h * 0.65,
             subtitleFont,
             subtitle,
+            (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
+
+        /*
+         * App version footer. Mirrors manifest.xml — see strings.xml
+         * AppVersion comment. Rendered in XTINY so it stays unobtrusive.
+         */
+        var version = WatchUi.loadResource(Rez.Strings.AppVersion) as Lang.String;
+        dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(
+            w / 2,
+            h * 0.90,
+            Graphics.FONT_SYSTEM_XTINY,
+            version,
             (Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER));
     }
 
@@ -127,8 +174,8 @@ class StatusView extends WatchUi.View {
      * really errors.
      */
     private function colorForStatus(kind as Lang.Number) as Lang.Number {
-        if (kind == CONN_CONNECTED)    { return Graphics.COLOR_GREEN; }
-        if (kind == CONN_CONNECTING)   { return Graphics.COLOR_WHITE; }
+        if (kind == CONN_CONNECTED)    { return Graphics.COLOR_BLUE; }
+        if (kind == CONN_CONNECTING)   { return Graphics.COLOR_BLUE; }
         if (kind == CONN_PENDING)      { return Graphics.COLOR_BLUE; }
         if (kind == CONN_NO_URL)       { return Graphics.COLOR_LT_GRAY; }
         if (kind == CONN_DISCONNECTED) { return Graphics.COLOR_RED; }

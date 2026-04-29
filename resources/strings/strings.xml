@@ -1,6 +1,10 @@
 <strings>
     <string id="AppName">SignalK Connect</string>
 
+    <!-- App version footer on StatusView. Mirror manifest.xml version
+         (CIQ doesn't expose the manifest version at runtime). -->
+    <string id="AppVersion">v2.0.0</string>
+
     <!-- Connection / transport titles. Used by RESTVesselConnect.getDisplayTitle,
          BleVesselConnect.getDisplayTitle, ConnectionTypePicker, and
          SignalKGlanceView. Keep wording in sync — these surface in multiple
