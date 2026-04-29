@@ -1,11 +1,5 @@
 project.manifest = manifest.xml
 
-# Default (debug) builds: drop the (:release) Log.d stub so debug
-# logging compiles in. Release builds must additionally pass
-# `-x debug` on the monkeyc command line so the (:debug) version is
-# excluded and the no-op stub wins. See source/util/Log.mc.
-base.excludeAnnotations = release
-
 # Per-device launcher-icon resource folders. The base resources/ directory
 # no longer contains launcher_icon.png — each device explicitly picks a size
 # folder here so the compiler never sees two candidate icons at once.
