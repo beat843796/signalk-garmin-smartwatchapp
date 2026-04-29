@@ -459,7 +459,7 @@ class AutopilotDelegate extends WatchUi.BehaviorDelegate {
         if (vessel.canSendCommands()) {
             return true;
         }
-        System.println("[AP] command blocked — not connected");
+        Log.d("[AP] command blocked — not connected");
         vibrateCommandFailure();
         return false;
     }
@@ -525,7 +525,7 @@ class AutopilotMenuDelegate extends WatchUi.Menu2InputDelegate {
     function onSelect(item as WatchUi.MenuItem) as Void {
 
         if (!vessel.canSendCommands()) {
-            System.println("[AP] mode change blocked — not connected");
+            Log.d("[AP] mode change blocked — not connected");
             if (Attention has :vibrate) {
                 Attention.vibrate([
                     new Attention.VibeProfile(75, 100),

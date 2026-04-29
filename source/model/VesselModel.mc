@@ -72,7 +72,7 @@ class VesselModel {
     function attachTransport(newConnect) as Void {
         var fromName = (connect != null) ? classNameOf(connect) : "null";
         var toName = (newConnect != null) ? classNameOf(newConnect) : "null";
-        System.println("[Model] attachTransport " + fromName + " → " + toName);
+        Log.d("[Model] attachTransport " + fromName + " → " + toName);
         if (connect != null) {
             connect.stop();
         }
@@ -103,7 +103,7 @@ class VesselModel {
      * changes. No-op for non-REST transports.
      */
     function configureSignalK() {
-        System.println("[Model] configureSignalK (settings change)");
+        Log.d("[Model] configureSignalK (settings change)");
         if (connect instanceof RESTVesselConnect) {
             connect.configureSignalK();
         }
@@ -177,12 +177,12 @@ class VesselModel {
      */
 
     function setAutopilotState(state) {
-        System.println("[Model] setAutopilotState '" + state + "'");
+        Log.d("[Model] setAutopilotState '" + state + "'");
         connect.setAutopilotState(state);
     }
 
     function changeHeading(change) {
-        System.println("[Model] changeHeading " + change + "°");
+        Log.d("[Model] changeHeading " + change + "°");
         connect.changeHeading(change);
     }
 
@@ -191,12 +191,12 @@ class VesselModel {
      */
 
     function requestAccess() {
-        System.println("[Model] requestAccess (user)");
+        Log.d("[Model] requestAccess (user)");
         connect.requestAccess();
     }
 
     function resetAccessRequest() {
-        System.println("[Model] resetAccessRequest (user)");
+        Log.d("[Model] resetAccessRequest (user)");
         connect.resetAccessRequest();
     }
 
@@ -423,6 +423,6 @@ class VesselModel {
         Storage.setValue(StorageKeys.GLANCE_SNAPSHOT, {
             "ap" => autopilotState
         });
-        System.println("[GLANCE] updated ap='" + autopilotState + "'");
+        Log.d("[GLANCE] updated ap='" + autopilotState + "'");
     }
 }

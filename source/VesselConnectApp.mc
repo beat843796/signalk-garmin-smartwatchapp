@@ -27,7 +27,7 @@ class VesselConnectApp extends Application.AppBase {
 
     function initialize() {
         AppBase.initialize();
-        System.println("[App] initialize");
+        Log.d("[App] initialize");
     }
 
     /*
@@ -36,11 +36,11 @@ class VesselConnectApp extends Application.AppBase {
      * getInitialView (main-app only).
      */
     function onStart(state) {
-        System.println("[App] onStart");
+        Log.d("[App] onStart");
     }
 
     function onStop(state) {
-        System.println("[App] onStop");
+        Log.d("[App] onStop");
         if (vessel != null) {
             vessel.stopUpdatingData();
         }
@@ -52,7 +52,7 @@ class VesselConnectApp extends Application.AppBase {
      * for non-REST), so calling unconditionally is safe.
      */
     function onSettingsChanged() {
-        System.println("[App] onSettingsChanged");
+        Log.d("[App] onSettingsChanged");
         if (vessel != null) {
             vessel.stopUpdatingData();
             vessel.configureSignalK();
@@ -74,14 +74,14 @@ class VesselConnectApp extends Application.AppBase {
      *     (set URL, request access, connect BLE, ...).
      */
     function getInitialView() {
-        System.println("[App] getInitialView");
+        Log.d("[App] getInitialView");
         if (vessel == null) {
-            System.println("[App] constructing VesselModel");
+            Log.d("[App] constructing VesselModel");
             vessel = new VesselModel();
         }
 
         var type = TransportFactory.getStoredType();
-        System.println("[App] connection type=" + type);
+        Log.d("[App] connection type=" + type);
         vessel.attachTransport(TransportFactory.build(type, vessel));
         vessel.startUpdatingData();
 

@@ -254,7 +254,7 @@ class ConfigMenuDelegate extends WatchUi.Menu2InputDelegate {
                 new BleConnectViewDelegate(),
                 WatchUi.SLIDE_LEFT);
         } else if (id == :bleDisconnect) {
-            System.println("[BLE] menu disconnect");
+            Log.d("[BLE] menu disconnect");
             vessel.connect.disconnect();
             WatchUi.popView(WatchUi.SLIDE_DOWN);
         } else if (id == :setConnectionType) {

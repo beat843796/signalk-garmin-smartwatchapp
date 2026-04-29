@@ -186,7 +186,7 @@ class BleService extends Ble.BleDelegate {
         apCharUuid  = Ble.stringToUuid(BleCharUuids.AP);
         cmdCharUuid = Ble.stringToUuid(BleCharUuids.CMD);
         registerProfileOnce();
-        System.println("[BLE] service initialised");
+        Log.d("[BLE] service initialised");
     }
 
     function getState() as Lang.Number {
@@ -208,11 +208,11 @@ class BleService extends Ble.BleDelegate {
      */
     function startConnect(onConnectedCb) as Void {
         if (state == BLE_CONNECTED) {
-            System.println("[BLE] startConnect ignored — already connected");
+            Log.d("[BLE] startConnect ignored — already connected");
             return;
         }
         if (state == BLE_CONNECTING) {
-            System.println("[BLE] startConnect ignored — already connecting");
+            Log.d("[BLE] startConnect ignored — already connecting");
             // Replace the callback in case a second view is awaiting it.
             onConnectedCallback = onConnectedCb;
             return;
@@ -220,7 +220,7 @@ class BleService extends Ble.BleDelegate {
         registerProfileOnce();
         onConnectedCallback = onConnectedCb;
         state = BLE_CONNECTING;
-        System.println("[BLE] startConnect — scanning for SignalK service UUID");
+        Log.d("[BLE] startConnect — scanning for SignalK service UUID");
         startScan();
     }
 
@@ -245,19 +245,19 @@ class BleService extends Ble.BleDelegate {
         if (state != BLE_DISCONNECTED) {
             return false;
         }
-        System.println("[BLE] tryAutoconnect — sticky flag set, kicking silent scan");
+        Log.d("[BLE] tryAutoconnect — sticky flag set, kicking silent scan");
         startConnect(null);
         return true;
     }
 
     function cancelConnect() as Void {
-        System.println("[BLE] cancelConnect");
+        Log.d("[BLE] cancelConnect");
         stopScan();
         if (pairedDevice != null) {
             try {
                 Ble.unpairDevice(pairedDevice);
             } catch (e) {
-                System.println("[BLE] unpair on cancel failed: " + e.getErrorMessage());
+                Log.d("[BLE] unpair on cancel failed: " + e.getErrorMessage());
             }
         }
         pairedDevice = null;
@@ -280,7 +280,7 @@ class BleService extends Ble.BleDelegate {
         if (streamingCharUuidStr != null && streamingCharUuidStr.equals(charUuidStr)) {
             return;
         }
-        System.println("[BLE] beginDataStreaming uuid=" + charUuidStr);
+        Log.d("[BLE] beginDataStreaming uuid=" + charUuidStr);
         streamingCharUuidStr = charUuidStr;
         streamingCharUuid = uuidObjectForCharStr(charUuidStr);
         if (state == BLE_CONNECTED && !readInFlight) {
@@ -307,7 +307,7 @@ class BleService extends Ble.BleDelegate {
         if (streamingCharUuidStr == null) {
             return;
         }
-        System.println("[BLE] endDataStreaming");
+        Log.d("[BLE] endDataStreaming");
         streamingCharUuidStr = null;
         streamingCharUuid = null;
     }
@@ -342,7 +342,7 @@ class BleService extends Ble.BleDelegate {
     function sendAutopilotSetState(stateName as Lang.String) as Lang.Boolean {
         var code = stateNameToCode(stateName);
         if (code == 0) {
-            System.println("[BLE] CMD setState rejected — unknown state '" + stateName + "'");
+            Log.d("[BLE] CMD setState rejected — unknown state '" + stateName + "'");
             return false;
         }
         var payload = [BleCmdAction.SET_STATE, code]b;
@@ -368,16 +368,16 @@ class BleService extends Ble.BleDelegate {
      */
     private function writeCmd(payload as Lang.ByteArray, label as Lang.String) as Lang.Boolean {
         if (state != BLE_CONNECTED || pairedDevice == null) {
-            System.println("[BLE] CMD " + label + " skipped — not connected");
+            Log.d("[BLE] CMD " + label + " skipped — not connected");
             return false;
         }
         if (readInFlight || writeInFlight) {
             if (pendingCmdPayload != null) {
-                System.println("[BLE] CMD pending replaced (was: " + pendingCmdLabel + ")");
+                Log.d("[BLE] CMD pending replaced (was: " + pendingCmdLabel + ")");
             }
             pendingCmdPayload = payload;
             pendingCmdLabel = label;
-            System.println("[BLE] CMD " + label + " queued behind in-flight op");
+            Log.d("[BLE] CMD " + label + " queued behind in-flight op");
             return true;
         }
         return dispatchCmd(payload, label);
@@ -393,20 +393,20 @@ class BleService extends Ble.BleDelegate {
         try {
             var service = pairedDevice.getService(serviceUuid);
             if (service == null) {
-                System.println("[BLE] CMD " + label + " skipped — service not discovered");
+                Log.d("[BLE] CMD " + label + " skipped — service not discovered");
                 return false;
             }
             var ch = service.getCharacteristic(cmdCharUuid);
             if (ch == null) {
-                System.println("[BLE] CMD " + label + " skipped — CMD char not discovered");
+                Log.d("[BLE] CMD " + label + " skipped — CMD char not discovered");
                 return false;
             }
             ch.requestWrite(payload, { :writeType => Ble.WRITE_TYPE_WITH_RESPONSE });
             writeInFlight = true;
-            System.println("[BLE] CMD " + label + " sent (" + payload.size() + " bytes)");
+            Log.d("[BLE] CMD " + label + " sent (" + payload.size() + " bytes)");
             return true;
         } catch (e) {
-            System.println("[BLE] CMD " + label + " threw: " + e.getErrorMessage());
+            Log.d("[BLE] CMD " + label + " threw: " + e.getErrorMessage());
             return false;
         }
     }
@@ -444,7 +444,7 @@ class BleService extends Ble.BleDelegate {
      * autoconnect.
      */
     function teardownLink() as Void {
-        System.println("[BLE] teardownLink");
+        Log.d("[BLE] teardownLink");
         var wasConnected = (state == BLE_CONNECTED);
         stopReadRecoveryTimer();
         stopScan();
@@ -452,7 +452,7 @@ class BleService extends Ble.BleDelegate {
             try {
                 Ble.unpairDevice(pairedDevice);
             } catch (e) {
-                System.println("[BLE] unpair failed: " + e.getErrorMessage());
+                Log.d("[BLE] unpair failed: " + e.getErrorMessage());
             }
         }
         pairedDevice = null;
@@ -477,7 +477,7 @@ class BleService extends Ble.BleDelegate {
      * or when leaving AutopilotView.
      */
     function disconnect() as Void {
-        System.println("[BLE] disconnect (user opt-out)");
+        Log.d("[BLE] disconnect (user opt-out)");
         Storage.deleteValue(StorageKeys.BLE_AUTOCONNECT);
         teardownLink();
     }
@@ -513,13 +513,13 @@ class BleService extends Ble.BleDelegate {
             };
             Ble.registerProfile(profile);
             profileRegistered = true;
-            System.println("[BLE] profile registered (NAV/ENV/AP/CMD)");
+            Log.d("[BLE] profile registered (NAV/ENV/AP/CMD)");
         } catch (e) {
             /*
              * Already-registered errors aren't fatal — pairing can still
              * happen, we just won't get characteristic discovery.
              */
-            System.println("[BLE] registerProfile failed: " + e.getErrorMessage());
+            Log.d("[BLE] registerProfile failed: " + e.getErrorMessage());
         }
     }
 
@@ -528,7 +528,7 @@ class BleService extends Ble.BleDelegate {
         try {
             Ble.setScanState(Ble.SCAN_STATE_SCANNING);
         } catch (e) {
-            System.println("[BLE] setScanState(SCANNING) failed: " + e.getErrorMessage());
+            Log.d("[BLE] setScanState(SCANNING) failed: " + e.getErrorMessage());
         }
     }
 
@@ -551,7 +551,7 @@ class BleService extends Ble.BleDelegate {
             if (raw instanceof Ble.ScanResult) {
                 if (state == BLE_CONNECTING && advertisesSignalKService(raw)) {
                     var advertisedName = raw.getDeviceName();
-                    System.println("[BLE] match by service UUID — pairing '"
+                    Log.d("[BLE] match by service UUID — pairing '"
                         + (advertisedName != null ? advertisedName : "<no name>")
                         + "' rssi=" + raw.getRssi());
                     stopScan();
@@ -566,7 +566,7 @@ class BleService extends Ble.BleDelegate {
                             connectedDeviceName = advertisedName;
                         }
                     } catch (e) {
-                        System.println("[BLE] pairDevice failed: " + e.getErrorMessage());
+                        Log.d("[BLE] pairDevice failed: " + e.getErrorMessage());
                         /*
                          * Pair throw never reaches onConnectedStateChanged,
                          * so the DISCONNECTED scan-resume path won't
@@ -592,9 +592,6 @@ class BleService extends Ble.BleDelegate {
     private function advertisesSignalKService(sr as Ble.ScanResult) as Lang.Boolean {
         try {
             var iter = sr.getServiceUuids();
-            if (iter == null) {
-                return false;
-            }
             var u = iter.next();
             while (u != null) {
                 if (u.equals(serviceUuid)) {
@@ -609,7 +606,7 @@ class BleService extends Ble.BleDelegate {
     }
 
     function onConnectedStateChanged(device as Ble.Device, ciqState as Ble.ConnectionState) as Void {
-        System.println("[BLE] connectedStateChanged state=" + ciqState);
+        Log.d("[BLE] connectedStateChanged state=" + ciqState);
         if (ciqState == Ble.CONNECTION_STATE_CONNECTED) {
             /*
              * Late-CONNECTED guard: if the user cancelled while a pair
@@ -619,7 +616,7 @@ class BleService extends Ble.BleDelegate {
              * they cancelled.
              */
             if (state != BLE_CONNECTING) {
-                System.println("[BLE] late CONNECTED in state=" + state + " — unpairing");
+                Log.d("[BLE] late CONNECTED in state=" + state + " — unpairing");
                 try { Ble.unpairDevice(device); } catch (e) { /* ignore */ }
                 return;
             }
@@ -646,7 +643,7 @@ class BleService extends Ble.BleDelegate {
              * service without the spinner. Cleared by disconnect().
              */
             Storage.setValue(StorageKeys.BLE_AUTOCONNECT, true);
-            System.println("[BLE] connected to '" + connectedDeviceName + "'");
+            Log.d("[BLE] connected to '" + connectedDeviceName + "'");
 
             /*
              * Notify the facade so it can redraw status views and
@@ -672,7 +669,7 @@ class BleService extends Ble.BleDelegate {
                 try {
                     cb.invoke();
                 } catch (e) {
-                    System.println("[BLE] onConnected callback threw: " + e.getErrorMessage());
+                    Log.d("[BLE] onConnected callback threw: " + e.getErrorMessage());
                 }
             }
         } else if (ciqState == Ble.CONNECTION_STATE_DISCONNECTED) {
@@ -687,7 +684,7 @@ class BleService extends Ble.BleDelegate {
             stopReadRecoveryTimer();
             if (wasConnected) {
                 state = BLE_DISCONNECTED;
-                System.println("[BLE] peripheral dropped link — state=DISCONNECTED");
+                Log.d("[BLE] peripheral dropped link — state=DISCONNECTED");
                 if (linkObserver != null) {
                     linkObserver.onLinkDisconnected();
                 }
@@ -698,7 +695,7 @@ class BleService extends Ble.BleDelegate {
                  * BLE_CONNECTING and resume scanning so the next advert
                  * gives us another shot.
                  */
-                System.println("[BLE] pair attempt failed — resuming scan");
+                Log.d("[BLE] pair attempt failed — resuming scan");
                 startScan();
             }
         }
@@ -711,7 +708,7 @@ class BleService extends Ble.BleDelegate {
      * found a null service (race between CONNECTED and discovery).
      */
     function onProfileRegister(uuid as Ble.Uuid, status as Ble.Status) as Void {
-        System.println("[BLE] onProfileRegister status=" + status);
+        Log.d("[BLE] onProfileRegister status=" + status);
         if (state == BLE_CONNECTED && streamingCharUuid != null && !readInFlight) {
             fireRead();
         }
@@ -727,11 +724,11 @@ class BleService extends Ble.BleDelegate {
      * those alone.
      */
     function onScanStateChange(scanState as Ble.ScanState, status as Ble.Status) as Void {
-        System.println("[BLE] scanState=" + scanState + " status=" + status);
+        Log.d("[BLE] scanState=" + scanState + " status=" + status);
         if (scanState == Ble.SCAN_STATE_OFF
                 && wantToScan
                 && state == BLE_CONNECTING) {
-            System.println("[BLE] scan dropped while we still want it — re-arming");
+            Log.d("[BLE] scan dropped while we still want it — re-arming");
             startScan();
         }
     }
@@ -743,9 +740,9 @@ class BleService extends Ble.BleDelegate {
     function onCharacteristicWrite(characteristic as Ble.Characteristic, status as Ble.Status) as Void {
         writeInFlight = false;
         if (status == Ble.STATUS_SUCCESS) {
-            System.println("[BLE] CMD write ACKed");
+            Log.d("[BLE] CMD write ACKed");
         } else {
-            System.println("[BLE] CMD write failed status=" + status);
+            Log.d("[BLE] CMD write failed status=" + status);
             /*
              * STATUS_GATT_INSUFFICIENT_AUTHENTICATION_FAIL is what CIQ
              * surfaces when the peripheral returns ATT 0x05. The
@@ -795,13 +792,13 @@ class BleService extends Ble.BleDelegate {
         try {
             var service = pairedDevice.getService(serviceUuid);
             if (service == null) {
-                System.println("[BLE] fireRead: service not yet discovered — retrying");
+                Log.d("[BLE] fireRead: service not yet discovered — retrying");
                 scheduleReadRetry();
                 return;
             }
             var ch = service.getCharacteristic(streamingCharUuid);
             if (ch == null) {
-                System.println("[BLE] fireRead: characteristic " + streamingCharUuidStr
+                Log.d("[BLE] fireRead: characteristic " + streamingCharUuidStr
                     + " missing on service — retrying");
                 scheduleReadRetry();
                 return;
@@ -813,7 +810,7 @@ class BleService extends Ble.BleDelegate {
              * Most commonly Ble.BLE_QUEUE_FULL when the radio is busy.
              * Don't crash the loop — schedule a retry tick.
              */
-            System.println("[BLE] requestRead threw: " + e.getErrorMessage());
+            Log.d("[BLE] requestRead threw: " + e.getErrorMessage());
             readInFlight = false;
             scheduleReadRetry();
         }
@@ -850,14 +847,7 @@ class BleService extends Ble.BleDelegate {
         readInFlight = false;
 
         if (status != Ble.STATUS_SUCCESS) {
-            System.println("[BLE] read failed status=" + status);
-            if (streamingCharUuid != null) {
-                scheduleReadRetry();
-            }
-            return;
-        }
-        if (value == null) {
-            System.println("[BLE] read got null payload");
+            Log.d("[BLE] read failed status=" + status);
             if (streamingCharUuid != null) {
                 scheduleReadRetry();
             }
@@ -867,7 +857,7 @@ class BleService extends Ble.BleDelegate {
         readCount += 1;
         var now = System.getTimer();
         if (now - lastReadLogAt > 1000) {
-            System.println("[BLE] reads=" + readCount);
+            Log.d("[BLE] reads=" + readCount);
             lastReadLogAt = now;
         }
 
@@ -904,36 +894,33 @@ class BleService extends Ble.BleDelegate {
         try {
             u = characteristic.getUuid();
         } catch (e) {
-            System.println("[BLE] characteristic.getUuid() threw: " + e.getErrorMessage());
-            return;
-        }
-        if (u == null) {
+            Log.d("[BLE] characteristic.getUuid() threw: " + e.getErrorMessage());
             return;
         }
 
         if (u.equals(navCharUuid)) {
             var d = BleVesselDataDecoder.decodeNav(value);
             if (d == null) {
-                System.println("[BLE] NAV decode failed (size=" + value.size() + ")");
+                Log.d("[BLE] NAV decode failed (size=" + value.size() + ")");
                 return;
             }
             vessel.applyNavData(d);
         } else if (u.equals(envCharUuid)) {
             var d = BleVesselDataDecoder.decodeEnv(value);
             if (d == null) {
-                System.println("[BLE] ENV decode failed (size=" + value.size() + ")");
+                Log.d("[BLE] ENV decode failed (size=" + value.size() + ")");
                 return;
             }
             vessel.applyEnvData(d);
         } else if (u.equals(apCharUuid)) {
             var d = BleVesselDataDecoder.decodeAp(value);
             if (d == null) {
-                System.println("[BLE] AP decode failed (size=" + value.size() + ")");
+                Log.d("[BLE] AP decode failed (size=" + value.size() + ")");
                 return;
             }
             vessel.applyApData(d);
         } else {
-            System.println("[BLE] read response for unknown char uuid=" + u);
+            Log.d("[BLE] read response for unknown char uuid=" + u);
         }
     }
 }

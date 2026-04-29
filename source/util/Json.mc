@@ -59,10 +59,10 @@ module Json {
      * Internal mutable parser state. One instance per parse() call.
      */
     class Parser {
-        var src;     // Lang.String — original body, used for substring extraction
-        var chars;   // Lang.Char[] — random access for cheap peek/advance
-        var pos;     // Lang.Number — current index into chars
-        var len;     // Lang.Number — chars.size()
+        var src as Lang.String;                // original body, used for substring extraction
+        var chars as Lang.Array<Lang.Char>;    // random access for cheap peek/advance
+        var pos as Lang.Number;                // current index into chars
+        var len as Lang.Number;                // chars.size()
 
         function initialize(s as Lang.String) {
             src = s;
@@ -102,8 +102,6 @@ module Json {
             if (c == 'n') { return readNull(); }
             if (c == '-' || (c >= '0' && c <= '9')) { return readNumber(); }
             throw new ParseError("unexpected '" + c.toString() + "' at " + pos);
-            // strict type checker doesn't recognise throw as terminating
-            return null;
         }
 
         function readObject() as Lang.Dictionary {

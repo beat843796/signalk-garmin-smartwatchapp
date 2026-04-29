@@ -1,0 +1,7 @@
+# Release-build override for monkey.jungle.
+# Pass both files to monkeyc so this one takes precedence:
+#   monkeyc -f monkey.jungle:monkey-release.jungle -r ...
+# Effect: the (:debug) Log.d definition is excluded and the (:release)
+# no-op stub wins, stripping all logging from the shipped binary.
+
+base.excludeAnnotations = debug

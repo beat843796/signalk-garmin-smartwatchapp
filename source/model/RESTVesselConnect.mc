@@ -174,7 +174,7 @@ class RESTVesselConnect extends VesselConnect {
         accessRequestHref = Storage.getValue(StorageKeys.ACCESS_HREF);
 
         authState = Utils.deriveInitialAuthState(baseURL, token, accessRequestHref);
-        System.println("[REST] configureSignalK baseURL=" + baseURL
+        Log.d("[REST] configureSignalK baseURL=" + baseURL
             + " hasToken=" + (token != null)
             + " hasHref=" + (accessRequestHref != null)
             + " authState=" + authState);
@@ -185,12 +185,12 @@ class RESTVesselConnect extends VesselConnect {
      */
 
     function start() as Void {
-        System.println("[REST] start authState=" + authState
+        Log.d("[REST] start authState=" + authState
             + " hasToken=" + (token != null)
             + " hasHref=" + (accessRequestHref != null));
 
         if (authState == AUTH_NO_URL) {
-            System.println("[REST] start skipped — no URL configured");
+            Log.d("[REST] start skipped — no URL configured");
             return;
         }
         if (authState == AUTH_CONNECTED && token != null) {
@@ -201,7 +201,7 @@ class RESTVesselConnect extends VesselConnect {
     }
 
     function stop() as Void {
-        System.println("[REST] stop");
+        Log.d("[REST] stop");
         Communications.cancelAllRequests();
         updateTimer = invalidateTimer(updateTimer);
         retryTimer = invalidateTimer(retryTimer);
@@ -211,12 +211,12 @@ class RESTVesselConnect extends VesselConnect {
     }
 
     function setAutopilotState(state) as Void {
-        System.println("[AP] setAutopilotState '" + state + "' (REST)");
+        Log.d("[AP] setAutopilotState '" + state + "' (REST)");
         sendAutopilotCommand({ "action" => "setState", "value" => state });
     }
 
     function changeHeading(degrees) as Void {
-        System.println("[AP] changeHeading " + degrees + "° (REST)");
+        Log.d("[AP] changeHeading " + degrees + "° (REST)");
         sendAutopilotCommand({ "action" => "changeHeading", "value" => degrees });
     }
 
@@ -277,11 +277,11 @@ class RESTVesselConnect extends VesselConnect {
      */
     function refresh() as Void {
         if (baseURL == null || token == null) {
-            System.println("[REST] refresh skipped — baseURL=" + baseURL
+            Log.d("[REST] refresh skipped — baseURL=" + baseURL
                 + " hasToken=" + (token != null));
             return;
         }
-        System.println("[REST] refresh (one-shot poll)");
+        Log.d("[REST] refresh (one-shot poll)");
         oneShotInFlight = true;
         updateVesselDataFromServer();
     }
@@ -292,7 +292,7 @@ class RESTVesselConnect extends VesselConnect {
      * + auth state survive — only the next-tick scheduling stops.
      */
     function pausePolling() as Void {
-        System.println("[REST] pausePolling");
+        Log.d("[REST] pausePolling");
         dataPollEnabled = false;
         updateTimer = invalidateTimer(updateTimer);
         retryTimer = invalidateTimer(retryTimer);
@@ -304,7 +304,7 @@ class RESTVesselConnect extends VesselConnect {
      * to poll is therefore a no-op.
      */
     function resumePolling() as Void {
-        System.println("[REST] resumePolling");
+        Log.d("[REST] resumePolling");
         dataPollEnabled = true;
         start();
     }
@@ -371,12 +371,12 @@ class RESTVesselConnect extends VesselConnect {
     function requestAccess() {
 
         if (accessRequestInFlight) {
-            System.println("[Auth] requestAccess ignored — another in flight");
+            Log.d("[Auth] requestAccess ignored — another in flight");
             return;
         }
 
         if (baseURL == null) {
-            System.println("[Auth] requestAccess ignored — no URL configured");
+            Log.d("[Auth] requestAccess ignored — no URL configured");
             return;
         }
 
@@ -392,9 +392,9 @@ class RESTVesselConnect extends VesselConnect {
         };
 
         var url = baseURL + "/signalk/v1/access/requests";
-        System.println("[Auth] POST " + url);
-        System.println("[Auth]   clientId=" + clientId);
-        System.println("[Auth]   description=" + getDeviceDescription());
+        Log.d("[Auth] POST " + url);
+        Log.d("[Auth]   clientId=" + clientId);
+        Log.d("[Auth]   description=" + getDeviceDescription());
 
         Communications.makeWebRequest(
             url,
@@ -454,7 +454,7 @@ class RESTVesselConnect extends VesselConnect {
         if (!accessRequestInFlight) {
             return;
         }
-        System.println("[Auth] requestAccess timed out after " + accessRequestTimeoutMs + "ms");
+        Log.d("[Auth] requestAccess timed out after " + accessRequestTimeoutMs + "ms");
         Communications.cancelAllRequests();
         finishAccessRequestPost();
         endAuthFlow();
@@ -487,19 +487,19 @@ class RESTVesselConnect extends VesselConnect {
     function onRequestAccessReceive(responseCode as Lang.Number, data as Lang.Dictionary or Lang.String or Null) as Void {
 
         if (!accessRequestInFlight) {
-            System.println("[Auth] onRequestAccessReceive late response ignored");
+            Log.d("[Auth] onRequestAccessReceive late response ignored");
             return;
         }
         finishAccessRequestPost();
         lastNetCode = responseCode;
 
-        System.println("[Auth] onRequestAccessReceive code=" + responseCode + " dataType=" + typeName(data));
+        Log.d("[Auth] onRequestAccessReceive code=" + responseCode + " dataType=" + typeName(data));
 
         var parsed = tryParseBody(data);
 
         if ((responseCode == 202 || responseCode == 200) && parsed != null) {
             accessRequestHref = parsed["href"];
-            System.println("[Auth] href=" + accessRequestHref);
+            Log.d("[Auth] href=" + accessRequestHref);
             if (accessRequestHref == null) {
                 endAuthFlow();
                 authState = AUTH_NEEDS_REQUEST;
@@ -518,13 +518,13 @@ class RESTVesselConnect extends VesselConnect {
              * the clientId is burned and the user needs to reset.
              */
             if (accessRequestHref != null) {
-                System.println("[Auth] 400 but we have href — resuming poll");
+                Log.d("[Auth] 400 but we have href — resuming poll");
                 enterPendingState();
                 return;
             }
         }
 
-        System.println("[Auth] submit failed, errorCode=" + responseCode);
+        Log.d("[Auth] submit failed, errorCode=" + responseCode);
         endAuthFlow();
         authState = AUTH_NEEDS_REQUEST;
         WatchUi.requestUpdate();
@@ -547,12 +547,12 @@ class RESTVesselConnect extends VesselConnect {
     function pollAccessRequest() as Void {
 
         if (accessRequestHref == null) {
-            System.println("[Auth] pollAccessRequest: no href, skipping");
+            Log.d("[Auth] pollAccessRequest: no href, skipping");
             return;
         }
 
         var url = baseURL + accessRequestHref;
-        System.println("[Auth] GET " + url);
+        Log.d("[Auth] GET " + url);
 
         Communications.makeWebRequest(
             url,
@@ -567,7 +567,7 @@ class RESTVesselConnect extends VesselConnect {
 
     function onPollAccessReceive(responseCode as Lang.Number, data as Lang.Dictionary or Lang.String or Null) as Void {
 
-        System.println("[Auth] onPollAccessReceive code=" + responseCode + " dataType=" + typeName(data));
+        Log.d("[Auth] onPollAccessReceive code=" + responseCode + " dataType=" + typeName(data));
         lastNetCode = responseCode;
 
         if (responseCode != 200) {
@@ -582,7 +582,7 @@ class RESTVesselConnect extends VesselConnect {
             if (responseCode == 404 ||
                 responseCode == 410 ||
                 (responseCode >= 500 && responseCode < 600)) {
-                System.println("[Auth] poll bailout: request gone server-side, code=" + responseCode);
+                Log.d("[Auth] poll bailout: request gone server-side, code=" + responseCode);
                 Storage.deleteValue(StorageKeys.ACCESS_HREF);
                 accessRequestHref = null;
                 endAuthFlow();
@@ -590,7 +590,7 @@ class RESTVesselConnect extends VesselConnect {
                 WatchUi.requestUpdate();
                 return;
             }
-            System.println("[Auth] poll non-200, scheduling retry");
+            Log.d("[Auth] poll non-200, scheduling retry");
             schedulePoll();
             WatchUi.requestUpdate();
             return;
@@ -598,13 +598,13 @@ class RESTVesselConnect extends VesselConnect {
 
         var parsed = tryParseBody(data);
         if (parsed == null) {
-            System.println("[Auth] poll 200 but body unparseable");
+            Log.d("[Auth] poll 200 but body unparseable");
             schedulePoll();
             return;
         }
 
         var state = parsed["state"];
-        System.println("[Auth]   state=" + state);
+        Log.d("[Auth]   state=" + state);
 
         if (state != null && state.equals("PENDING")) {
             /*
@@ -621,14 +621,14 @@ class RESTVesselConnect extends VesselConnect {
 
         if (state != null && state.equals("COMPLETED")) {
             var accessRequest = parsed["accessRequest"];
-            System.println("[Auth]   accessRequest=" + accessRequest);
+            Log.d("[Auth]   accessRequest=" + accessRequest);
             var permission = null;
             var jwt = null;
             if (accessRequest instanceof Lang.Dictionary) {
                 permission = accessRequest["permission"];
                 jwt = accessRequest["token"];
             }
-            System.println("[Auth]   permission=" + permission + " tokenPresent=" + (jwt != null));
+            Log.d("[Auth]   permission=" + permission + " tokenPresent=" + (jwt != null));
 
             if (permission != null && permission.equals("APPROVED") && jwt != null) {
                 finalizeApproval(jwt);
@@ -641,7 +641,7 @@ class RESTVesselConnect extends VesselConnect {
             }
         }
 
-        System.println("[Auth] poll: unknown state, scheduling retry");
+        Log.d("[Auth] poll: unknown state, scheduling retry");
         schedulePoll();
     }
 
@@ -664,7 +664,7 @@ class RESTVesselConnect extends VesselConnect {
          * page (instead of leaving the user on Status after auto-pop).
          */
         lastDataPollOk = false;
-        System.println("[Auth] ** APPROVED ** — starting data poll");
+        Log.d("[Auth] ** APPROVED ** — starting data poll");
         /*
          * Fire the toast from here (not from the request-access view)
          * so it shows even if the user backed out of the spinner
@@ -680,7 +680,7 @@ class RESTVesselConnect extends VesselConnect {
         Storage.deleteValue(StorageKeys.ACCESS_HREF);
         accessRequestHref = null;
         authState = AUTH_DENIED;
-        System.println("[Auth] ** DENIED ** — user must reset to try again");
+        Log.d("[Auth] ** DENIED ** — user must reset to try again");
         /*
          * Fire the toast from here so it shows even if the user
          * backed out of the spinner. The request-access view (if
@@ -699,7 +699,7 @@ class RESTVesselConnect extends VesselConnect {
      * it.
      */
     function resetAccessRequest() as Void {
-        System.println("[Auth] resetAccessRequest — wiping clientId/href/token");
+        Log.d("[Auth] resetAccessRequest — wiping clientId/href/token");
 
         stop();
 
@@ -745,7 +745,7 @@ class RESTVesselConnect extends VesselConnect {
         if (oneShotInFlight
                 || dataPollLastLogAt == 0
                 || (now - dataPollLastLogAt) >= dataPollLogIntervalMs) {
-            System.println("[Data] GET " + url + " (one-shot=" + oneShotInFlight + ")");
+            Log.d("[Data] GET " + url + " (one-shot=" + oneShotInFlight + ")");
             dataPollLastLogAt = now;
         }
 
@@ -771,7 +771,7 @@ class RESTVesselConnect extends VesselConnect {
          * response came back). No-op.
          */
         if (responseCode == -1003) {
-            System.println("[Data] response cancelled (-1003)");
+            Log.d("[Data] response cancelled (-1003)");
             return;
         }
 
@@ -791,7 +791,7 @@ class RESTVesselConnect extends VesselConnect {
                      * specific view (autopilot / status) and should
                      * stay on it.
                      */
-                    System.println("[Data] poll recovered — code=200 (was failing)");
+                    Log.d("[Data] poll recovered — code=200 (was failing)");
                     lastDataPollOk = true;
                     if (!oneShotInFlight) {
                         redirectToDataPage();
@@ -821,12 +821,12 @@ class RESTVesselConnect extends VesselConnect {
              * 200 with unparseable body — fall through to error path
              * with a synthesised -400 so the UI shows something useful.
              */
-            System.println("[Data] 200 but body unparseable — synthesising -400");
+            Log.d("[Data] 200 but body unparseable — synthesising -400");
             lastNetCode = -400;
             responseCode = -400;
         }
 
-        System.println("[Data] poll failed code=" + responseCode
+        Log.d("[Data] poll failed code=" + responseCode
             + " wasOk=" + lastDataPollOk
             + " oneShot=" + oneShotInFlight);
 
@@ -838,7 +838,7 @@ class RESTVesselConnect extends VesselConnect {
          * Access; finalizeApproval kicks the data poll back off.
          */
         if (responseCode == 401 || responseCode == 403) {
-            System.println("[Data] auth dead — wiping token");
+            Log.d("[Data] auth dead — wiping token");
             Storage.deleteValue(StorageKeys.TOKEN);
             token = null;
             authState = AUTH_NEEDS_REQUEST;
@@ -895,7 +895,7 @@ class RESTVesselConnect extends VesselConnect {
      * state without having to navigate the loop.
      */
     function redirectToConfigPage() as Void {
-        System.println("[REST] redirect → StatusView (poll failure transition)");
+        Log.d("[REST] redirect → StatusView (poll failure transition)");
         var pair = VesselViewLoop.build(VIEWLOOP_PAGE_STATUS);
         WatchUi.switchToView(pair[0], pair[1], WatchUi.SLIDE_LEFT);
     }
@@ -906,13 +906,13 @@ class RESTVesselConnect extends VesselConnect {
      * very first successful poll following a fresh auth approval).
      */
     function redirectToDataPage() as Void {
-        System.println("[REST] redirect → VesselDataView (poll recovery transition)");
+        Log.d("[REST] redirect → VesselDataView (poll recovery transition)");
         var pair = VesselViewLoop.build(VIEWLOOP_PAGE_DATA);
         WatchUi.switchToView(pair[0], pair[1], WatchUi.SLIDE_RIGHT);
     }
 
     function startRetryTimer() {
-        System.println("[Data] network error — retry in " + retryInterval / 1000 + "s");
+        Log.d("[Data] network error — retry in " + retryInterval / 1000 + "s");
         retryTimer = invalidateTimer(retryTimer);
         retryTimer = new Timer.Timer();
         retryTimer.start(method(:start), retryInterval, false);
@@ -932,7 +932,7 @@ class RESTVesselConnect extends VesselConnect {
             return;
         }
         var url = baseURL + "/signalk";
-        System.println("[Probe] GET " + url);
+        Log.d("[Probe] GET " + url);
         Communications.makeWebRequest(
             url,
             null,
@@ -945,7 +945,7 @@ class RESTVesselConnect extends VesselConnect {
     }
 
     function onProbeReceive(responseCode as Lang.Number, data as Lang.Dictionary or Lang.String or Null) as Void {
-        System.println("[Probe] code=" + responseCode);
+        Log.d("[Probe] code=" + responseCode);
         probeOk = (responseCode == 200);
         WatchUi.requestUpdate();
     }
@@ -957,14 +957,14 @@ class RESTVesselConnect extends VesselConnect {
     function sendAutopilotCommand(command) {
 
         if (isAutopilotRequestPending) {
-            System.println("[AP] command dropped — previous request still pending: "
+            Log.d("[AP] command dropped — previous request still pending: "
                 + command);
             return;
         }
         isAutopilotRequestPending = true;
 
         var url = baseURL + "/signalk/v1/api/raymarineautopilotfork/command";
-        System.println("[AP] POST " + url + " body=" + command);
+        Log.d("[AP] POST " + url + " body=" + command);
 
         Communications.makeWebRequest(
             url,
@@ -987,7 +987,7 @@ class RESTVesselConnect extends VesselConnect {
         lastNetCode = responseCode;
 
         if (responseCode == 200) {
-            System.println("[AP] response code=200 — accepted");
+            Log.d("[AP] response code=200 — accepted");
             /*
              * Tactile confirmation that the autopilot accepted the
              * command. Single short pulse; distinct from the longer
@@ -997,7 +997,7 @@ class RESTVesselConnect extends VesselConnect {
                 Attention.vibrate([new Attention.VibeProfile(50, 75)]);
             }
         } else {
-            System.println("[AP] response code=" + responseCode + " — rejected");
+            Log.d("[AP] response code=" + responseCode + " — rejected");
             /*
              * Failure: longer double-pulse so the difference between
              * success and failure is unambiguous through gloves.
@@ -1039,7 +1039,7 @@ class RESTVesselConnect extends VesselConnect {
         }
         clientId = Utils.generateUuidV4();
         Storage.setValue(StorageKeys.CLIENT_ID, clientId);
-        System.println("[Auth] generated new clientId=" + clientId);
+        Log.d("[Auth] generated new clientId=" + clientId);
         return clientId;
     }
 
@@ -1049,17 +1049,17 @@ class RESTVesselConnect extends VesselConnect {
      * null on any parse failure or null/non-string input. Callers map
      * null → -400 in their own error handling.
      */
-    function tryParseBody(data) {
+    function tryParseBody(data) as Lang.Dictionary or Null {
         if (!(data instanceof Lang.String)) {
             return null;
         }
         try {
             return Json.parse(data);
         } catch (e instanceof Json.ParseError) {
-            System.println("[REST] body parse failed: " + e.getErrorMessage());
+            Log.d("[REST] body parse failed: " + e.getErrorMessage());
             return null;
         } catch (e) {
-            System.println("[REST] body parse threw: " + e.getErrorMessage());
+            Log.d("[REST] body parse threw: " + e.getErrorMessage());
             return null;
         }
     }

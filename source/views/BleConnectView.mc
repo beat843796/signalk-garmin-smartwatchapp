@@ -48,7 +48,7 @@ class BleConnectView extends WatchUi.View {
     }
 
     function onShow() {
-        System.println("[BLE] BleConnectView onShow");
+        Log.d("[BLE] BleConnectView onShow");
         /*
          * Only ever pushed in BLE mode (Config menu gates inclusion of
          * the "Connect" item on transport type), so vessel.connect is a
@@ -61,7 +61,7 @@ class BleConnectView extends WatchUi.View {
     }
 
     function onHide() {
-        System.println("[BLE] BleConnectView onHide");
+        Log.d("[BLE] BleConnectView onHide");
         if (redrawTimer != null) {
             redrawTimer.stop();
             redrawTimer = null;
@@ -88,7 +88,7 @@ class BleConnectView extends WatchUi.View {
      * they want to see live data, not the status screen.
      */
     function onConnected() as Void {
-        System.println("[BLE] BleConnectView onConnected");
+        Log.d("[BLE] BleConnectView onConnected");
         WatchUi.showToast(Rez.Strings.ToastConnected, null);
         if (!popScheduled) {
             popScheduled = true;
@@ -111,7 +111,7 @@ class BleConnectViewDelegate extends WatchUi.BehaviorDelegate {
     }
 
     function onBack() as Lang.Boolean {
-        System.println("[BLE] BleConnectView onBack — cancelling");
+        Log.d("[BLE] BleConnectView onBack — cancelling");
         vessel.connect.cancelConnect();
         WatchUi.popView(WatchUi.SLIDE_RIGHT);
         return true;

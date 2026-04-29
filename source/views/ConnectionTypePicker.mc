@@ -67,7 +67,7 @@ class ConnectionTypePickerDelegate extends WatchUi.Menu2InputDelegate {
             return;
         }
 
-        System.println("[Picker] user selected " + newType);
+        Log.d("[Picker] user selected " + newType);
 
         var current = TransportFactory.getStoredType();
         if (!current.equals(newType)) {
@@ -132,9 +132,8 @@ class ConnectionTypePickerDelegate extends WatchUi.Menu2InputDelegate {
      */
     function onBack() as Void {
         if (firstLaunch) {
-            System.println("[Picker] first-launch back — exiting app");
+            Log.d("[Picker] first-launch back — exiting app");
             System.exit();
-            return;
         }
         WatchUi.popView(WatchUi.SLIDE_DOWN);
     }

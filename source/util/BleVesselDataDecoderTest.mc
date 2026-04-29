@@ -38,12 +38,12 @@ function bvd_makeApSentinels() as Lang.ByteArray {
     return buf;
 }
 
-function bvd_writeU16LE(buf, offset, value) {
+function bvd_writeU16LE(buf as Lang.ByteArray, offset as Lang.Number, value as Lang.Number) as Void {
     buf[offset]     = value & 0xFF;
     buf[offset + 1] = (value >> 8) & 0xFF;
 }
 
-function bvd_writeI16LE(buf, offset, value) {
+function bvd_writeI16LE(buf as Lang.ByteArray, offset as Lang.Number, value as Lang.Number) as Void {
     if (value < 0) {
         value = value + 0x10000;
     }
@@ -51,13 +51,13 @@ function bvd_writeI16LE(buf, offset, value) {
     buf[offset + 1] = (value >> 8) & 0xFF;
 }
 
-function bvd_writeU24LE(buf, offset, value) {
+function bvd_writeU24LE(buf as Lang.ByteArray, offset as Lang.Number, value as Lang.Number) as Void {
     buf[offset]     = value & 0xFF;
     buf[offset + 1] = (value >> 8) & 0xFF;
     buf[offset + 2] = (value >> 16) & 0xFF;
 }
 
-function bvd_writeU32LE(buf, offset, value) {
+function bvd_writeU32LE(buf as Lang.ByteArray, offset as Lang.Number, value as Lang.Number) as Void {
     buf[offset]     = value & 0xFF;
     buf[offset + 1] = (value >> 8) & 0xFF;
     buf[offset + 2] = (value >> 16) & 0xFF;
