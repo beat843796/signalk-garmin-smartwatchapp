@@ -52,6 +52,7 @@ class VesselConnectApp extends Application.AppBase {
      * for non-REST), so calling unconditionally is safe.
      */
     function onSettingsChanged() {
+        System.println("[App] onSettingsChanged");
         if (vessel != null) {
             vessel.stopUpdatingData();
             vessel.configureSignalK();

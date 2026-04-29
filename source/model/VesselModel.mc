@@ -79,6 +79,9 @@ class VesselModel {
      * without re-authing / re-pairing.
      */
     function attachTransport(newConnect) as Void {
+        var fromName = (connect != null) ? classNameOf(connect) : "null";
+        var toName = (newConnect != null) ? classNameOf(newConnect) : "null";
+        System.println("[Model] attachTransport " + fromName + " → " + toName);
         if (connect != null) {
             connect.stop();
         }
@@ -92,10 +95,22 @@ class VesselModel {
     }
 
     /*
+     * Short-form transport tag for log lines — REST/BLE/None — without
+     * pulling in any reflection. Keeps [Model] entries grep-able.
+     */
+    private function classNameOf(c) as Lang.String {
+        if (c instanceof RESTVesselConnect) { return "REST"; }
+        if (c instanceof BleVesselConnect)  { return "BLE";  }
+        if (c instanceof NoneVesselConnect) { return "None"; }
+        return "?";
+    }
+
+    /*
      * Re-reads persisted REST config (base URL etc.) on settings
      * changes. No-op for non-REST transports.
      */
     function configureSignalK() {
+        System.println("[Model] configureSignalK (settings change)");
         if (connect instanceof RESTVesselConnect) {
             connect.configureSignalK();
         }
@@ -169,10 +184,12 @@ class VesselModel {
      */
 
     function setAutopilotState(state) {
+        System.println("[Model] setAutopilotState '" + state + "'");
         connect.setAutopilotState(state);
     }
 
     function changeHeading(change) {
+        System.println("[Model] changeHeading " + change + "°");
         connect.changeHeading(change);
     }
 
@@ -181,10 +198,12 @@ class VesselModel {
      */
 
     function requestAccess() {
+        System.println("[Model] requestAccess (user)");
         connect.requestAccess();
     }
 
     function resetAccessRequest() {
+        System.println("[Model] resetAccessRequest (user)");
         connect.resetAccessRequest();
     }
 

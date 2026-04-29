@@ -45,6 +45,7 @@ class BleVesselConnect extends VesselConnect {
      * BleConnectView spinner flow uses startConnect() instead.
      */
     function start() as Void {
+        System.println("[BLE] start (try autoconnect)");
         service.tryAutoconnect();
     }
 
@@ -57,6 +58,7 @@ class BleVesselConnect extends VesselConnect {
      * clear the flag.
      */
     function stop() as Void {
+        System.println("[BLE] stop (transport-switch / app shutdown)");
         service.teardownLink();
     }
 
@@ -131,10 +133,12 @@ class BleVesselConnect extends VesselConnect {
      */
 
     function setAutopilotState(state) as Void {
+        System.println("[AP] setAutopilotState '" + state + "' (BLE)");
         service.sendAutopilotSetState(state);
     }
 
     function changeHeading(degrees) as Void {
+        System.println("[AP] changeHeading " + degrees + "° (BLE)");
         service.sendAutopilotChangeHeading(degrees);
     }
 
@@ -146,6 +150,7 @@ class BleVesselConnect extends VesselConnect {
      */
 
     function onLinkConnected() as Void {
+        System.println("[BLE] onLinkConnected (facade) — persisting glance snapshot");
         if (vessel != null) {
             vessel.persistGlanceSnapshot();
         }
@@ -153,6 +158,7 @@ class BleVesselConnect extends VesselConnect {
     }
 
     function onLinkDisconnected() as Void {
+        System.println("[BLE] onLinkDisconnected (facade)");
         WatchUi.requestUpdate();
     }
 }

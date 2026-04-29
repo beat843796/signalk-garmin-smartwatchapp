@@ -102,6 +102,19 @@ class RESTVesselConnect extends VesselConnect {
     private var lastAuthStateObserved = -1;
 
     /*
+     * Throttling state for the recurring data-poll log. The poll fires
+     * 3×/s; logging every iteration drowns the [Data] log. We heartbeat
+     * once per ~5 s while everything is fine, AND log every non-200 /
+     * state transition unconditionally so failures stand out.
+     *
+     * `dataPollLastLogAt` is a millisecond System.getTimer() value;
+     * 0 = "haven't logged yet" (forces the next request/response to log
+     * unconditionally — matches the BleService read-loop pattern).
+     */
+    private var dataPollLastLogAt = 0;
+    private const dataPollLogIntervalMs = 5000;
+
+    /*
      * Tracks whether the previous data poll succeeded. Used to detect
      * transitions:
      *   OK → fail  → redirect ViewLoop to StatusView page (once)
@@ -155,13 +168,16 @@ class RESTVesselConnect extends VesselConnect {
      */
     function configureSignalK() {
         baseURL = Utils.normalizeBaseUrl(Application.Properties.getValue("baseurl_prop"));
-        logDebug("Base URL: " + baseURL);
 
         token = Storage.getValue(StorageKeys.TOKEN);
         clientId = Storage.getValue(StorageKeys.CLIENT_ID);
         accessRequestHref = Storage.getValue(StorageKeys.ACCESS_HREF);
 
         authState = Utils.deriveInitialAuthState(baseURL, token, accessRequestHref);
+        System.println("[REST] configureSignalK baseURL=" + baseURL
+            + " hasToken=" + (token != null)
+            + " hasHref=" + (accessRequestHref != null)
+            + " authState=" + authState);
     }
 
     /*
@@ -169,9 +185,12 @@ class RESTVesselConnect extends VesselConnect {
      */
 
     function start() as Void {
-        logDebug("start, authState=" + authState);
+        System.println("[REST] start authState=" + authState
+            + " hasToken=" + (token != null)
+            + " hasHref=" + (accessRequestHref != null));
 
         if (authState == AUTH_NO_URL) {
+            System.println("[REST] start skipped — no URL configured");
             return;
         }
         if (authState == AUTH_CONNECTED && token != null) {
@@ -182,7 +201,7 @@ class RESTVesselConnect extends VesselConnect {
     }
 
     function stop() as Void {
-        logDebug("stop");
+        System.println("[REST] stop");
         Communications.cancelAllRequests();
         updateTimer = invalidateTimer(updateTimer);
         retryTimer = invalidateTimer(retryTimer);
@@ -192,10 +211,12 @@ class RESTVesselConnect extends VesselConnect {
     }
 
     function setAutopilotState(state) as Void {
+        System.println("[AP] setAutopilotState '" + state + "' (REST)");
         sendAutopilotCommand({ "action" => "setState", "value" => state });
     }
 
     function changeHeading(degrees) as Void {
+        System.println("[AP] changeHeading " + degrees + "° (REST)");
         sendAutopilotCommand({ "action" => "changeHeading", "value" => degrees });
     }
 
@@ -256,8 +277,11 @@ class RESTVesselConnect extends VesselConnect {
      */
     function refresh() as Void {
         if (baseURL == null || token == null) {
+            System.println("[REST] refresh skipped — baseURL=" + baseURL
+                + " hasToken=" + (token != null));
             return;
         }
+        System.println("[REST] refresh (one-shot poll)");
         oneShotInFlight = true;
         updateVesselDataFromServer();
     }
@@ -268,7 +292,7 @@ class RESTVesselConnect extends VesselConnect {
      * + auth state survive — only the next-tick scheduling stops.
      */
     function pausePolling() as Void {
-        logDebug("pausePolling");
+        System.println("[REST] pausePolling");
         dataPollEnabled = false;
         updateTimer = invalidateTimer(updateTimer);
         retryTimer = invalidateTimer(retryTimer);
@@ -280,7 +304,7 @@ class RESTVesselConnect extends VesselConnect {
      * to poll is therefore a no-op.
      */
     function resumePolling() as Void {
-        logDebug("resumePolling");
+        System.println("[REST] resumePolling");
         dataPollEnabled = true;
         start();
     }
@@ -675,7 +699,7 @@ class RESTVesselConnect extends VesselConnect {
      * it.
      */
     function resetAccessRequest() as Void {
-        logDebug("reset");
+        System.println("[Auth] resetAccessRequest — wiping clientId/href/token");
 
         stop();
 
@@ -708,8 +732,26 @@ class RESTVesselConnect extends VesselConnect {
 
         updateTimer = invalidateTimer(updateTimer);
 
+        var url = baseURL + "/signalk/v1/api/minimumvesseldatarest/vesseldata";
+
+        /*
+         * Throttled "GET vesseldata" log — printing 3×/s would drown
+         * the [Data] log. Log the first request after startup/recovery
+         * and then a heartbeat every ~dataPollLogIntervalMs. Errors
+         * and OK→fail / fail→OK transitions log unconditionally in
+         * onDataReceive. One-shot refresh requests always log so the
+         * trace is unambiguous about who fired them.
+         */
+        var now = System.getTimer();
+        if (oneShotInFlight
+                || dataPollLastLogAt == 0
+                || (now - dataPollLastLogAt) >= dataPollLogIntervalMs) {
+            System.println("[Data] GET " + url + " (one-shot=" + oneShotInFlight + ")");
+            dataPollLastLogAt = now;
+        }
+
         Communications.makeWebRequest(
-            baseURL + "/signalk/v1/api/minimumvesseldatarest/vesseldata",
+            url,
             {},
             {
                 :method => Communications.HTTP_REQUEST_METHOD_GET,
@@ -730,6 +772,7 @@ class RESTVesselConnect extends VesselConnect {
          * response came back). No-op.
          */
         if (responseCode == -1003) {
+            System.println("[Data] response cancelled (-1003)");
             return;
         }
 
@@ -749,6 +792,7 @@ class RESTVesselConnect extends VesselConnect {
                      * specific view (autopilot / status) and should
                      * stay on it.
                      */
+                    System.println("[Data] poll recovered — code=200 (was failing)");
                     lastDataPollOk = true;
                     if (!oneShotInFlight) {
                         redirectToDataPage();
@@ -756,6 +800,15 @@ class RESTVesselConnect extends VesselConnect {
                         WatchUi.requestUpdate();
                     }
                 } else {
+                    /*
+                     * Steady-state 200. The matching GET request log
+                     * (gated by the same dataPollLastLogAt heartbeat)
+                     * already gives us a periodic "alive" line; logging
+                     * a paired "poll OK" here would just double the
+                     * volume. So we stay silent on the success steady
+                     * state and let the request side carry the
+                     * heartbeat.
+                     */
                     WatchUi.requestUpdate();
                 }
                 if (dataPollEnabled) {
@@ -769,11 +822,14 @@ class RESTVesselConnect extends VesselConnect {
              * 200 with unparseable body — fall through to error path
              * with a synthesised -400 so the UI shows something useful.
              */
+            System.println("[Data] 200 but body unparseable — synthesising -400");
             lastNetCode = -400;
             responseCode = -400;
         }
 
-        logDebug("Data response code: " + responseCode);
+        System.println("[Data] poll failed code=" + responseCode
+            + " wasOk=" + lastDataPollOk
+            + " oneShot=" + oneShotInFlight);
 
         /*
          * 401 / 403: token is dead server-side. Wipe it from storage
@@ -840,6 +896,7 @@ class RESTVesselConnect extends VesselConnect {
      * state without having to navigate the loop.
      */
     function redirectToConfigPage() as Void {
+        System.println("[REST] redirect → StatusView (poll failure transition)");
         var pair = VesselViewLoop.build(VIEWLOOP_PAGE_STATUS);
         WatchUi.switchToView(pair[0], pair[1], WatchUi.SLIDE_LEFT);
     }
@@ -850,12 +907,13 @@ class RESTVesselConnect extends VesselConnect {
      * very first successful poll following a fresh auth approval).
      */
     function redirectToDataPage() as Void {
+        System.println("[REST] redirect → VesselDataView (poll recovery transition)");
         var pair = VesselViewLoop.build(VIEWLOOP_PAGE_DATA);
         WatchUi.switchToView(pair[0], pair[1], WatchUi.SLIDE_RIGHT);
     }
 
     function startRetryTimer() {
-        logDebug("Network error. Retry in " + retryInterval / 1000 + "s");
+        System.println("[Data] network error — retry in " + retryInterval / 1000 + "s");
         retryTimer = invalidateTimer(retryTimer);
         retryTimer = new Timer.Timer();
         retryTimer.start(method(:start), retryInterval, false);
@@ -900,12 +958,17 @@ class RESTVesselConnect extends VesselConnect {
     function sendAutopilotCommand(command) {
 
         if (isAutopilotRequestPending) {
+            System.println("[AP] command dropped — previous request still pending: "
+                + command);
             return;
         }
         isAutopilotRequestPending = true;
 
+        var url = baseURL + "/signalk/v1/api/raymarineautopilotfork/command";
+        System.println("[AP] POST " + url + " body=" + command);
+
         Communications.makeWebRequest(
-            baseURL + "/signalk/v1/api/raymarineautopilotfork/command",
+            url,
             command,
             {
                 :method => Communications.HTTP_REQUEST_METHOD_POST,
@@ -925,6 +988,7 @@ class RESTVesselConnect extends VesselConnect {
         lastNetCode = responseCode;
 
         if (responseCode == 200) {
+            System.println("[AP] response code=200 — accepted");
             /*
              * Tactile confirmation that the autopilot accepted the
              * command. Single short pulse; distinct from the longer
@@ -934,6 +998,7 @@ class RESTVesselConnect extends VesselConnect {
                 Attention.vibrate([new Attention.VibeProfile(50, 75)]);
             }
         } else {
+            System.println("[AP] response code=" + responseCode + " — rejected");
             /*
              * Failure: longer double-pulse so the difference between
              * success and failure is unambiguous through gloves.
@@ -975,7 +1040,7 @@ class RESTVesselConnect extends VesselConnect {
         }
         clientId = Utils.generateUuidV4();
         Storage.setValue(StorageKeys.CLIENT_ID, clientId);
-        logDebug("Generated new clientId: " + clientId);
+        System.println("[Auth] generated new clientId=" + clientId);
         return clientId;
     }
 
@@ -1007,9 +1072,5 @@ class RESTVesselConnect extends VesselConnect {
         if (v instanceof Lang.Array) { return "Array"; }
         if (v instanceof Lang.Number) { return "Number"; }
         return "Other";
-    }
-
-    function logDebug(msg) {
-        System.println(msg);
     }
 }
