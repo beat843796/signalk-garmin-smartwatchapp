@@ -30,7 +30,7 @@
          RESTVesselConnect.getStatusLabel. -->
     <string id="StatusConnected">CONNECTED</string>
     <string id="StatusNoUrl">NO URL</string>
-    <string id="StatusNoHttps">NO HTTPS</string>
+    <string id="StatusNoHttps">NO SERVER FOUND</string>
     <string id="StatusNotReachable">NOT REACHABLE</string>
     <string id="StatusNotAuth">NOT AUTHENTICATED</string>
     <string id="StatusPending">PENDING</string>
