@@ -10,7 +10,7 @@ SignalK node server on the user's boat LAN (typically a Raspberry Pi) or connect
 relies on two server-side plugins:
 
 - `signalk-raymarine-autopilot` — autopilot commands (sibling repo)
-- `signalk-minimalvesseldata-plugin` — the vessel-data REST endpoint (sibling repo) and BLE provider
+- `signalk-garmin-smartwatchapp-companion` — the vessel-data REST endpoint (sibling repo) and BLE provider
 - `signalk-autopilot-deltasim` — optional: emits fake autopilot deltas for local dev (sibling repo)
 
 the plugins are installed on the rpi for testing in the ~./signalk folder using `npm install <githubrepo>`
@@ -18,9 +18,9 @@ the plugins are installed on the rpi for testing in the ~./signalk folder using 
 on the same level as the garmin watch porject you find the sibling projects that are either the plugins or are there fro data sim or testing
 
 - `signalk-autopilot-deltasim` - optional plugin generating some autopilot deltas for testing the autopilot view
-- `signalk-ble-test` - a script testing the signalk-minimalvesseldata-plugin BLE function
+- `signalk-ble-test` - a script testing the signalk-garmin-smartwatchapp-companion BLE function
 - `signalk-data-simulator` - optional plugin for simulating high frequency data
-- `signalk-minimalvesseldata-plugin` - the plugin needed for interacting with the watch via REST and BLE
+- `signalk-garmin-smartwatchapp-companion` - the plugin needed for interacting with the watch via REST and BLE
 - `signalk-raymarine-autopilot` - plugin needed so the autopilor in the boat is connected
 
 Only when explicitly ask you can modify code in those sibling projects. Sometimes its even needed to modify code as those are companion projects to the watch app.
@@ -36,7 +36,7 @@ signalk-server's tokensecurity hardcodes `/plugins/*` as admin-only, but
 `/signalk/v1/api/*` accepts readwrite tokens (for GETs) and readwrite+admin
 (for PUTs). Both plugins register their routes via `signalKApiRoutes` to
 land in the more permissive namespace — see `signalk-raymarine-autopilot/index.js`
-and `signalk-minimalvesseldata-plugin/index.js`.
+and `signalk-garmin-smartwatchapp-companion/index.js`.
 
 The watch requests the **readwrite** permission level. Admin is not
 needed or wanted.
@@ -55,7 +55,7 @@ Use websearch if necessary for research to get details on documentation for the 
 
 - SignalK (including API): https://signalk.org/specification/1.8.2/doc/
 - SignalK node server github repo: https://github.com/SignalK/signalk-server
-- Minimal Vesseldata plugin: https://github.com/beat843796/signalk-minimalvesseldata-plugin
+- Garmin Smartwatchapp Companion plugin: https://github.com/beat843796/signalk-garmin-smartwatchapp-companion
 - Autopilot pligin: https://github.com/beat843796/signalk-raymarine-autopilot
 
 ## Code Style
@@ -101,4 +101,4 @@ legacy widget carousel. The app appears in the glance carousel via
 - Do not update any md files yourself unless i ask for it explicitly. Also do not update the TODO.md
 - User Facing strings always must go to resources/strings/strings.xml so localization is supported. 
 - create logs for all relevant state changes and business logic functions triggered by user input so we have an easy time debugging. espacially to trace errors in BLE and REST stack
-- whenever you have made changes to thay minimalvesseldata or to one of the autopilot/raymarine plugins you have to push the changes to git, ssh into the rpi, got to ~/.signalk and npm install <gitreporef> all changes plugins and then restart the server
+- whenever you have made changes to the garmin-smartwatchapp-companion or to one of the autopilot/raymarine plugins you have to push the changes to git, ssh into the rpi, got to ~/.signalk and npm install <gitreporef> all changes plugins and then restart the server

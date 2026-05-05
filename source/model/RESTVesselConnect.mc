@@ -731,7 +731,7 @@ class RESTVesselConnect extends VesselConnect {
 
         updateTimer = invalidateTimer(updateTimer);
 
-        var url = baseURL + "/signalk/v1/api/minimumvesseldatarest/vesseldata";
+        var url = baseURL + "/signalk/v1/api/garmin-watch-companion/vesseldata";
 
         /*
          * Throttled "GET vesseldata" log — printing 3×/s would drown

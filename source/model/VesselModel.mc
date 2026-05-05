@@ -238,7 +238,7 @@ class VesselModel {
     /*
      * Applies a parsed vessel-data dict to the local fields. Called
      * by RESTVesselConnect.onDataReceive when a 200 + valid JSON body
-     * arrives. Schema is the minimumvesseldatarest plugin's flat dict
+     * arrives. Schema is the garmin-watch-companion plugin's flat dict
      * of SI numbers + autopilotState string. Missing fields land as
      * `null`; formatters render those as "—" so absent values are
      * not confused with valid zero readings.

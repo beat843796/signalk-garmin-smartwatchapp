@@ -11,9 +11,9 @@ for future launches — no username or password on the watch.
 Install these on your [SignalK Node server](https://github.com/SignalK/signalk-server):
 
 - [Autopilot plugin](https://github.com/beat843796/signalk-raymarine-autopilot) — heading / mode control.
-- [Minimal vessel data plugin](https://github.com/beat843796/signalk-minimalvesseldata-plugin) — the aggregated `vesseldata` endpoint the watch polls.
+- [Garmin Smartwatchapp Companion plugin](https://github.com/beat843796/signalk-garmin-smartwatchapp-companion) — the aggregated `vesseldata` endpoint the watch polls.
 
-The user the watch registers as needs `admin` role (the minimal-vessel-data
+The user the watch registers as needs `admin` role (the garmin-smartwatchapp-companion
 plugin endpoint is admin-only).
 
 ### Supported devices

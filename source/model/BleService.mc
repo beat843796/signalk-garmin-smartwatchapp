@@ -746,7 +746,7 @@ class BleService extends Ble.BleDelegate {
             /*
              * STATUS_GATT_INSUFFICIENT_AUTHENTICATION_FAIL is what CIQ
              * surfaces when the peripheral returns ATT 0x05. The
-             * minimalvesseldata plugin uses 0x05 for the
+             * companion plugin uses 0x05 for the
              * bleAllowAutopilotCommands=off gate (CIQ collapses the
              * semantically tighter 0x08 onto a generic STATUS_WRITE_FAIL
              * — see plugin's ble.js for the rationale). So a status of

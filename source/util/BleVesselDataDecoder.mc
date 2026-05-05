@@ -1,7 +1,7 @@
 /*
  * BleVesselDataDecoder.mc
  * Pure decoders for the three Vessel Data BLE characteristics
- * (NAV / ENV / AP) exposed by the signalk-minimalvesseldata-plugin.
+ * (NAV / ENV / AP) exposed by the signalk-garmin-smartwatchapp-companion plugin.
  * Wire formats and offsets mirror `ble.js`'s CHARACTERISTICS table
  * and the plugin README's per-characteristic offset tables.
  *
